@@ -207,4 +207,4 @@ marimo/_lsp/
 __marimo__/
 
 
-/medmcqa/train.json
+medmcqa/train.json
