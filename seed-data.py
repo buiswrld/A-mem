@@ -1,101 +1,173 @@
-from Amem.agentic_memory.memory_system import AgenticMemorySystem
-from agents import Agent,Runner
-from dotenv import dotenv_values
-import json
+"""Run a small MedMCQA evaluation with or without A-MEM retrieval.
+
+This is an integration check: the memory condition intentionally stores the
+sampled questions (including their explanations) before asking the agent. It
+shows that a MedMCQA row can move through A-MEM and back into the QA prompt;
+it is not a held-out generalisation benchmark.
+"""
+
 import asyncio
+import json
+import re
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 import click
-import datetime
+from agents import Agent, Runner
+
+from Amem.agentic_memory.memory_system import AgenticMemorySystem
 
 
-env = dotenv_values(".env")
+SAMPLE_PATH = Path("medmcqa/sample.json")
+ANSWER_LETTERS = "ABCD"
 
-with open("medmcqa/sample.json","r") as f:
-    data = json.load(f)
 
-def structureQuestion(n: int):
-    structuredOut = f"""
-    Question: {data[n]["question"]}
-    Options:
-    A. {data[n]["opa"]} 
-    B. {data[n]["opb"]}
-    C. {data[n]["opc"]}
-    D. {data[n]["opd"]}
-    Explanation: {data[n]["exp"]}
-    """
-    return structuredOut
+def load_questions(path: Path = SAMPLE_PATH) -> List[Dict[str, Any]]:
+    with path.open() as file:
+        return json.load(file)
 
-def getTimeStamp():
-    now = datetime.datetime.now()
-    formatted = now.strftime("%Y%m%d%H%M")
-    return formatted
+
+def format_question(row: Dict[str, Any]) -> str:
+    """Format a MedMCQA row as the question the answering agent will see."""
+    return f"""Question: {row['question']}
+Options:
+A. {row['opa']}
+B. {row['opb']}
+C. {row['opc']}
+D. {row['opd']}"""
+
+
+def row_to_memory_note(row: Dict[str, Any]) -> str:
+    """Adapt one MedMCQA row to the text content expected by A-MEM."""
+    explanation = row.get("exp") or "No explanation is available."
+    return f"{format_question(row)}\nExplanation: {explanation}"
+
+
+def gold_letter(row: Dict[str, Any]) -> str:
+    """Convert MedMCQA's one-based `cop` field to A, B, C, or D."""
+    return ANSWER_LETTERS[int(row["cop"]) - 1]
+
+
+def timestamp() -> str:
+    return datetime.now().strftime("%Y%m%d%H%M")
+
+
+def parse_prediction(output: str) -> Optional[str]:
+    """Read a required {\"answer\": \"A\"} response, with a small fallback."""
+    try:
+        parsed = json.loads(output.strip())
+        answer = str(parsed.get("answer", "")).upper()
+        if answer in ANSWER_LETTERS:
+            return answer
+    except (json.JSONDecodeError, AttributeError):
+        pass
+
+    match = re.search(r'"answer"\s*:\s*"?([A-D])', output, flags=re.IGNORECASE)
+    return match.group(1).upper() if match else None
+
+
+def build_prompt(row: Dict[str, Any], retrieved_memories: List[str]) -> str:
+    memories = "\n\n".join(f"- {memory}" for memory in retrieved_memories)
+    if not memories:
+        memories = "(No memories were retrieved.)"
+
+    return f"""You are answering a medical multiple-choice question. Use the
+retrieved memories if they are relevant, but do not assume they are always
+correct.
+
+Retrieved memories:
+{memories}
+
+{format_question(row)}
+
+Return only valid JSON with exactly one key and one answer letter:
+{{"answer":"A"}}
+"""
+
+
+def create_memory_system(rows: List[Dict[str, Any]]) -> AgenticMemorySystem:
+    memory_system = AgenticMemorySystem(
+        model_name="all-MiniLM-L6-v2",
+        llm_backend="openai",
+        llm_model="gpt-4o-mini",
+    )
+    for row in rows:
+        memory_system.add_note(
+            content=row_to_memory_note(row),
+            tags=row["topic_name"] or "unknown",
+            category=row["subject_name"],
+            timestamp=timestamp(),
+        )
+    return memory_system
+
+
+async def evaluate(
+    agent: Agent, rows: List[Dict[str, Any]], memory: bool
+) -> List[Dict[str, Any]]:
+    memory_system = create_memory_system(rows) if memory else None
+    results = []
+
+    for index, row in enumerate(rows, start=1):
+        retrieved = []
+        if memory_system:
+            matches = memory_system.search_agentic(format_question(row), k=2)
+            retrieved = [match["content"] for match in matches]
+
+        response = await Runner.run(agent, build_prompt(row, retrieved))
+        prediction = parse_prediction(response.final_output)
+        expected_note = row_to_memory_note(row)
+        results.append(
+            {
+                "id": row["id"],
+                "question": row["question"],
+                "retrieved_memories": retrieved,
+                "expected_memory_retrieved": expected_note in retrieved if memory else None,
+                "raw_response": response.final_output,
+                "prediction": prediction,
+                "gold": gold_letter(row),
+                "correct": prediction == gold_letter(row),
+            }
+        )
+        print(f"Question {index}/{len(rows)}: {prediction or 'unparsed'} (gold: {gold_letter(row)})")
+
+    return results
+
+
+def write_results(path: Path, memory: bool, results: List[Dict[str, Any]]) -> None:
+    correct = sum(result["correct"] for result in results)
+    parsed = sum(result["prediction"] is not None for result in results)
+    payload = {
+        "run": {
+            "memory_enabled": memory,
+            "question_count": len(results),
+            "correct": correct,
+            "accuracy": correct / len(results) if results else 0,
+            "parsed_predictions": parsed,
+            "created_at": datetime.now().isoformat(),
+        },
+        "results": results,
+    }
+    with path.open("w") as file:
+        json.dump(payload, file, indent=2)
+    print(f"Wrote results to {path}")
+    print(f"Accuracy: {correct}/{len(results)} ({payload['run']['accuracy']:.1%})")
 
 
 @click.command()
-@click.option("--memory", default=False,help="Run agent and flag to determine if memory is active or not")
-def runAgent(memory: bool):
-    if not memory:    
-        async def agent_runner(n:int):
-            result = await Runner.run(agent,
-            f"""
-            You will be asked a series of multiple choice medical questions. Please output your answer succinctly and simply along with the correct option.
-
-            {data[n]["question"]}, options:
-
-            A. {data[n]["opa"]},\nB. {data[n]["opb"]},\nC. {data[n]["opc"]},\nD. {data[n]["opd"]}
-            """)
-            with open ("agentoutput-nomem.md", "a") as f:
-                f.write("\n"+ result.final_output)
-
-        for i in range(1, len(data)+1):
-            print(f"Running agent on question {i}...")
-            asyncio.run(agent_runner(i))
-    elif memory:
-        memory_system = AgenticMemorySystem(
-                model_name='all-MiniLM-L6-v2',  # Embedding model for ChromaDB
-                llm_backend="openai",           # LLM backend (openai/ollama)
-                llm_model="gpt-4o-mini"         # LLM model name
-        )
-        for i in range(0,len(data)):
-            memory_id = memory_system.add_note(
-                    content = structureQuestion(i),
-                    tags = "unknown" if data[i]["topic_name"] == 'null' else data[i]["topic_name"],
-                    category = data[i]["subject_name"],
-                    timestamp = getTimeStamp()
-                    )
-
-        async def agent_runner_mem(n:int):
-            related = memory_system.search_agentic(structureQuestion(n), k=2)
-            memory_context = "\n".join(
-                f"- {m['content']} (context: {m['context']}, tags: {m['tags']})"
-                for m in related
-            )
-
-            result = await Runner.run(agent,
-            f"""
-            You will be asked a series of multiple choice medical questions. Please output your answer succinctly and simply along with the correct option.
-
-            Here are related notes retrieved from your memory that may help:
-            {memory_context}
-
-            {data[n]["question"]}, options:
-
-            A. {data[n]["opa"]},\nB. {data[n]["opb"]},\nC. {data[n]["opc"]},\nD. {data[n]["opd"]}
-            """)
-            with open("agentoutput-mem.md", "a") as f:
-                f.write("\n"+ result.final_output)
-
-        for i in range(0, len(data)):
-            print(f"Running memory agent on question {i}...")
-            asyncio.run(agent_runner_mem(i))
+@click.option("--memory/--no-memory", default=False, help="Enable A-MEM retrieval.")
+@click.option("--output", type=click.Path(path_type=Path), default=None, help="Result JSON path.")
+def run_agent(memory: bool, output: Optional[Path]) -> None:
+    rows = load_questions()
+    agent = Agent(
+        name="Medical Assistant",
+        instructions="You answer medical questions accurately and concisely.",
+        model="gpt-4o-mini",
+    )
+    results = asyncio.run(evaluate(agent, rows, memory))
+    default_output = "evaluation-results-memory.json" if memory else "evaluation-results-nomem.json"
+    write_results(output or Path(default_output), memory, results)
 
 
 if __name__ == "__main__":
-    agent = Agent(
-            name="Medical Assistant",
-            instructions="You answer medical questions accurately and concisely.",
-            model = "gpt-4o-mini"
-    )
-    runAgent()
-
-
-
+    run_agent()
