@@ -1,0 +1,662 @@
+{
+  "run": {
+    "memory_enabled": true,
+    "question_count": 50,
+    "correct": 47,
+    "accuracy": 0.94,
+    "parsed_predictions": 50,
+    "created_at": "2026-07-16T11:04:43.298667"
+  },
+  "results": [
+    {
+      "id": "6a94747c-e154-4e4d-ae31-961a081a4332",
+      "question": "A patient is suspected to have vestibular schwannoma the investigation of choice for its diagnosis is:",
+      "retrieved_memories": [
+        "Question: A patient is suspected to have vestibular schwannoma the investigation of choice for its diagnosis is:\nOptions:\nA. Contrast enhanced CT scan\nB. Gadolinium enhanced MRI\nC. SPECT\nD. PET scan\nExplanation: Ans. B (Gadolinium enhanced MRI) Vestibular schwannoma (VS) - arise from inferior vestibular division of eight nerve as from the auditory division a. MRI with gadolinium is the current standard for screening for suspected vestibular schwannomas because of the high false negative rate associated with BSERA Treatment Under 65 years - small intracranial tumors (within the internal auditory canal) may be surgically removed through the transmastoid labyrinthine route a. Larges tumors (> 3 cm) are associated with increased incidence of hearing loss, dysequilibrium, headache facial numbness, and diplopia are removed a suboccipital craniotomy b. Huge ones can only be removed combined suboccipital and translabyrinthine approach Over age 65 with slowly growing tumors, observation is the proffered treatment.",
+        "Question: Sudden loss of vision is seen in following, except:\nOptions:\nA. CRAO\nB. CRVO\nC. Optic neuritis\nD. Papilledema\nExplanation: Papilledema (choked disk) is usually a symptom of increased intracranial pressure caused by a mass, such as a brain tumor. The increased pressure is transmitted to the optic disk through the extension of the subarachnoid space around the optic nerve. Papilledema caused by a sudden increase in intracranial pressure develops within 24 to 48 hours. Visual acuity is not affected in papilledema, although the blind spot may be enlarged. Ref :Chang D.F. (2011). Chapter 2. Ophthalmologic Examination. In P. Riordan-Eva, E.T. Cunningham, Jr. (Eds), Vaughan & Asbury's General Ophthalmology, 18e."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "a93bf85d-916c-4316-8062-48c7dadfd151",
+      "question": "Sudden loss of vision is seen in following, except:",
+      "retrieved_memories": [
+        "Question: Sudden loss of vision is seen in following, except:\nOptions:\nA. CRAO\nB. CRVO\nC. Optic neuritis\nD. Papilledema\nExplanation: Papilledema (choked disk) is usually a symptom of increased intracranial pressure caused by a mass, such as a brain tumor. The increased pressure is transmitted to the optic disk through the extension of the subarachnoid space around the optic nerve. Papilledema caused by a sudden increase in intracranial pressure develops within 24 to 48 hours. Visual acuity is not affected in papilledema, although the blind spot may be enlarged. Ref :Chang D.F. (2011). Chapter 2. Ophthalmologic Examination. In P. Riordan-Eva, E.T. Cunningham, Jr. (Eds), Vaughan & Asbury's General Ophthalmology, 18e.",
+        "Question: Not seen in acute iridocyclitis:\nOptions:\nA. Small pupil\nB. Mucopurulent discharge\nC. Ciliary congestion\nD. Pain\nExplanation: Some Clinical Features of Acute Iridocyclitis"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "7ab603cf-8713-4983-b058-d8d6bbd5c0f8",
+      "question": "A 7 year old female patient complains of multiple carious teeth and has the habit of frequent snacking, is fond of chocolates and does not brush twice daily. Intra-oral examination shows grossly carious deciduous mandibular molars and proximal caries with mandibular canines. Which type of finish line was used during the crown preparation in the restored  tooth shown in the post-operative radiograph of this patient?",
+      "retrieved_memories": [
+        "Question: A 7 year old female patient complains of multiple carious teeth and has the habit of frequent snacking, is fond of chocolates and does not brush twice daily. Intra-oral examination shows grossly carious deciduous mandibular molars and proximal caries with mandibular canines. Which type of finish line was used during the crown preparation in the restored  tooth shown in the post-operative radiograph of this patient?\nOptions:\nA. Chamfer\nB. Feathered edge\nC. Chisel\nD. Shoulder\nExplanation: Adequately contoured stainless steel crowns have maintained function and the relationship of the\u00a0primary teeth in the arch. The gingival margin of the preparation on the proximal surface should\u00a0 be a smooth feathered edge with no ledge or shoulder present.\nThe stainless steel crown (SSC) is an extremely durable restoration. Children with extensive decay,\u00a0large lesions or multiple surface lesions in primary molars should be treated with stainless steel\u00a0crowns. Because of the protection from future decay provided by their feature of full coverage and\u00a0 their increased durability and longevity, strong consideration should be given to the use of SSCs in\u00a0 children who require general anesthesia.",
+        "Question: Which amongst the following is the gold standard for demonstrating hCG\nOptions:\nA. Radio immuno assay\nB. Latex agglutination\nC. Immunoflorescence\nD. ELISA\nExplanation: No explanation is available."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "ee818d66-c859-4f35-9227-837b7dcd664a",
+      "question": "Which of the following agents do not act GABAA Cl- channel complex receptors?",
+      "retrieved_memories": [
+        "Question: Which of the following agents do not act GABAA Cl- channel complex receptors?\nOptions:\nA. Zopiclone\nB. Benzodiazepines\nC. Thiopentone\nD. Promethazine\nExplanation: Zopiclone (non benzodiazepine hypnotics ),benzodiazepine ,thiopentone(barbiturates) all act on GABA-Cl channel ,whereas promethazin is a antihistamine drug that acts on histaminergic receptors which causes high sedation. Ref: KD Tripathio 8th ed.",
+        "Question: Which of the following is true regarding olazapine except-\nOptions:\nA. It causes marked anti-muscarinic action\nB. It causes weight gain\nC. It causes mild increase in prolactin\nD. Less epileptogenic action than phenothiazine\nExplanation: Ans. is 'd' i.e., Less epileptogenic action than phenothiazine o Clozapine and olanzapine are most epileptogenic antipsychotics. o Olanzapine blocks multiple monoaminergic (D2, 5-HT2, al, a2) as well as muscarinic and H1receptors. o It causes weight gain o It causes little rise in prolactin level."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "69d5a0c8-5c34-4b3a-9b70-1ba77aa50f16",
+      "question": "Etiology of bloody discharge from nipple -",
+      "retrieved_memories": [
+        "Question: Etiology of bloody discharge from nipple -\nOptions:\nA. Duct papiloma\nB. Breast abscess\nC. Fibroadenoma\nD. Cyst\nExplanation: Ans. is 'a' i.e., Duct papiloma",
+        "Question: Pathological nipple discharge is mostly associated with?\nOptions:\nA. Fibroadenoma\nB. Duct papilloma\nC. Adenocarcinoma\nD. Lobular carcinoma\nExplanation: Ans. (b) Duct papillomaRef: Bailey & Love 24th ed p 828, Schwartz 9thed ch-17"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "8388e47b-f88c-441b-bad2-e5402945f4a1",
+      "question": "Most common nerve to be affected in supracondylar fracture of humerus is: (Repeat)",
+      "retrieved_memories": [
+        "Question: Most common nerve to be affected in supracondylar fracture of humerus is: (Repeat)\nOptions:\nA. Median nerve\nB. Ulnar nerve\nC. Radial nerve\nD. Axillary nerve\nExplanation: Ref: The elbow and its disorders. by Bernard F. M or rex, Joaquin Sanchez-Sotelo, Page 226. Skeletal trauma in children, by Neil E. Green, Marc F Swiontkowski, Page 212.Explanation:Nerve injuries occur in about 40% of type III (Gartland's classification) supracondylar fractures.Earlier literature stated that radial nerve was the most commonly injured nerve in supracondylar fractures.Recent studies indicate that the anterior interosseous branch of median nerve is mostly affected.Nerve involvement differs with the type of fracture -1. Anterior interosseous nerve (a motor branch of the median nerve) is mostly affected during postero-lateral displacement of the distal fragment.Radial nerve is mostly affected w-ith postero-medial displacement.Ulnar nerve is involved in flexion type of supracondylar fracture.",
+        "Question: Which of the given test is used for assessing posterior glenohumeral instability?\nOptions:\nA. Jerk test\nB. Crank test\nC. Fulcrum test\nD. Sulcus test\nExplanation: Common posterior instability tests include the jerk test, posterior stress test, Kim test, and load and shift test. Crank test is for superior labral pathology which is similar to the McMurray test for the knee. The crank test attempts to catch labrum tears between the two joint surfaces. Both the \"hop\" test and the \"fulcrum\" test are helpful in making the diagnosis of a femoral shaft stress fracture. The sulcus test evaluates inferior instability of the humeral head. Ref: Shoulder edited by Richard L.Angelo, 2010, Page 118."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "9a361392-e58b-4989-a1d5-38a6cc55632d",
+      "question": "All of the following is true about \"Imiquimod\" except-",
+      "retrieved_memories": [
+        "Question: All of the following is true about \"Imiquimod\" except-\nOptions:\nA. Direct antiviral activity\nB. Indirect antiviral\nC. Antitumor activity\nD. It release cytokines\nExplanation: Ans. is 'c' i.e., Antitumor activity o Imiquimod is a immunomodulatory agent that is effective for topical treatment of Condylomata accuminata and other dermatological conditions. o It lacks direct antiviral or antiproliferative effects in vitro but rather induces cytokines and chemokines with antiviral and immunomodulating effects. o Imiquimod shows antiviral activity in animal models after systemic or topical administration.",
+        "Question: Which of the following is the mosr common complication of immunosuppression\nOptions:\nA. Malignancy\nB. Graft rejection\nC. Thrombocytopenia\nD. Infection\nExplanation: ."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "0f926d77-ad0b-4111-aa47-bc3e3dbe46c8",
+      "question": "Which of the following statement regarding disinfectants in not true?",
+      "retrieved_memories": [
+        "Question: Which of the following statement regarding disinfectants in not true?\nOptions:\nA. Hypochlorites are bactericidal and inactivated by organic matter\nB. Glutaraldehyde is sporicidal and not inactivated by organic matter\nC. Formaldehyde is bactericidal, sporicidal and virucidal\nD. Phenol is bactericidal and readily inactivated by organic matter\nExplanation: Phenol exe microcidal activity by injuring lipid containing plasma membrane, which results in leakage of cellular contents. They remain active in presence of organic compounds, they are stable and persists for long period after application. Ref: Toora (2008), Chapter 7, \"The control of microbial growth\", In the book,\"Microbiology: An Introduction\" 9th Edition, India, Page 198; Textbook of Microbiology By Ananthnarayananan, 7th Edition, Pages 30-32; Medical Microbiology By Jawetz, 24th Edition, Page 61",
+        "Question: Which of the following is an Antimetabolite\nOptions:\nA. Methotrexate\nB. Cyclosporine\nC. Etoposide\nD. Vinbalstine\nExplanation: Refer KDT 6/e p 823 Methotrexate is an Antimetabolite that acts By inhibiting DHFRase"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "a11eb964-8860-458d-a60c-5d373cc93873",
+      "question": "Organism causing cervical carcinoma is?",
+      "retrieved_memories": [
+        "Question: Organism causing cervical carcinoma is?\nOptions:\nA. HPV\nB. HAV\nC. HBV\nD. HCV\nExplanation: ANSWER: (A) HPVREF: Shaw 15th ed page 400Aetiology, epidemiology and predisposing risk factors of cervical cancer:Average age 35-45 years. Precancerous lesions occur 10-15 years earlier (Figure 29.8).Coitus before the age of 18 years.Multiple sexual partners.Delivery of the first baby before the age of 20 years.Multiparity with poor birth spacing between pregnancies.Poor personal hygiene.Poor socioeconomic status.At one time, exposure to smegma from uncircumcised partners was considered an important factor, accounting for lower incidence of cancer of the cervix amongst the Jews and Muslims. Now it is realized that the incidence of human papilloma virus is low in circumcised men, and that is the reason for low incidence of cancer in their wives.Smoking and drug abuse, including alcohol, are immunosuppressive (13 fold).Women with STD, HIV infection, herpes simplex virus 2 infection, human papilloma virus (HPV) infection (16, 18, 31, 33) or condylomata have a high predisposition to cancer. Of these, HPV is nowr considered the most important cause. Most HPV infection 16,18 are symptomless in young women and clear within 2 years. Persistent infection is the cause of cancer of the cervix in 70-90% cases.Immunosuppressed individuals (following transplant surgery).Women with preinvasive lesions.Women wTho do not come for regular health check-up and Pap tests.COC and progestogens use over 8-year period can cause adenocarcinoma of the endocervix (double the risk).Five per cent women exposed to diethylstilboestrol in utero developed carcinoma of vagina and cervix. With withdraxval of this hormone its incidence has dropped.",
+        "Question: Pathological nipple discharge is mostly associated with?\nOptions:\nA. Fibroadenoma\nB. Duct papilloma\nC. Adenocarcinoma\nD. Lobular carcinoma\nExplanation: Ans. (b) Duct papillomaRef: Bailey & Love 24th ed p 828, Schwartz 9thed ch-17"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "0b18ca2d-dda2-428d-be7d-7a77acb44b17",
+      "question": "All are true regarding axillary lymph nodes except?",
+      "retrieved_memories": [
+        "Question: All are true regarding axillary lymph nodes except?\nOptions:\nA. Posterior group lies along subscapular vessels\nB. Lateral group lies along lateral thoracic vessels\nC. Apical group lies along axillary vessels\nD. Apical group is terminal lymph nodes\nExplanation: Ans. is 'b' i.e., Lateral group lies along lateral thoracic vesselsAxillary lymph nodes The axillary lymph nodes are divided into 5 groups :?Anterior (pectoral) group :- Lie along lateral thoracic vessels, i.e. along the lateral border of pectoralis minor. They receive lymph from upper half of the anterior wall of trunk and from major pa of breast.Posterior (scapular) group :- Lie along the Subscapular vessels. They receive lymph from the upper half of the posterior wall of trunk and axillary tail.Lateral group :- Lie along the upper pa of the humerus, medial to the axillary vein. They receive lymph from upper limb.Central group :- Lie in the fat of the upper axilla. The receive lymph from the preceding groups and drain into apical group. The intercostobrachial nerve is closely related to them.Apical (infraclavicular) group :- Lie deep to the clavipectoral fascia along the axillary vessels. They receive lymph from central group, upper pa of breast and the thumb and its web. These are called terminal group of lymph nodes, as they receive lymphatics from other nodes of breast.",
+        "Question: All of the following are true with respect to ligation of internal iliac aery except -\nOptions:\nA. For hemostasis, anterior division is to be ligated\nB. Collateral circulation is established later between middle sacral and lateral sacral aeries\nC. Bleeding is always controlled with it\nD. The aery should be ligated and not transected\nExplanation: Ligation of one or both internal iliac aeries is done to contro hemorrhage from pelvic vessels. it is technically difficult and is onlt successfull in half of the time. The impoance mechanism of iliac aery ligation is a 85% reduction in pulse pressure in the aeries distal to ligation.This conves an aerial pressure system into one with pressures approaching those in the venous circulation. this creates vessels more amenable to hemostasis pressure and clot formation. Reference: Wlliams text book of Obstetrics, 24th edition page no 820"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "e1bbd48f-e5a6-4bd4-9f9e-b6dea1e0edee",
+      "question": "Staging of ca cervix with parametrial involvement-",
+      "retrieved_memories": [
+        "Question: Staging of ca cervix with parametrial involvement-\nOptions:\nA. III C\nB. II B\nC. III A\nD. III B\nExplanation: Ans. is 'b' i.e., IIB {Ref: Shaw's Gynae 15th/ep. 420 & Internet] Ref- FIGO staging of Cervical carcinomas Stage I Stage I is carcinoma strictly confined to the cervix; extension to the uterine corpus should be disregarded. The diagnosis of both Stages IA1 and IA2 should be based on microscopic examination of removed tissue, preferably a cone, which must include the entire lesion. Stage IA: Invasive cancer identified only microscopically. Invasion is limited to measured stromal invasion with a maximum depth of 5 mm and no wider than 7 mm. Stage IA1: Stage IA1: Measured invasion of the stroma no greater than 3 mm in depth and no wider than 7 mm diameter. Stage IA2: Stage IA2: Measured invasion of stroma greater than 3 mm but no greater than 5 mm in depth and no wider than 7 mm in diameter. Stage IB: Stage IB: Clinical lesions confined to the cervix or preclinical lesions greater than Stage IA. All gross lesions even with superficial invasion are Stage IB cancers. Stage IB1: Stage IB1: Clinical lesions no greater than 4 cm in size. Stage IB2: Stage IB2: Clinical lesions greater than 4 cm in size. Stage II Stage II is carcinoma that extends beyond the cervix, but does not extend into the pelvic wall. The carcinoma involves the vagina, but not as far as the lower third. Stage IIA: No obvious parametrial involvement. Involvement of up to the upper two-thirds of the vagina. Stage IIB: Obvious parametrial involvement, but not into the pelvic sidewall. Stage III Stage III is carcinoma that has extended into the pelvic sidewall. On rectal examination, there is no cancer-free space between the tumour and the pelvic sidewall. The tumour involves the lower third of the vagina. All cases with hydronephrosis or a non-functioning kidney are Stage III cancers. Stage IIIA: No extension into the pelvic sidewall but involvement of the lower third of the vagina. Stage IIIB: Extension into the pelvic sidewall or hydronephrosis or non-functioning kidney. Stage IV Stage IV is carcinoma that has extended beyond the true pelvis or has clinically involved the mucosa of the bladder and/or rectum. Stage IVA: Spread of the tumour into adjacent pelvic organs. Stage IVB: Spread to distant organs. Source: TNM Classification of malignant tumours. L. Sobin and Ch Wittekind (eds.), UICC Internation Union against Cancer, Geneva, Switzerland. pp155-157; 6th ed. 2002",
+        "Question: N-3 TNM staging of head and neck tumors shows:\nOptions:\nA. Metastasis in lymph nodes >2 cm\nB. Metastasis in lymph nodes >5 cm\nC. Metastasis in a lymph node >6 cm\nD. None\nExplanation: 8th AJCC (2017) TNM Classification of Carcinoma Lip & Oral Cavity Primary Tumor (T) Regional Lymph Nodes (N) Tis Carcinoma in situ. N1 Metastasis in a single ipsilateral LN, <3 cm in greatest dimension without extranodal extension T1 Tumor <2cm in greatest dimension & <5cm depth of invasion N2a Metastasis in a single ipsilateral LN, >3 cm but <6 cm in greatest dimension without extranodal extension T2 Tumor <2cm in greatest dimension & >5 mm but <10 mm depth of invasion or tumor >2 cm but <4 cm in greatest dimension & depth of invation < 10 mm N2b Metastaes in a multiple ipsilateral LN, none >6 cm in greatest dimension without extranodal extension T3 Tumor >4 cm in greastest dimension and >10 mm depth of invasion N2c Metastases in bilateral or contralateral LN, none >6cm in greatest dimension without extranodal extension T4a Lip: Tumor invades through coical bone, inferior alveolar nerve, floor of mouth, or skin (of chin or nose) N3a Metastasis in a LN >6cm in greatest dimension without extranodal extension N3b Metastasis in a single or multiple LNs with clinical extranodal extension Oral cavity: Tumor invades through coical bone mandible or maxillary sinus or invades the skin of face Distant Metastasis T4b Tumor invades masticator space, pterygoid plates, or skull base and/or encases internal carotid aery M0 No distant metastasis. M1 Distant metastasis."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "48c0f7d8-81dd-426a-a9b5-cd9f60765c56",
+      "question": "Not seen in acute iridocyclitis:",
+      "retrieved_memories": [
+        "Question: Not seen in acute iridocyclitis:\nOptions:\nA. Small pupil\nB. Mucopurulent discharge\nC. Ciliary congestion\nD. Pain\nExplanation: Some Clinical Features of Acute Iridocyclitis",
+        "Question: Sudden loss of vision is seen in following, except:\nOptions:\nA. CRAO\nB. CRVO\nC. Optic neuritis\nD. Papilledema\nExplanation: Papilledema (choked disk) is usually a symptom of increased intracranial pressure caused by a mass, such as a brain tumor. The increased pressure is transmitted to the optic disk through the extension of the subarachnoid space around the optic nerve. Papilledema caused by a sudden increase in intracranial pressure develops within 24 to 48 hours. Visual acuity is not affected in papilledema, although the blind spot may be enlarged. Ref :Chang D.F. (2011). Chapter 2. Ophthalmologic Examination. In P. Riordan-Eva, E.T. Cunningham, Jr. (Eds), Vaughan & Asbury's General Ophthalmology, 18e."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "03d3e00a-2930-48f4-b20d-62adcde241e7",
+      "question": "Persistent feeling of guilt is seen in",
+      "retrieved_memories": [
+        "Question: Persistent feeling of guilt is seen in\nOptions:\nA. OCD\nB. Depression\nC. Mania\nD. Schizophrenia\nExplanation: increased guilt is a carecterstic of depression DIAGNOSTIC CRITERIA FOR DEPRESSION Depressed mood most of the day Anhedonia=== loss of interest in previous pleasurable activities Fatiguability Dec sleep Dec appetite Hopelessness Suicidal ideas Ideas of guilt Reference: Kaplon and sadock, 11 th edition, synopsis of psychiatry, 11 th edition, pg no. 347",
+        "Question: Which of the following is true regarding olazapine except-\nOptions:\nA. It causes marked anti-muscarinic action\nB. It causes weight gain\nC. It causes mild increase in prolactin\nD. Less epileptogenic action than phenothiazine\nExplanation: Ans. is 'd' i.e., Less epileptogenic action than phenothiazine o Clozapine and olanzapine are most epileptogenic antipsychotics. o Olanzapine blocks multiple monoaminergic (D2, 5-HT2, al, a2) as well as muscarinic and H1receptors. o It causes weight gain o It causes little rise in prolactin level."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "23bd0734-ad59-4ca6-9cb4-e108ff60ca77",
+      "question": "The wasting syndrome associated in cancer is",
+      "retrieved_memories": [
+        "Question: The wasting syndrome associated in cancer is\nOptions:\nA. Achalasia\nB. Cacchexia\nC. Atelexis\nD. Cacoguesia\nExplanation: No explanation is available.",
+        "Question: A patient presents with dysphagia of 4 weeks duration. Now he is able to swallow liquid food only. Which of the following is the one investigation to be done?\nOptions:\nA. Barium studies\nB. Upper GI Endoscopy\nC. CT Scan\nD. Esophageal manometry\nExplanation: Carcinoma Esophagus: Barium swallow is the first investigation for an esophageal disease presenting with dysphagia (it can show irregular filling defect with or without proximal dilatation, annular lesion appear as constricting bands) Barium Swallow A barium swallow is recommended for any patient presenting with dysphagia. The esophagram gives an overview of anatomy and function It is able to differentiate intraluminal from intramural lesions and to discriminate between intrinsic (from a mass protruding into the lumen) and extrinsic (from compression of a structures outside the esophagus) compression The classic finding of an apple-core lesion in patients with esophageal cancer is recognised easily Endoscopy and biopsy is the investigation of choice for CA Esophagus For adequate assessment, both barium swallow and endoscopy are required. Ref: Sabiston 20th edition Pgno: 1028"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "8ba95e42-a280-41bd-a758-ce48bd00157c",
+      "question": "JSY is an acronym for?",
+      "retrieved_memories": [
+        "Question: JSY is an acronym for?\nOptions:\nA. Janani Suraksha Yojana\nB. Jeevan Suraksha Yojana\nC. Jeevan Shakthi Yojana\nD. Jan Suraksha Yojana\nExplanation: Janani Suraksha Yojana is a centrally funded scheme launched in 2005 offering maternity benefits. It aims at lowering maternal moality and infant moality by encouraging institutional deliveries. Ref : Park's Textbook of Preventive medicine",
+        "Question: Which of the following is an Antimetabolite\nOptions:\nA. Methotrexate\nB. Cyclosporine\nC. Etoposide\nD. Vinbalstine\nExplanation: Refer KDT 6/e p 823 Methotrexate is an Antimetabolite that acts By inhibiting DHFRase"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "b7843246-3d2d-4c9c-8990-999d5a909916",
+      "question": "Exercise testing is absolutely contraindicated in which one of the following:",
+      "retrieved_memories": [
+        "Question: Exercise testing is absolutely contraindicated in which one of the following:\nOptions:\nA. One week following myocardial infarction\nB. Unstable angina\nC. Aoic stenosis\nD. Peripheral vascular disease\nExplanation: Answer is C (Aoic stenosis) \"Many of the traditional contraindications such as recent myocardial infarction or congestive hea failure are no longer considered if the patient is stable and ambulatory but Aoic Stenosis remains a contraindication\" Contraindications to exercise stress testing: Acute myocardial infarction (< 4 - 5 days) Rest angina < 48 hours Unstable rhythm Severe Aoic Stenosis Acute Myocarditis Uncontrolled hea failure Active infective endocarditis Exercise testing should also not be done during an episode of unstable angina and its presence in the options confuses the issue. However, going with what CMDT has to say, aoic stenosis remains the answer of choice. Exercise testing in unstable angina : Unstable angina is a term used to describe patients who present with rapidly worsening angina, severe angina at rest or prolonged or ischaemia chest pain without ECG or enzyme evidence of MI. Unstable angina episode Admit, Bed Rest, Aspirin, p blockers Exercise Tolerance test Exercise testing is indicated in unstable angina once the plaque has stabilized and is arranged later, in order to assess the patients need for coronary angiography if the test is positive at low work load.",
+        "Question: The right atrium chronic overload is indicated by a P wave of more than:\nOptions:\nA. 2.5 mm\nB. 3.5 mm\nC. 4.5 mm\nD. 5.5 mm\nExplanation: Ans. a. 2.5 mm (Ref: Harrison 19/e p1453, 18/e p1832; Marc Gertsch's The ECG; A Two-Step Approach to Diagnosis';Ch-4)The right atrium chronic overload is indicated by a P wave of more than 2.5 mm.\"Normal atrial depolarization vector is oriented downward and towards the subject's left, reflecting the spread of depolarization from the sinus node to the right and then the left atrial myocardium. This vector points toward the positive pole of lead II and toward the negative pole of lead aVR. Normal P wave is less than 2.5 mm in lead II. If it is more than 2.5 mm, this indicate right atrial overload.\"- Harrison 19/e p1453, 18/e p1832Right Atrial Enlargement (P Pulmonale): Peaked, tall and narrow P waves in leads II, III and aVF in lung disease are called 'P pulmonale'. The presence of P pulmonale is taken as P wave of more than 2.5 mm in leads, II, III and aVF. Though many factors such as verticalization of the heart, increased residual volume and impaired lung function have been reported to be correlated with these changes in the P wave, right atrial overload (right atrial enlargement or increased right atrial pressure or both) is still thought to be responsible for P pulmonale in lung disease.\"- Maeda S, Katsura H. Chida K. Imai T. Kuboki K. Watanabe C, Kida K. Ohkawa S, Matsushita S, Ueda K and Kuramoto K. Lack of correlation between P pulmonale and right atrial overload in chronic obstructive airways disease. Br Heart J. 1991; 65:132-6.\"Right Atrial Enlargement (P Pulmonale): As the activation of the right atrium begins earlier than that of the left atrium, an increase of the right atrial (RA) vector does not prolong the P duration. P pulmonale is characterized by tall and sometimes pointed P waves in leads II, aVF and III. The amplitude of the P waves is 2.5 mm in at least one of these leads. In the opposite 'lead aVL, the P wave is completely negative. The P wave may be higher than normal and pointed in leads V1/V2 rarely in the other precordial leads.\"- Marc Gertsch's 'The ECG: A Two-Step Approach to Diagnosis';- Ch-4"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "```json\n{\"answer\":\"C\"}\n```",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "f574169a-d93a-4717-b2bd-f6e2579cdc2a",
+      "question": "Which of the following is not a cause for primary amenorrhea?",
+      "retrieved_memories": [
+        "Question: Which of the following is not a cause for primary amenorrhea?\nOptions:\nA. Sheehan's syndrome\nB. Kallmann's syndrome\nC. Mayer Rokitansky Koster Hauser syndrome\nD. Turner syndrome\nExplanation: No explanation is available.",
+        "Question: Systemic steroid cause all except -\nOptions:\nA. Hypeension\nB. Glaucoma\nC. Cataract\nD. Osteoporosis\nExplanation: Ans. is 'b' i.e., Glaucoma"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "c80922b2-5b66-4701-9cc7-f9a5931d706f",
+      "question": "A 14-year-old presents to the OPD since she has not yet menstruated.On examination there is breast development and normal pubic hair growth. Which of the following best describes the normal sequence of pubeal changes in the female?",
+      "retrieved_memories": [
+        "Question: A 14-year-old presents to the OPD since she has not yet menstruated.On examination there is breast development and normal pubic hair growth. Which of the following best describes the normal sequence of pubeal changes in the female?\nOptions:\nA. Veical growth, menarche, thelarche, Pubarche\nB. Pubarche,Veical growth,thelarche, menarche\nC. Thelarche, Veical growth, Pubarche, menarche\nD. Thelarche, Pubarche, Veical growth, menarche\nExplanation: In girls, pubeal development typically takes place over 4.5 years .Sex steroid production during pubey stimulates development of secondary sex characteristics,growth of long bones which is the reason for veical growth spu. * The first sign of pubey is accelerated growth, and breast budding is usually the first recognized pubeal change, followed by the appearance of pubic hair, peak growth velocity, and menarche. Delayed or interrupted pubey No Periods or any secondary sex characteristics by age 13, Have secondary sexual characteristics but not had menarche by age 15 or have not attained menarche 5 or more years since the onset of pubeal development. *Please note: the question can confuse us sometimes. If asked about the overall first event in pubey, then its Accelerated general growth. But if asked the first specific sign of pubey, then breast budding is the answer.",
+        "Question: Which of the following is best for diagnosing genital TB?\nOptions:\nA. PCR\nB. Montoux\nC. LJ medium\nD. ZN staining\nExplanation: Ans. (c) LJ mediumRef: Harrison 19th ed. /1110* Harrison states: \"In genitourinary TB - culture of 3 morning urinary specimen yields a definitive diagnosis in 90% cases. LJ medium is most common solid medium used for culture.* Prevalence of GU TB= 10-15%* MC c/o- Urinary frequency, dysuria, nocturia, hematuria, and flank or abdominal pain.* Diagnosis- Culture of three morning urine specimens- definitive diagnosis in nearly 90% patient.* Other test- IV pyelography, abdominal CT, MRI-may show deformities and obstructions* Suggestive findings- calcifications and ureteral strictures-* Complication-# Female- affects the fallopian tubes and the endometrium and may cause infertility, pelvic pain, and menstrual abnormalities.# Diagnosis requires biopsy or culture of specimens obtained by dilation and curettage.# Male- affects the epididymis, producing a slightly tender mass that may drain externally through a fistulous tract; orchitis and prostatitis may also develop.* Rx: Genitourinary TB responds well to chemotherapy."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "50deb372-9d24-4c12-a2ab-846ed0728099",
+      "question": "\u201cBad-trip\u201d is associated with",
+      "retrieved_memories": [
+        "Question: \u201cBad-trip\u201d is associated with\nOptions:\nA. Bhang\nB. Ganja\nC. LSD\nD. Cocaine\nExplanation: \u2022 LSD intoxication causes bad trips, which is the acute panic reaction in which the individual experience a loss of control over his self.\n\u2022 Spontaneous recurrence of LSD, or sometimes cannabis use experience even during a withdrawal state is known as Flash-back.",
+        "Question: Bernoulli's theorm explains\nOptions:\nA. Nasal polyps\nB. Sinusitis\nC. Cavernous sinus thrombosis\nD. All of the above\nExplanation: No explanation is available."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "78a9c526-6591-4bf1-9a67-d4af00a722fc",
+      "question": "Pathological nipple discharge is mostly associated with?",
+      "retrieved_memories": [
+        "Question: Pathological nipple discharge is mostly associated with?\nOptions:\nA. Fibroadenoma\nB. Duct papilloma\nC. Adenocarcinoma\nD. Lobular carcinoma\nExplanation: Ans. (b) Duct papillomaRef: Bailey & Love 24th ed p 828, Schwartz 9thed ch-17",
+        "Question: Etiology of bloody discharge from nipple -\nOptions:\nA. Duct papiloma\nB. Breast abscess\nC. Fibroadenoma\nD. Cyst\nExplanation: Ans. is 'a' i.e., Duct papiloma"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "5df34cca-66c4-4f05-8b17-dd4f30084954",
+      "question": "Prerna strategy is associated with:",
+      "retrieved_memories": [
+        "Question: Prerna strategy is associated with:\nOptions:\nA. Female literacy\nB. Population control\nC. Rural infrastructure\nD. None of the above\nExplanation: Prerna strategy provides incentives to couples who fulfil the following criteria: girl marrying at age more than 19 years, first child after 2 yeras after marriage, keeping a gap of 3 years between first and second child and sterilization of either parent. Ref: National Health Programmes in India, J.Kishore, 10th edition pg: 643",
+        "Question: JSY is an acronym for?\nOptions:\nA. Janani Suraksha Yojana\nB. Jeevan Suraksha Yojana\nC. Jeevan Shakthi Yojana\nD. Jan Suraksha Yojana\nExplanation: Janani Suraksha Yojana is a centrally funded scheme launched in 2005 offering maternity benefits. It aims at lowering maternal moality and infant moality by encouraging institutional deliveries. Ref : Park's Textbook of Preventive medicine"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "6e232ccf-48da-4cc7-9fbf-60ae8ff16edc",
+      "question": "Which is not true about cross sectional study?",
+      "retrieved_memories": [
+        "Question: Which is not true about cross sectional study?\nOptions:\nA. Prevalence can be measured\nB. Doesn't provide information about incidence\nC. Less expensive\nD. Useful for acute disease\nExplanation: It is useful for chronic disease as incidence is not measured. Cross-sectional studies are descriptive studies (neither longitudinal nor experimental). Unlike case-control studies they can be used to describe, not only the Odds ratio, but also absolute risks and relative risks from prevalences. The use of routinely collected data allows large cross-sectional studies to be made at little or no expense. It doesn't provide information about incidence.",
+        "Question: Organism causing cervical carcinoma is?\nOptions:\nA. HPV\nB. HAV\nC. HBV\nD. HCV\nExplanation: ANSWER: (A) HPVREF: Shaw 15th ed page 400Aetiology, epidemiology and predisposing risk factors of cervical cancer:Average age 35-45 years. Precancerous lesions occur 10-15 years earlier (Figure 29.8).Coitus before the age of 18 years.Multiple sexual partners.Delivery of the first baby before the age of 20 years.Multiparity with poor birth spacing between pregnancies.Poor personal hygiene.Poor socioeconomic status.At one time, exposure to smegma from uncircumcised partners was considered an important factor, accounting for lower incidence of cancer of the cervix amongst the Jews and Muslims. Now it is realized that the incidence of human papilloma virus is low in circumcised men, and that is the reason for low incidence of cancer in their wives.Smoking and drug abuse, including alcohol, are immunosuppressive (13 fold).Women with STD, HIV infection, herpes simplex virus 2 infection, human papilloma virus (HPV) infection (16, 18, 31, 33) or condylomata have a high predisposition to cancer. Of these, HPV is nowr considered the most important cause. Most HPV infection 16,18 are symptomless in young women and clear within 2 years. Persistent infection is the cause of cancer of the cervix in 70-90% cases.Immunosuppressed individuals (following transplant surgery).Women with preinvasive lesions.Women wTho do not come for regular health check-up and Pap tests.COC and progestogens use over 8-year period can cause adenocarcinoma of the endocervix (double the risk).Five per cent women exposed to diethylstilboestrol in utero developed carcinoma of vagina and cervix. With withdraxval of this hormone its incidence has dropped."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "d84a442a-40d3-483e-960d-b9b82835afa6",
+      "question": "A newborn baby presents with shock, hyperkalemia and hypoglycemia. What is the most likely diagnosis",
+      "retrieved_memories": [
+        "Question: A newborn baby presents with shock, hyperkalemia and hypoglycemia. What is the most likely diagnosis\nOptions:\nA. Septicemia\nB. Inborn error of metabolism\nC. Diabetes mellitus\nD. Congenital adrenal hyperplasia\nExplanation: These features of congenital adrenal hyperplasia may due to deficiency of 21-hydroxylase and present with ambiguous genetalia,polyuria,shock,recurrent vomiting and features of sepsis with negative septic screen. Reference : OP Ghai,essential paediatrics,8th edition page no 526",
+        "Question: Triad of vomiting, abdominal distension and ''String of beads\" sign on abdominal X-ray is typically suggestive of?\nOptions:\nA. Duodenal atresia\nB. Small bowel obstruction\nC. Large bowel obstruction\nD. Gastric volvulus\nExplanation: Ans. b (Small bowel obstruction). (Ref. Grainger & Allison's Diagnostic Radiology, 5th ed., 981, 1089)Erect abdomen X-ray features of small bowel obstruction:# Multiple fluid levels (3 or more than 3, size more than 3 cm and in mid-abdomen - 'candy-cone appearance).# \"Step-ladder\" appearance in low obstruction (the greater the number of dilated bowel loops, more distal is the site obstruction) and the \"concertina effect\" in Jejunal obstruction are known features.# Visualization of 'valvulae conniventes' is diagnostic feature.# Pathognomonic feature is \"String of beads sign\" (gas trapped between valvulae conniventes only when very dilated small bowel is almost completely fluid filled and it is virtually diagnostic of small bowel obstruction).Educational points:# Standing (erect) X-ray abdomen is 'gold standard' investigation of diagnosis of bowel obstruction.# The mucosal folds of small bowel - 'valvulae conniventes', are numerous in jejunum and sparse in ileum.# On barium study, jejunum gives typical feathery appearance \\ while ileum is almost featureless.# The most common cause of small bowel obstruction is post-operative adhesions.Q\"STRING OF BEADS\" APPEARANCE('Pile of plates' appearance)Is classically seen on angiography in FibroMuscular Dysplasia.\"STRING SIGN\"Persistent narrow stream of barium indicating stenosis.'STRING SIGN'CHPS (a string of barium seen through pyloric canal seen in CHPS .STRING SIGN OF KANTOR'Crohn's diseaseAlso know following x-ray signs in abdomen:X-ray AppearanceDiagnosis1Double bubble sign# Duodenal atresia.# Ladd's band.# Annular pancreas2Triple bubble sign# Jejunal atresia3Multiple bubble sign# Ileal atresia4'String of beads' sign# Small bowel obstruction5Cupola sign# Pneumoperitoneum6Rigler's double wall signFoot-ball signDog's cape sign# Pneumoperitoneum7Sentinel Loop SignGas less abdomenRenal halo signColon cut-off sign# Acute pancreatitis8Coffee bean signInverted 'U' or 'V' signOmega signBent inner tube signLiver overlap signDIO overlap signApex under diaphragm# Sigmoid volvulus9Medusa Lock sign# Roundworms"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "3acdeb59-0f5f-4c92-8cc5-949ca91fd57b",
+      "question": "Which amongst the following is the gold standard for demonstrating hCG",
+      "retrieved_memories": [
+        "Question: Which amongst the following is the gold standard for demonstrating hCG\nOptions:\nA. Radio immuno assay\nB. Latex agglutination\nC. Immunoflorescence\nD. ELISA\nExplanation: No explanation is available.",
+        "Question: Which of the following is the mosr common complication of immunosuppression\nOptions:\nA. Malignancy\nB. Graft rejection\nC. Thrombocytopenia\nD. Infection\nExplanation: ."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "A",
+      "correct": false
+    },
+    {
+      "id": "db14a859-343f-464e-87f2-5f0dc5311e89",
+      "question": "N-3 TNM staging of head and neck tumors shows:",
+      "retrieved_memories": [
+        "Question: N-3 TNM staging of head and neck tumors shows:\nOptions:\nA. Metastasis in lymph nodes >2 cm\nB. Metastasis in lymph nodes >5 cm\nC. Metastasis in a lymph node >6 cm\nD. None\nExplanation: 8th AJCC (2017) TNM Classification of Carcinoma Lip & Oral Cavity Primary Tumor (T) Regional Lymph Nodes (N) Tis Carcinoma in situ. N1 Metastasis in a single ipsilateral LN, <3 cm in greatest dimension without extranodal extension T1 Tumor <2cm in greatest dimension & <5cm depth of invasion N2a Metastasis in a single ipsilateral LN, >3 cm but <6 cm in greatest dimension without extranodal extension T2 Tumor <2cm in greatest dimension & >5 mm but <10 mm depth of invasion or tumor >2 cm but <4 cm in greatest dimension & depth of invation < 10 mm N2b Metastaes in a multiple ipsilateral LN, none >6 cm in greatest dimension without extranodal extension T3 Tumor >4 cm in greastest dimension and >10 mm depth of invasion N2c Metastases in bilateral or contralateral LN, none >6cm in greatest dimension without extranodal extension T4a Lip: Tumor invades through coical bone, inferior alveolar nerve, floor of mouth, or skin (of chin or nose) N3a Metastasis in a LN >6cm in greatest dimension without extranodal extension N3b Metastasis in a single or multiple LNs with clinical extranodal extension Oral cavity: Tumor invades through coical bone mandible or maxillary sinus or invades the skin of face Distant Metastasis T4b Tumor invades masticator space, pterygoid plates, or skull base and/or encases internal carotid aery M0 No distant metastasis. M1 Distant metastasis.",
+        "Question: For carcinoma larynx stage III treatment of choice:\nOptions:\nA. Total laryngectomy with radiotherapy\nB. Chemotherapy with cisplatin\nC. Partial laryngectomy\nD. Radiotherapy\nExplanation: (a) Total laryngectomy with radiotherapy(Ref. Cummings, 6th ed., 1617)This question was asked in 1996 when the treatment of stage III carcinoma larynx used to be total laryngectomy with or without neck dissection followed by radiotherapy.But nowadays the best management of carcinoma larynx stage III is concurrent chemoradiation with cisplatin.Chemotherapy alone is not given in carcinoma larynx.Radiotherapy is used in the management of stage I or II carcinoma larynx.Partial laryngectomy is done for stage I and II tumours where radiation therapy has failed."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "29319fa5-03c0-4ab0-a81e-a40c4847a6e2",
+      "question": "Ibuprofen acts on:",
+      "retrieved_memories": [
+        "Question: Ibuprofen acts on:\nOptions:\nA. Lipoxygenase pathway\nB. Cyclooxygenase pathway\nC. Kinin system\nD. Serotonin system\nExplanation: Ibuprofen is an NSAID - So acts on COX pathway ESSENTIALS OF MEDICAL PHARMACOLOGY;7TH EDITION;KD TRIPATHI;PAGE NO 193",
+        "Question: Which of the following is an Antimetabolite\nOptions:\nA. Methotrexate\nB. Cyclosporine\nC. Etoposide\nD. Vinbalstine\nExplanation: Refer KDT 6/e p 823 Methotrexate is an Antimetabolite that acts By inhibiting DHFRase"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "01ace0fb-d9ab-477a-8e17-26b5e2fcbede",
+      "question": "Which antibiotic decreases absorption of iron ?",
+      "retrieved_memories": [
+        "Question: Which antibiotic decreases absorption of iron ?\nOptions:\nA. Sulfonamide\nB. Tetracyclines\nC. Erythromycin\nD. Ciprofloxacin\nExplanation: Ans. is 'b' i.e., Tetracycline Factors facilitating iron absorption - Acid, ascorbic acid (Vit C), amino acids containing SH radical, meat. All these are reducing substances which enhance conversion of Fe\" to Fe\" and thus improve absorption. Factors impending iron absorption - antacids, alkalies, phosphate (rich in egg yolk), phytates (in maize, wheat), tetracyclines, presence of other food in stomach.",
+        "Question: Which of the following is an Antimetabolite\nOptions:\nA. Methotrexate\nB. Cyclosporine\nC. Etoposide\nD. Vinbalstine\nExplanation: Refer KDT 6/e p 823 Methotrexate is an Antimetabolite that acts By inhibiting DHFRase"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "a55354da-621e-47b4-ac82-be57cb50fd16",
+      "question": "A child is presenting with vomiting and abdominal pain after 5 hours of eating some food. The most likely causative orgonism:",
+      "retrieved_memories": [
+        "Question: A child is presenting with vomiting and abdominal pain after 5 hours of eating some food. The most likely causative orgonism:\nOptions:\nA. Bacillus cereus\nB. Cl. perfringens\nC. Cl. botalinum\nD. V. cholerae\nExplanation: M/C cause of food poisoning. Chinese fries rice is major source of the organism. REF : ananthanarayana 10th ed",
+        "Question: Triad of vomiting, abdominal distension and ''String of beads\" sign on abdominal X-ray is typically suggestive of?\nOptions:\nA. Duodenal atresia\nB. Small bowel obstruction\nC. Large bowel obstruction\nD. Gastric volvulus\nExplanation: Ans. b (Small bowel obstruction). (Ref. Grainger & Allison's Diagnostic Radiology, 5th ed., 981, 1089)Erect abdomen X-ray features of small bowel obstruction:# Multiple fluid levels (3 or more than 3, size more than 3 cm and in mid-abdomen - 'candy-cone appearance).# \"Step-ladder\" appearance in low obstruction (the greater the number of dilated bowel loops, more distal is the site obstruction) and the \"concertina effect\" in Jejunal obstruction are known features.# Visualization of 'valvulae conniventes' is diagnostic feature.# Pathognomonic feature is \"String of beads sign\" (gas trapped between valvulae conniventes only when very dilated small bowel is almost completely fluid filled and it is virtually diagnostic of small bowel obstruction).Educational points:# Standing (erect) X-ray abdomen is 'gold standard' investigation of diagnosis of bowel obstruction.# The mucosal folds of small bowel - 'valvulae conniventes', are numerous in jejunum and sparse in ileum.# On barium study, jejunum gives typical feathery appearance \\ while ileum is almost featureless.# The most common cause of small bowel obstruction is post-operative adhesions.Q\"STRING OF BEADS\" APPEARANCE('Pile of plates' appearance)Is classically seen on angiography in FibroMuscular Dysplasia.\"STRING SIGN\"Persistent narrow stream of barium indicating stenosis.'STRING SIGN'CHPS (a string of barium seen through pyloric canal seen in CHPS .STRING SIGN OF KANTOR'Crohn's diseaseAlso know following x-ray signs in abdomen:X-ray AppearanceDiagnosis1Double bubble sign# Duodenal atresia.# Ladd's band.# Annular pancreas2Triple bubble sign# Jejunal atresia3Multiple bubble sign# Ileal atresia4'String of beads' sign# Small bowel obstruction5Cupola sign# Pneumoperitoneum6Rigler's double wall signFoot-ball signDog's cape sign# Pneumoperitoneum7Sentinel Loop SignGas less abdomenRenal halo signColon cut-off sign# Acute pancreatitis8Coffee bean signInverted 'U' or 'V' signOmega signBent inner tube signLiver overlap signDIO overlap signApex under diaphragm# Sigmoid volvulus9Medusa Lock sign# Roundworms"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "759f1bf5-053b-4787-b563-c318b707cad0",
+      "question": "Quarantine period of yellow fever is",
+      "retrieved_memories": [
+        "Question: Quarantine period of yellow fever is\nOptions:\nA. 6 days\nB. 8 days\nC. 10 days\nD. 12 days\nExplanation: A. i.e. (6 days) (237- Park 19th) (248- Park 20th)* All travelers {including infants) must possess a valid international certificate of vaccination against yellow fever before they are allowed to enter yellow fever \"receptive\" areas. If no such certificate is available the traveler is placed on quarantine, in a mosquito proof ward for 6 days from the date of leaving an infected area.**The validity of the certificate begins 10 days after the date of vaccination and extends upto 10 years*Important points(i) Yellow fever vaccine is valid till 10years**(ii) Incubation period of yellow fever is - 3 - 6 days**(iii) Transovarian transmission of the disease is seen in yellow fever**(iv) International certificate for traveling is required for -yellowfever**(v) Yellow fever is not present in India because the yellow fever virus is absent**. The common monkey of India. (Maccus spp) is susceptible to yellow fever. The missing link in the chain of transmission as the virus of yellow fever which does not seen to occur in India(vi) According to International health regulation there is no risk of spread of yellow fever. If the aedes aegypti index remains below 1%**(vii) Vector control for yellow fever around an airport is done upto a distance of 400 meter**(viii) Yellow fever - 17D vaccine** administered subcutaneously. Immunity begins to appear on the 7th day and last for more than 35 years and possibly for life. However WHO recommended revaccination after 10 years for international travel.(ix) Cholera and yellow fever vaccines given together or within 3 weeks interfere with each other* The duration of quarantine is Longest incubation period*",
+        "Question: Which of the following statement regarding disinfectants in not true?\nOptions:\nA. Hypochlorites are bactericidal and inactivated by organic matter\nB. Glutaraldehyde is sporicidal and not inactivated by organic matter\nC. Formaldehyde is bactericidal, sporicidal and virucidal\nD. Phenol is bactericidal and readily inactivated by organic matter\nExplanation: Phenol exe microcidal activity by injuring lipid containing plasma membrane, which results in leakage of cellular contents. They remain active in presence of organic compounds, they are stable and persists for long period after application. Ref: Toora (2008), Chapter 7, \"The control of microbial growth\", In the book,\"Microbiology: An Introduction\" 9th Edition, India, Page 198; Textbook of Microbiology By Ananthnarayananan, 7th Edition, Pages 30-32; Medical Microbiology By Jawetz, 24th Edition, Page 61"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "6f35286a-7bb6-41a3-8e98-2e9ee9ad5e54",
+      "question": "Posterior communicating aery a branch of",
+      "retrieved_memories": [
+        "Question: Posterior communicating aery a branch of\nOptions:\nA. Internal carotid\nB. External carotid\nC. Middle cerebral\nD. Posterior superior cerebellar\nExplanation: Posterior communicating aery is a branch of internal carotid which connects posterior cerebral aery Ref: Gray's 40e/p-250-251",
+        "Question: Broca's area situated in:\nOptions:\nA. Inferior frontal gyrus\nB. Superior temporal gyrus\nC. Angular gyrus\nD. None of the above\nExplanation: Ans. a. Inferior frontal gyrusMotor speech area of Broca (areas 44 and 45 of Brodmann)The motor speech area of Broca is located in the pars triangularis (area 45) and pars opercularis (area 44) of inferior frontal gyrus of frontal lobe of left hemisphere (dominant hemisphere) in most of the individuals, and the persons are right handed.However, in 30% cases it is present in the right hemisphere and persons are left handed.Brocas area is responsible for the production of expressive speech/vocalization.It brings about the formation of words by its connections with the adjacent primary motor area, which in turn appropriately stimulate the muscles of the larynx, mouth, tongue, soft palate, and the respiratory muscles.It connected to Wernicke speech area by the arcuate fasciculus.Broca AphasiaResults from lesions in Broca speech area.Also called motor, expressive, nonfluent, or anterior aphasia.Causes patients to speak slowly (nonfluent) and with effort; however, they have good comprehension of spoken and written language.Frequently accompanied by contralateral weakness of the lower face and arm and a sympathetic apraxia of the left hand (the inability to write with the nonparalyzed hand)."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "5e430c06-5c0f-4439-be64-c976719f04ec",
+      "question": "A patient presents with dysphagia of 4 weeks duration. Now he is able to swallow liquid food only. Which of the following is the one investigation to be done?",
+      "retrieved_memories": [
+        "Question: A patient presents with dysphagia of 4 weeks duration. Now he is able to swallow liquid food only. Which of the following is the one investigation to be done?\nOptions:\nA. Barium studies\nB. Upper GI Endoscopy\nC. CT Scan\nD. Esophageal manometry\nExplanation: Carcinoma Esophagus: Barium swallow is the first investigation for an esophageal disease presenting with dysphagia (it can show irregular filling defect with or without proximal dilatation, annular lesion appear as constricting bands) Barium Swallow A barium swallow is recommended for any patient presenting with dysphagia. The esophagram gives an overview of anatomy and function It is able to differentiate intraluminal from intramural lesions and to discriminate between intrinsic (from a mass protruding into the lumen) and extrinsic (from compression of a structures outside the esophagus) compression The classic finding of an apple-core lesion in patients with esophageal cancer is recognised easily Endoscopy and biopsy is the investigation of choice for CA Esophagus For adequate assessment, both barium swallow and endoscopy are required. Ref: Sabiston 20th edition Pgno: 1028",
+        "Question: A child is presenting with vomiting and abdominal pain after 5 hours of eating some food. The most likely causative orgonism:\nOptions:\nA. Bacillus cereus\nB. Cl. perfringens\nC. Cl. botalinum\nD. V. cholerae\nExplanation: M/C cause of food poisoning. Chinese fries rice is major source of the organism. REF : ananthanarayana 10th ed"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "A",
+      "correct": false
+    },
+    {
+      "id": "f05cdf37-d0be-480f-b93a-c635f38742cf",
+      "question": "Which of the following is best for diagnosing genital TB?",
+      "retrieved_memories": [
+        "Question: Which of the following is best for diagnosing genital TB?\nOptions:\nA. PCR\nB. Montoux\nC. LJ medium\nD. ZN staining\nExplanation: Ans. (c) LJ mediumRef: Harrison 19th ed. /1110* Harrison states: \"In genitourinary TB - culture of 3 morning urinary specimen yields a definitive diagnosis in 90% cases. LJ medium is most common solid medium used for culture.* Prevalence of GU TB= 10-15%* MC c/o- Urinary frequency, dysuria, nocturia, hematuria, and flank or abdominal pain.* Diagnosis- Culture of three morning urine specimens- definitive diagnosis in nearly 90% patient.* Other test- IV pyelography, abdominal CT, MRI-may show deformities and obstructions* Suggestive findings- calcifications and ureteral strictures-* Complication-# Female- affects the fallopian tubes and the endometrium and may cause infertility, pelvic pain, and menstrual abnormalities.# Diagnosis requires biopsy or culture of specimens obtained by dilation and curettage.# Male- affects the epididymis, producing a slightly tender mass that may drain externally through a fistulous tract; orchitis and prostatitis may also develop.* Rx: Genitourinary TB responds well to chemotherapy.",
+        "Question: Pathological nipple discharge is mostly associated with?\nOptions:\nA. Fibroadenoma\nB. Duct papilloma\nC. Adenocarcinoma\nD. Lobular carcinoma\nExplanation: Ans. (b) Duct papillomaRef: Bailey & Love 24th ed p 828, Schwartz 9thed ch-17"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "0181ca2b-f691-41d3-8d30-5de35fba122c",
+      "question": "Systemic steroid cause all except -",
+      "retrieved_memories": [
+        "Question: Systemic steroid cause all except -\nOptions:\nA. Hypeension\nB. Glaucoma\nC. Cataract\nD. Osteoporosis\nExplanation: Ans. is 'b' i.e., Glaucoma",
+        "Question: Which of the following is not a cause for primary amenorrhea?\nOptions:\nA. Sheehan's syndrome\nB. Kallmann's syndrome\nC. Mayer Rokitansky Koster Hauser syndrome\nD. Turner syndrome\nExplanation: No explanation is available."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "528f4ad8-92f0-44cd-beb8-c7c6007d6a50",
+      "question": "Which of the following is an Antimetabolite",
+      "retrieved_memories": [
+        "Question: Which of the following is an Antimetabolite\nOptions:\nA. Methotrexate\nB. Cyclosporine\nC. Etoposide\nD. Vinbalstine\nExplanation: Refer KDT 6/e p 823 Methotrexate is an Antimetabolite that acts By inhibiting DHFRase",
+        "Question: Which is most potent HDL:\nOptions:\nA. Pre-beta HDL\nB. HDL-2\nC. HDL-3\nD. Discoidal HDL\nExplanation: Pre-beta HDL is the most potent HDL in making cholesterol from peripheral tissues. Pre b HDL : Lipid poor Most potent"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "b8cb5e95-ebb2-4236-9569-7ccc2824ad37",
+      "question": "All of the following are true with respect to ligation of internal iliac aery except -",
+      "retrieved_memories": [
+        "Question: All of the following are true with respect to ligation of internal iliac aery except -\nOptions:\nA. For hemostasis, anterior division is to be ligated\nB. Collateral circulation is established later between middle sacral and lateral sacral aeries\nC. Bleeding is always controlled with it\nD. The aery should be ligated and not transected\nExplanation: Ligation of one or both internal iliac aeries is done to contro hemorrhage from pelvic vessels. it is technically difficult and is onlt successfull in half of the time. The impoance mechanism of iliac aery ligation is a 85% reduction in pulse pressure in the aeries distal to ligation.This conves an aerial pressure system into one with pressures approaching those in the venous circulation. this creates vessels more amenable to hemostasis pressure and clot formation. Reference: Wlliams text book of Obstetrics, 24th edition page no 820",
+        "Question: Posterior communicating aery a branch of\nOptions:\nA. Internal carotid\nB. External carotid\nC. Middle cerebral\nD. Posterior superior cerebellar\nExplanation: Posterior communicating aery is a branch of internal carotid which connects posterior cerebral aery Ref: Gray's 40e/p-250-251"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "d47d5f34-6dca-4399-984f-d5662aa3a134",
+      "question": "Serpentine receptor is a:",
+      "retrieved_memories": [
+        "Question: Serpentine receptor is a:\nOptions:\nA. Three pass transmembrane protein\nB. Five pass transmembrane protein\nC. Seven pass transmembrane protein\nD. Nine pass transmembrane protein\nExplanation: Serpentine Receptors are G protein coupled receptors that span the cell membrane seven times (seven pass transmembrane protein). Ref: Ganong's Review of Medical Physiology, 21st Edition, Page 42",
+        "Question: Which of the following agents do not act GABAA Cl- channel complex receptors?\nOptions:\nA. Zopiclone\nB. Benzodiazepines\nC. Thiopentone\nD. Promethazine\nExplanation: Zopiclone (non benzodiazepine hypnotics ),benzodiazepine ,thiopentone(barbiturates) all act on GABA-Cl channel ,whereas promethazin is a antihistamine drug that acts on histaminergic receptors which causes high sedation. Ref: KD Tripathio 8th ed."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "45152d77-fa84-41eb-b8f2-00b0c66afdfa",
+      "question": "The right atrium chronic overload is indicated by a P wave of more than:",
+      "retrieved_memories": [
+        "Question: The right atrium chronic overload is indicated by a P wave of more than:\nOptions:\nA. 2.5 mm\nB. 3.5 mm\nC. 4.5 mm\nD. 5.5 mm\nExplanation: Ans. a. 2.5 mm (Ref: Harrison 19/e p1453, 18/e p1832; Marc Gertsch's The ECG; A Two-Step Approach to Diagnosis';Ch-4)The right atrium chronic overload is indicated by a P wave of more than 2.5 mm.\"Normal atrial depolarization vector is oriented downward and towards the subject's left, reflecting the spread of depolarization from the sinus node to the right and then the left atrial myocardium. This vector points toward the positive pole of lead II and toward the negative pole of lead aVR. Normal P wave is less than 2.5 mm in lead II. If it is more than 2.5 mm, this indicate right atrial overload.\"- Harrison 19/e p1453, 18/e p1832Right Atrial Enlargement (P Pulmonale): Peaked, tall and narrow P waves in leads II, III and aVF in lung disease are called 'P pulmonale'. The presence of P pulmonale is taken as P wave of more than 2.5 mm in leads, II, III and aVF. Though many factors such as verticalization of the heart, increased residual volume and impaired lung function have been reported to be correlated with these changes in the P wave, right atrial overload (right atrial enlargement or increased right atrial pressure or both) is still thought to be responsible for P pulmonale in lung disease.\"- Maeda S, Katsura H. Chida K. Imai T. Kuboki K. Watanabe C, Kida K. Ohkawa S, Matsushita S, Ueda K and Kuramoto K. Lack of correlation between P pulmonale and right atrial overload in chronic obstructive airways disease. Br Heart J. 1991; 65:132-6.\"Right Atrial Enlargement (P Pulmonale): As the activation of the right atrium begins earlier than that of the left atrium, an increase of the right atrial (RA) vector does not prolong the P duration. P pulmonale is characterized by tall and sometimes pointed P waves in leads II, aVF and III. The amplitude of the P waves is 2.5 mm in at least one of these leads. In the opposite 'lead aVL, the P wave is completely negative. The P wave may be higher than normal and pointed in leads V1/V2 rarely in the other precordial leads.\"- Marc Gertsch's 'The ECG: A Two-Step Approach to Diagnosis';- Ch-4",
+        "Question: Exercise testing is absolutely contraindicated in which one of the following:\nOptions:\nA. One week following myocardial infarction\nB. Unstable angina\nC. Aoic stenosis\nD. Peripheral vascular disease\nExplanation: Answer is C (Aoic stenosis) \"Many of the traditional contraindications such as recent myocardial infarction or congestive hea failure are no longer considered if the patient is stable and ambulatory but Aoic Stenosis remains a contraindication\" Contraindications to exercise stress testing: Acute myocardial infarction (< 4 - 5 days) Rest angina < 48 hours Unstable rhythm Severe Aoic Stenosis Acute Myocarditis Uncontrolled hea failure Active infective endocarditis Exercise testing should also not be done during an episode of unstable angina and its presence in the options confuses the issue. However, going with what CMDT has to say, aoic stenosis remains the answer of choice. Exercise testing in unstable angina : Unstable angina is a term used to describe patients who present with rapidly worsening angina, severe angina at rest or prolonged or ischaemia chest pain without ECG or enzyme evidence of MI. Unstable angina episode Admit, Bed Rest, Aspirin, p blockers Exercise Tolerance test Exercise testing is indicated in unstable angina once the plaque has stabilized and is arranged later, in order to assess the patients need for coronary angiography if the test is positive at low work load."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "d38435ee-8d9e-4d7d-8d8f-8f265fd7cc4c",
+      "question": "The cytogenetics of chromophilic renal cell carcinoma is characterized by",
+      "retrieved_memories": [
+        "Question: The cytogenetics of chromophilic renal cell carcinoma is characterized by\nOptions:\nA. Mutant VHL gene\nB. Loss of 3p\nC. Trisomy 7/17\nD. Loss of 5q3\nExplanation: Chromophilic renal cell carcinoma is a distinct type of human renal cancer, only recently recognized and defined by its characteristic histomorphological aspect and cytogenetic aberrations. Immunohistochemistry revealed coexpression of vimentin and cytokeratins in all cell lines the cytokeratin polypeptide patterns, however, varying between the different cell lines. Chromphi-1 tumour cells produced slowly growing tumors in nude mice using the subrenal capsule assay. In all cell lines, the cytogenetic analysis revealed numerical chromosomal aberrations known to be characteristic for chromophilic RCCs, i.e. loss of the Y chromosome, tri- or tetrasomy of chromosomes 7 and 17 as well as various combinations of additional structural and numerical chromosomal aberrations. Ref: Wikipedia",
+        "Question: Staging of ca cervix with parametrial involvement-\nOptions:\nA. III C\nB. II B\nC. III A\nD. III B\nExplanation: Ans. is 'b' i.e., IIB {Ref: Shaw's Gynae 15th/ep. 420 & Internet] Ref- FIGO staging of Cervical carcinomas Stage I Stage I is carcinoma strictly confined to the cervix; extension to the uterine corpus should be disregarded. The diagnosis of both Stages IA1 and IA2 should be based on microscopic examination of removed tissue, preferably a cone, which must include the entire lesion. Stage IA: Invasive cancer identified only microscopically. Invasion is limited to measured stromal invasion with a maximum depth of 5 mm and no wider than 7 mm. Stage IA1: Stage IA1: Measured invasion of the stroma no greater than 3 mm in depth and no wider than 7 mm diameter. Stage IA2: Stage IA2: Measured invasion of stroma greater than 3 mm but no greater than 5 mm in depth and no wider than 7 mm in diameter. Stage IB: Stage IB: Clinical lesions confined to the cervix or preclinical lesions greater than Stage IA. All gross lesions even with superficial invasion are Stage IB cancers. Stage IB1: Stage IB1: Clinical lesions no greater than 4 cm in size. Stage IB2: Stage IB2: Clinical lesions greater than 4 cm in size. Stage II Stage II is carcinoma that extends beyond the cervix, but does not extend into the pelvic wall. The carcinoma involves the vagina, but not as far as the lower third. Stage IIA: No obvious parametrial involvement. Involvement of up to the upper two-thirds of the vagina. Stage IIB: Obvious parametrial involvement, but not into the pelvic sidewall. Stage III Stage III is carcinoma that has extended into the pelvic sidewall. On rectal examination, there is no cancer-free space between the tumour and the pelvic sidewall. The tumour involves the lower third of the vagina. All cases with hydronephrosis or a non-functioning kidney are Stage III cancers. Stage IIIA: No extension into the pelvic sidewall but involvement of the lower third of the vagina. Stage IIIB: Extension into the pelvic sidewall or hydronephrosis or non-functioning kidney. Stage IV Stage IV is carcinoma that has extended beyond the true pelvis or has clinically involved the mucosa of the bladder and/or rectum. Stage IVA: Spread of the tumour into adjacent pelvic organs. Stage IVB: Spread to distant organs. Source: TNM Classification of malignant tumours. L. Sobin and Ch Wittekind (eds.), UICC Internation Union against Cancer, Geneva, Switzerland. pp155-157; 6th ed. 2002"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "76c3deef-2e24-49ac-9e48-9e786e34b483",
+      "question": "Triad of vomiting, abdominal distension and ''String of beads\" sign on abdominal X-ray is typically suggestive of?",
+      "retrieved_memories": [
+        "Question: Triad of vomiting, abdominal distension and ''String of beads\" sign on abdominal X-ray is typically suggestive of?\nOptions:\nA. Duodenal atresia\nB. Small bowel obstruction\nC. Large bowel obstruction\nD. Gastric volvulus\nExplanation: Ans. b (Small bowel obstruction). (Ref. Grainger & Allison's Diagnostic Radiology, 5th ed., 981, 1089)Erect abdomen X-ray features of small bowel obstruction:# Multiple fluid levels (3 or more than 3, size more than 3 cm and in mid-abdomen - 'candy-cone appearance).# \"Step-ladder\" appearance in low obstruction (the greater the number of dilated bowel loops, more distal is the site obstruction) and the \"concertina effect\" in Jejunal obstruction are known features.# Visualization of 'valvulae conniventes' is diagnostic feature.# Pathognomonic feature is \"String of beads sign\" (gas trapped between valvulae conniventes only when very dilated small bowel is almost completely fluid filled and it is virtually diagnostic of small bowel obstruction).Educational points:# Standing (erect) X-ray abdomen is 'gold standard' investigation of diagnosis of bowel obstruction.# The mucosal folds of small bowel - 'valvulae conniventes', are numerous in jejunum and sparse in ileum.# On barium study, jejunum gives typical feathery appearance \\ while ileum is almost featureless.# The most common cause of small bowel obstruction is post-operative adhesions.Q\"STRING OF BEADS\" APPEARANCE('Pile of plates' appearance)Is classically seen on angiography in FibroMuscular Dysplasia.\"STRING SIGN\"Persistent narrow stream of barium indicating stenosis.'STRING SIGN'CHPS (a string of barium seen through pyloric canal seen in CHPS .STRING SIGN OF KANTOR'Crohn's diseaseAlso know following x-ray signs in abdomen:X-ray AppearanceDiagnosis1Double bubble sign# Duodenal atresia.# Ladd's band.# Annular pancreas2Triple bubble sign# Jejunal atresia3Multiple bubble sign# Ileal atresia4'String of beads' sign# Small bowel obstruction5Cupola sign# Pneumoperitoneum6Rigler's double wall signFoot-ball signDog's cape sign# Pneumoperitoneum7Sentinel Loop SignGas less abdomenRenal halo signColon cut-off sign# Acute pancreatitis8Coffee bean signInverted 'U' or 'V' signOmega signBent inner tube signLiver overlap signDIO overlap signApex under diaphragm# Sigmoid volvulus9Medusa Lock sign# Roundworms",
+        "Question: Which of the following is best for diagnosing genital TB?\nOptions:\nA. PCR\nB. Montoux\nC. LJ medium\nD. ZN staining\nExplanation: Ans. (c) LJ mediumRef: Harrison 19th ed. /1110* Harrison states: \"In genitourinary TB - culture of 3 morning urinary specimen yields a definitive diagnosis in 90% cases. LJ medium is most common solid medium used for culture.* Prevalence of GU TB= 10-15%* MC c/o- Urinary frequency, dysuria, nocturia, hematuria, and flank or abdominal pain.* Diagnosis- Culture of three morning urine specimens- definitive diagnosis in nearly 90% patient.* Other test- IV pyelography, abdominal CT, MRI-may show deformities and obstructions* Suggestive findings- calcifications and ureteral strictures-* Complication-# Female- affects the fallopian tubes and the endometrium and may cause infertility, pelvic pain, and menstrual abnormalities.# Diagnosis requires biopsy or culture of specimens obtained by dilation and curettage.# Male- affects the epididymis, producing a slightly tender mass that may drain externally through a fistulous tract; orchitis and prostatitis may also develop.* Rx: Genitourinary TB responds well to chemotherapy."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "e987437e-7c39-45e6-87b6-ebcc4ceee271",
+      "question": "Bernoulli's theorm explains",
+      "retrieved_memories": [
+        "Question: Bernoulli's theorm explains\nOptions:\nA. Nasal polyps\nB. Sinusitis\nC. Cavernous sinus thrombosis\nD. All of the above\nExplanation: No explanation is available.",
+        "Question: Not seen in acute iridocyclitis:\nOptions:\nA. Small pupil\nB. Mucopurulent discharge\nC. Ciliary congestion\nD. Pain\nExplanation: Some Clinical Features of Acute Iridocyclitis"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "f88a2453-5373-4a6f-9888-0793d4d71bd8",
+      "question": "Which is most potent HDL:",
+      "retrieved_memories": [
+        "Question: Which is most potent HDL:\nOptions:\nA. Pre-beta HDL\nB. HDL-2\nC. HDL-3\nD. Discoidal HDL\nExplanation: Pre-beta HDL is the most potent HDL in making cholesterol from peripheral tissues. Pre b HDL : Lipid poor Most potent",
+        "Question: Which of the following is an Antimetabolite\nOptions:\nA. Methotrexate\nB. Cyclosporine\nC. Etoposide\nD. Vinbalstine\nExplanation: Refer KDT 6/e p 823 Methotrexate is an Antimetabolite that acts By inhibiting DHFRase"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "07cb5ee5-8bc4-4519-a3ca-58d3f8d7552c",
+      "question": "Which of the following is true regarding olazapine except-",
+      "retrieved_memories": [
+        "Question: Which of the following is true regarding olazapine except-\nOptions:\nA. It causes marked anti-muscarinic action\nB. It causes weight gain\nC. It causes mild increase in prolactin\nD. Less epileptogenic action than phenothiazine\nExplanation: Ans. is 'd' i.e., Less epileptogenic action than phenothiazine o Clozapine and olanzapine are most epileptogenic antipsychotics. o Olanzapine blocks multiple monoaminergic (D2, 5-HT2, al, a2) as well as muscarinic and H1receptors. o It causes weight gain o It causes little rise in prolactin level.",
+        "Question: Which of the following agents do not act GABAA Cl- channel complex receptors?\nOptions:\nA. Zopiclone\nB. Benzodiazepines\nC. Thiopentone\nD. Promethazine\nExplanation: Zopiclone (non benzodiazepine hypnotics ),benzodiazepine ,thiopentone(barbiturates) all act on GABA-Cl channel ,whereas promethazin is a antihistamine drug that acts on histaminergic receptors which causes high sedation. Ref: KD Tripathio 8th ed."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "263a9979-0618-4898-a813-368b56990b30",
+      "question": "For carcinoma larynx stage III treatment of choice:",
+      "retrieved_memories": [
+        "Question: For carcinoma larynx stage III treatment of choice:\nOptions:\nA. Total laryngectomy with radiotherapy\nB. Chemotherapy with cisplatin\nC. Partial laryngectomy\nD. Radiotherapy\nExplanation: (a) Total laryngectomy with radiotherapy(Ref. Cummings, 6th ed., 1617)This question was asked in 1996 when the treatment of stage III carcinoma larynx used to be total laryngectomy with or without neck dissection followed by radiotherapy.But nowadays the best management of carcinoma larynx stage III is concurrent chemoradiation with cisplatin.Chemotherapy alone is not given in carcinoma larynx.Radiotherapy is used in the management of stage I or II carcinoma larynx.Partial laryngectomy is done for stage I and II tumours where radiation therapy has failed.",
+        "Question: N-3 TNM staging of head and neck tumors shows:\nOptions:\nA. Metastasis in lymph nodes >2 cm\nB. Metastasis in lymph nodes >5 cm\nC. Metastasis in a lymph node >6 cm\nD. None\nExplanation: 8th AJCC (2017) TNM Classification of Carcinoma Lip & Oral Cavity Primary Tumor (T) Regional Lymph Nodes (N) Tis Carcinoma in situ. N1 Metastasis in a single ipsilateral LN, <3 cm in greatest dimension without extranodal extension T1 Tumor <2cm in greatest dimension & <5cm depth of invasion N2a Metastasis in a single ipsilateral LN, >3 cm but <6 cm in greatest dimension without extranodal extension T2 Tumor <2cm in greatest dimension & >5 mm but <10 mm depth of invasion or tumor >2 cm but <4 cm in greatest dimension & depth of invation < 10 mm N2b Metastaes in a multiple ipsilateral LN, none >6 cm in greatest dimension without extranodal extension T3 Tumor >4 cm in greastest dimension and >10 mm depth of invasion N2c Metastases in bilateral or contralateral LN, none >6cm in greatest dimension without extranodal extension T4a Lip: Tumor invades through coical bone, inferior alveolar nerve, floor of mouth, or skin (of chin or nose) N3a Metastasis in a LN >6cm in greatest dimension without extranodal extension N3b Metastasis in a single or multiple LNs with clinical extranodal extension Oral cavity: Tumor invades through coical bone mandible or maxillary sinus or invades the skin of face Distant Metastasis T4b Tumor invades masticator space, pterygoid plates, or skull base and/or encases internal carotid aery M0 No distant metastasis. M1 Distant metastasis."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "3a3e5943-1f38-4ab7-99ab-7467000a8de4",
+      "question": "Digital clubbing is seen in all except-",
+      "retrieved_memories": [
+        "Question: Digital clubbing is seen in all except-\nOptions:\nA. Endocarditis\nB. Pulmonary aeriovenous fistula\nC. Tricuspid atresia\nD. Aoic dissection\nExplanation: Tricuspid atresia symptoms in children include: Cyanosis: a blue or purple tint to lips, skin and nails. Hea murmur: the hea sounds abnormal when a doctor listens with a stethoscope. .Abnormal shape of the fingeips (\"clubbing\") in older children. Finger clubbing is seen in aoic dissection Ref Davidson 23rd edition pg 465",
+        "Question: Exercise testing is absolutely contraindicated in which one of the following:\nOptions:\nA. One week following myocardial infarction\nB. Unstable angina\nC. Aoic stenosis\nD. Peripheral vascular disease\nExplanation: Answer is C (Aoic stenosis) \"Many of the traditional contraindications such as recent myocardial infarction or congestive hea failure are no longer considered if the patient is stable and ambulatory but Aoic Stenosis remains a contraindication\" Contraindications to exercise stress testing: Acute myocardial infarction (< 4 - 5 days) Rest angina < 48 hours Unstable rhythm Severe Aoic Stenosis Acute Myocarditis Uncontrolled hea failure Active infective endocarditis Exercise testing should also not be done during an episode of unstable angina and its presence in the options confuses the issue. However, going with what CMDT has to say, aoic stenosis remains the answer of choice. Exercise testing in unstable angina : Unstable angina is a term used to describe patients who present with rapidly worsening angina, severe angina at rest or prolonged or ischaemia chest pain without ECG or enzyme evidence of MI. Unstable angina episode Admit, Bed Rest, Aspirin, p blockers Exercise Tolerance test Exercise testing is indicated in unstable angina once the plaque has stabilized and is arranged later, in order to assess the patients need for coronary angiography if the test is positive at low work load."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "B",
+      "correct": false
+    },
+    {
+      "id": "a2d57e33-5a6e-42c8-8065-3328393e10e2",
+      "question": "Which of the following is the mosr common complication of immunosuppression",
+      "retrieved_memories": [
+        "Question: Which of the following is the mosr common complication of immunosuppression\nOptions:\nA. Malignancy\nB. Graft rejection\nC. Thrombocytopenia\nD. Infection\nExplanation: .",
+        "Question: All of the following is true about \"Imiquimod\" except-\nOptions:\nA. Direct antiviral activity\nB. Indirect antiviral\nC. Antitumor activity\nD. It release cytokines\nExplanation: Ans. is 'c' i.e., Antitumor activity o Imiquimod is a immunomodulatory agent that is effective for topical treatment of Condylomata accuminata and other dermatological conditions. o It lacks direct antiviral or antiproliferative effects in vitro but rather induces cytokines and chemokines with antiviral and immunomodulating effects. o Imiquimod shows antiviral activity in animal models after systemic or topical administration."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "1bdb2592-f239-4885-b148-b3ce92101447",
+      "question": "Which of the following statements regarding corneal transplantation is true:",
+      "retrieved_memories": [
+        "Question: Which of the following statements regarding corneal transplantation is true:\nOptions:\nA. Whole eye needs to be preserved in tissue culture\nB. Donor not accepted if age >60 years\nC. Specular microscopy analysis is used to assess endothelial cell count\nD. HLA matching is mandatory\nExplanation: Ans. Specular microscopy analysis is used to assess endothelial cell count",
+        "Question: Which of the following is the mosr common complication of immunosuppression\nOptions:\nA. Malignancy\nB. Graft rejection\nC. Thrombocytopenia\nD. Infection\nExplanation: ."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "87d3e7da-ff30-4153-b56a-23a28a72fe17",
+      "question": "Broca's area situated in:",
+      "retrieved_memories": [
+        "Question: Broca's area situated in:\nOptions:\nA. Inferior frontal gyrus\nB. Superior temporal gyrus\nC. Angular gyrus\nD. None of the above\nExplanation: Ans. a. Inferior frontal gyrusMotor speech area of Broca (areas 44 and 45 of Brodmann)The motor speech area of Broca is located in the pars triangularis (area 45) and pars opercularis (area 44) of inferior frontal gyrus of frontal lobe of left hemisphere (dominant hemisphere) in most of the individuals, and the persons are right handed.However, in 30% cases it is present in the right hemisphere and persons are left handed.Brocas area is responsible for the production of expressive speech/vocalization.It brings about the formation of words by its connections with the adjacent primary motor area, which in turn appropriately stimulate the muscles of the larynx, mouth, tongue, soft palate, and the respiratory muscles.It connected to Wernicke speech area by the arcuate fasciculus.Broca AphasiaResults from lesions in Broca speech area.Also called motor, expressive, nonfluent, or anterior aphasia.Causes patients to speak slowly (nonfluent) and with effort; however, they have good comprehension of spoken and written language.Frequently accompanied by contralateral weakness of the lower face and arm and a sympathetic apraxia of the left hand (the inability to write with the nonparalyzed hand).",
+        "Question: Posterior communicating aery a branch of\nOptions:\nA. Internal carotid\nB. External carotid\nC. Middle cerebral\nD. Posterior superior cerebellar\nExplanation: Posterior communicating aery is a branch of internal carotid which connects posterior cerebral aery Ref: Gray's 40e/p-250-251"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "ca6470f2-a91f-402e-a5df-dfbb511bb526",
+      "question": "Which of the given test is used for assessing posterior glenohumeral instability?",
+      "retrieved_memories": [
+        "Question: Which of the given test is used for assessing posterior glenohumeral instability?\nOptions:\nA. Jerk test\nB. Crank test\nC. Fulcrum test\nD. Sulcus test\nExplanation: Common posterior instability tests include the jerk test, posterior stress test, Kim test, and load and shift test. Crank test is for superior labral pathology which is similar to the McMurray test for the knee. The crank test attempts to catch labrum tears between the two joint surfaces. Both the \"hop\" test and the \"fulcrum\" test are helpful in making the diagnosis of a femoral shaft stress fracture. The sulcus test evaluates inferior instability of the humeral head. Ref: Shoulder edited by Richard L.Angelo, 2010, Page 118.",
+        "Question: Exercise testing is absolutely contraindicated in which one of the following:\nOptions:\nA. One week following myocardial infarction\nB. Unstable angina\nC. Aoic stenosis\nD. Peripheral vascular disease\nExplanation: Answer is C (Aoic stenosis) \"Many of the traditional contraindications such as recent myocardial infarction or congestive hea failure are no longer considered if the patient is stable and ambulatory but Aoic Stenosis remains a contraindication\" Contraindications to exercise stress testing: Acute myocardial infarction (< 4 - 5 days) Rest angina < 48 hours Unstable rhythm Severe Aoic Stenosis Acute Myocarditis Uncontrolled hea failure Active infective endocarditis Exercise testing should also not be done during an episode of unstable angina and its presence in the options confuses the issue. However, going with what CMDT has to say, aoic stenosis remains the answer of choice. Exercise testing in unstable angina : Unstable angina is a term used to describe patients who present with rapidly worsening angina, severe angina at rest or prolonged or ischaemia chest pain without ECG or enzyme evidence of MI. Unstable angina episode Admit, Bed Rest, Aspirin, p blockers Exercise Tolerance test Exercise testing is indicated in unstable angina once the plaque has stabilized and is arranged later, in order to assess the patients need for coronary angiography if the test is positive at low work load."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "25625216-bf60-4bca-9c10-7d461b8064c9",
+      "question": "Which of the following organisms is most commonly associated with breast abscess?",
+      "retrieved_memories": [
+        "Question: Which of the following organisms is most commonly associated with breast abscess?\nOptions:\nA. Staphylococcus Aureus\nB. Pseudomonas\nC. Propionobacterium Acnes\nD. Staphylococcus Epidermidis\nExplanation: Ans. is 'a' i.e., Staphylococcus Aureus o Staphylocccus Aureus is the most common organism associated with Mastitis and Breast Abscess.o Staphylococcus epidermidis is part of normal skin flora, but is not a common cause of mastitis. Pseudomonas is a more common pathogen of the respiratory or urinary tract. Propionobacterium acnes is the bacteria most commonly associated with acne.",
+        "Question: Etiology of bloody discharge from nipple -\nOptions:\nA. Duct papiloma\nB. Breast abscess\nC. Fibroadenoma\nD. Cyst\nExplanation: Ans. is 'a' i.e., Duct papiloma"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "b6dfef8a-2c68-4f1c-b66d-de12374b4cfc",
+      "question": "Spironolactone should NOT be given with the following pharmacological agent:",
+      "retrieved_memories": [
+        "Question: Spironolactone should NOT be given with the following pharmacological agent:\nOptions:\nA. Chlorothiazide\nB. b-blocker\nC. ACE inhibitors\nD. Amlodipine\nExplanation: Unlike most other diuretics, K+-sparing diuretics reduce urinary excretion of K+ and can cause mild, moderate, or even life-threatening hyperkalemia. The risk of this complication is greatly increased by renal disease (in which maximal K+ excretion may be reduced) or by the use of other drugs that reduce or inhibit renin (beta blockers, NSAIDs, aliskiren) or angiotensin II activity (angiotensin- conveing enzyme inhibitors, angiotensin receptor inhibitors). Since most other diuretic agents lead to K+ losses, hyperkalemia is more common when K+-sparing diuretics are used as the sole diuretic agent, especially in patients with renal insufficiency. REF : katzung pharmacology : 14th ed",
+        "Question: Which of the following agents do not act GABAA Cl- channel complex receptors?\nOptions:\nA. Zopiclone\nB. Benzodiazepines\nC. Thiopentone\nD. Promethazine\nExplanation: Zopiclone (non benzodiazepine hypnotics ),benzodiazepine ,thiopentone(barbiturates) all act on GABA-Cl channel ,whereas promethazin is a antihistamine drug that acts on histaminergic receptors which causes high sedation. Ref: KD Tripathio 8th ed."
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    }
+  ]
+}
