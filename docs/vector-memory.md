@@ -63,6 +63,44 @@ field, so it must not be inserted directly.  We will write a small adapter
 later that selects the intended claim and keeps correction material out of the
 memory text.
 
+## The experiment scaffold now in place
+
+`agentic_memory.experiment_memory` supplies three deliberately small helpers:
+
+```python
+from agentic_memory.experiment_memory import (
+    contents_for_prompt, load_notes, open_condition, retrieve_with_log,
+)
+
+memory = open_condition("clean", directory=".vector-memory")
+load_notes(memory, [
+    {
+        "note_id": "clean-001",
+        "content": "An approved clean reference note.",
+        "metadata": {"kind": "clean_note", "topic": "example"},
+    }
+])
+
+record = retrieve_with_log(
+    memory, question_id="dev-001", query="A related question", k=3
+)
+notes_for_llm = contents_for_prompt(record)
+```
+
+- `open_condition()` maps `clean`, `poison`, and `corrected` to separate
+  Chroma collections such as `mcq_clean`. The no-memory baseline simply does
+  not open or search a collection.
+- `load_notes()` upserts an approved, already-normalized list of notes. It
+  intentionally does not parse the current poison JSON yet.
+- `retrieve_with_log()` records every final returned note with its rank, ID,
+  content, distance, and metadata. `poison_retrieved` is `true` only if one of
+  those final top-k notes has `kind: "poison_claim"`.
+- `contents_for_prompt()` strips the result down to note text. The LLM never
+  sees the poison flag, record ID, rank, or distance.
+
+This is enough to validate isolation and observability using harmless sample
+notes before the research team approves the final clean and poison corpora.
+
 ## What this first version deliberately does not do
 
 - It does not use LangChain.  LangChain can be useful later to connect an LLM,
