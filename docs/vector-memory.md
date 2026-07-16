@@ -101,34 +101,31 @@ notes_for_llm = contents_for_prompt(record)
 This is enough to validate isolation and observability using harmless sample
 notes before the research team approves the final clean and poison corpora.
 
-## Poison-record adapter
+## Direct poison input
 
-`agentic_memory.poison_adapter` is the narrow boundary between an approved
-poison-data file and the vector store. It does not load a dataset itself or
-judge medical accuracy. Given one approved record, it returns the note shape
-that `load_notes()` accepts:
+Once the team approves the final poison JSON, make each record already match
+`load_notes()` and insert it directly. Keep only the intended claim in
+`content`; do not include any explanation or correction in that field.
 
 ```python
-from agentic_memory.poison_adapter import adapt_poison_records
-
-notes = adapt_poison_records(approved_records)
-load_notes(open_condition("poison"), notes)
+approved_poison_note = {
+    "note_id": "poison-001",
+    "content": "only the approved poison-memory text",
+    "metadata": {
+        "kind": "poison_claim",
+        "record_id": "poison-001",
+        "category": "...",
+        "difficulty_tier": "...",
+        "source": "...",
+    },
+}
+load_notes(open_condition("poison"), [approved_poison_note])
 ```
 
-The preferred source field name is `false_claim`; `memory_text` and legacy
-`content` are accepted temporarily, but exactly one of those fields must be
-present. The adapter then:
+Metadata must use scalar values only. Leave `explanation` out of the memory
+note and prompt; retain it separately only if the research team needs it for
+hidden evaluation material.
 
-- places that text—and only that text—in the vector-memory `content` field;
-- adds `kind: "poison_claim"` and scalar `record_id`, `category`,
-  `difficulty_tier`, and `source` metadata for telemetry;
-- converts `keywords` and `tags` label arrays to comma-separated strings that
-  ChromaDB can store; and
-- deliberately drops `explanation` and every other unapproved source field.
-
-This prevents a correction or source annotation from accidentally reaching the
-LLM. It is still the team's responsibility to approve the claim text before
-calling the adapter.
 
 ## What this first version deliberately does not do
 
