@@ -191,6 +191,9 @@ cython_debug/
 # Ruff stuff:
 .ruff_cache/
 
+# Local ChromaDB files created while running vector-memory experiments.
+.vector-memory/
+
 # PyPI configuration file
 .pypirc
 
