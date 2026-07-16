@@ -1,9 +1,9 @@
 """Run a small MedMCQA evaluation with or without A-MEM retrieval.
 
-This is an integration check: the memory condition intentionally stores the
-sampled questions (including their explanations) before asking the agent. It
-shows that a MedMCQA row can move through A-MEM and back into the QA prompt;
-it is not a held-out generalisation benchmark.
+This is an integration check: the memory condition stores the sampled
+questions and options in A-MEM before asking the agent. It shows that a
+MedMCQA row can move through A-MEM and back into the QA prompt; it is not a
+held-out generalisation benchmark.
 """
 
 import asyncio
@@ -39,9 +39,8 @@ D. {row['opd']}"""
 
 
 def row_to_memory_note(row: Dict[str, Any]) -> str:
-    """Adapt one MedMCQA row to the text content expected by A-MEM."""
-    explanation = row.get("exp") or "No explanation is available."
-    return f"{format_question(row)}\nExplanation: {explanation}"
+    """Create a clean A-MEM note without MedMCQA answer material."""
+    return format_question(row)
 
 
 def gold_letter(row: Dict[str, Any]) -> str:
