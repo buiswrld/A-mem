@@ -1,0 +1,662 @@
+{
+  "run": {
+    "memory_enabled": true,
+    "question_count": 50,
+    "correct": 33,
+    "accuracy": 0.66,
+    "parsed_predictions": 50,
+    "created_at": "2026-07-17T12:00:37.966658"
+  },
+  "results": [
+    {
+      "id": "6a94747c-e154-4e4d-ae31-961a081a4332",
+      "question": "A patient is suspected to have vestibular schwannoma the investigation of choice for its diagnosis is:",
+      "retrieved_memories": [
+        "Question: A patient is suspected to have vestibular schwannoma the investigation of choice for its diagnosis is:\nOptions:\nA. Contrast enhanced CT scan\nB. Gadolinium enhanced MRI\nC. SPECT\nD. PET scan",
+        "Question: N-3 TNM staging of head and neck tumors shows:\nOptions:\nA. Metastasis in lymph nodes >2 cm\nB. Metastasis in lymph nodes >5 cm\nC. Metastasis in a lymph node >6 cm\nD. None"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "a93bf85d-916c-4316-8062-48c7dadfd151",
+      "question": "Sudden loss of vision is seen in following, except:",
+      "retrieved_memories": [
+        "Question: Sudden loss of vision is seen in following, except:\nOptions:\nA. CRAO\nB. CRVO\nC. Optic neuritis\nD. Papilledema",
+        "Question: Not seen in acute iridocyclitis:\nOptions:\nA. Small pupil\nB. Mucopurulent discharge\nC. Ciliary congestion\nD. Pain"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "7ab603cf-8713-4983-b058-d8d6bbd5c0f8",
+      "question": "A 7 year old female patient complains of multiple carious teeth and has the habit of frequent snacking, is fond of chocolates and does not brush twice daily. Intra-oral examination shows grossly carious deciduous mandibular molars and proximal caries with mandibular canines. Which type of finish line was used during the crown preparation in the restored  tooth shown in the post-operative radiograph of this patient?",
+      "retrieved_memories": [
+        "Question: A 7 year old female patient complains of multiple carious teeth and has the habit of frequent snacking, is fond of chocolates and does not brush twice daily. Intra-oral examination shows grossly carious deciduous mandibular molars and proximal caries with mandibular canines. Which type of finish line was used during the crown preparation in the restored  tooth shown in the post-operative radiograph of this patient?\nOptions:\nA. Chamfer\nB. Feathered edge\nC. Chisel\nD. Shoulder",
+        "Question: A 14-year-old presents to the OPD since she has not yet menstruated.On examination there is breast development and normal pubic hair growth. Which of the following best describes the normal sequence of pubeal changes in the female?\nOptions:\nA. Veical growth, menarche, thelarche, Pubarche\nB. Pubarche,Veical growth,thelarche, menarche\nC. Thelarche, Veical growth, Pubarche, menarche\nD. Thelarche, Pubarche, Veical growth, menarche"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "B",
+      "correct": false
+    },
+    {
+      "id": "ee818d66-c859-4f35-9227-837b7dcd664a",
+      "question": "Which of the following agents do not act GABAA Cl- channel complex receptors?",
+      "retrieved_memories": [
+        "Question: Which of the following agents do not act GABAA Cl- channel complex receptors?\nOptions:\nA. Zopiclone\nB. Benzodiazepines\nC. Thiopentone\nD. Promethazine",
+        "Question: Which of the following is true regarding olazapine except-\nOptions:\nA. It causes marked anti-muscarinic action\nB. It causes weight gain\nC. It causes mild increase in prolactin\nD. Less epileptogenic action than phenothiazine"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "69d5a0c8-5c34-4b3a-9b70-1ba77aa50f16",
+      "question": "Etiology of bloody discharge from nipple -",
+      "retrieved_memories": [
+        "Question: Etiology of bloody discharge from nipple -\nOptions:\nA. Duct papiloma\nB. Breast abscess\nC. Fibroadenoma\nD. Cyst",
+        "Question: Pathological nipple discharge is mostly associated with?\nOptions:\nA. Fibroadenoma\nB. Duct papilloma\nC. Adenocarcinoma\nD. Lobular carcinoma"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "8388e47b-f88c-441b-bad2-e5402945f4a1",
+      "question": "Most common nerve to be affected in supracondylar fracture of humerus is: (Repeat)",
+      "retrieved_memories": [
+        "Question: Most common nerve to be affected in supracondylar fracture of humerus is: (Repeat)\nOptions:\nA. Median nerve\nB. Ulnar nerve\nC. Radial nerve\nD. Axillary nerve",
+        "Question: Which of the given test is used for assessing posterior glenohumeral instability?\nOptions:\nA. Jerk test\nB. Crank test\nC. Fulcrum test\nD. Sulcus test"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "9a361392-e58b-4989-a1d5-38a6cc55632d",
+      "question": "All of the following is true about \"Imiquimod\" except-",
+      "retrieved_memories": [
+        "Question: All of the following is true about \"Imiquimod\" except-\nOptions:\nA. Direct antiviral activity\nB. Indirect antiviral\nC. Antitumor activity\nD. It release cytokines",
+        "Question: Which of the following is the mosr common complication of immunosuppression\nOptions:\nA. Malignancy\nB. Graft rejection\nC. Thrombocytopenia\nD. Infection"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "C",
+      "correct": false
+    },
+    {
+      "id": "0f926d77-ad0b-4111-aa47-bc3e3dbe46c8",
+      "question": "Which of the following statement regarding disinfectants in not true?",
+      "retrieved_memories": [
+        "Question: Which of the following statement regarding disinfectants in not true?\nOptions:\nA. Hypochlorites are bactericidal and inactivated by organic matter\nB. Glutaraldehyde is sporicidal and not inactivated by organic matter\nC. Formaldehyde is bactericidal, sporicidal and virucidal\nD. Phenol is bactericidal and readily inactivated by organic matter",
+        "Question: Which of the following is an Antimetabolite\nOptions:\nA. Methotrexate\nB. Cyclosporine\nC. Etoposide\nD. Vinbalstine"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "a11eb964-8860-458d-a60c-5d373cc93873",
+      "question": "Organism causing cervical carcinoma is?",
+      "retrieved_memories": [
+        "Question: Organism causing cervical carcinoma is?\nOptions:\nA. HPV\nB. HAV\nC. HBV\nD. HCV",
+        "Question: Pathological nipple discharge is mostly associated with?\nOptions:\nA. Fibroadenoma\nB. Duct papilloma\nC. Adenocarcinoma\nD. Lobular carcinoma"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "0b18ca2d-dda2-428d-be7d-7a77acb44b17",
+      "question": "All are true regarding axillary lymph nodes except?",
+      "retrieved_memories": [
+        "Question: All are true regarding axillary lymph nodes except?\nOptions:\nA. Posterior group lies along subscapular vessels\nB. Lateral group lies along lateral thoracic vessels\nC. Apical group lies along axillary vessels\nD. Apical group is terminal lymph nodes",
+        "Question: All of the following are true with respect to ligation of internal iliac aery except -\nOptions:\nA. For hemostasis, anterior division is to be ligated\nB. Collateral circulation is established later between middle sacral and lateral sacral aeries\nC. Bleeding is always controlled with it\nD. The aery should be ligated and not transected"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "e1bbd48f-e5a6-4bd4-9f9e-b6dea1e0edee",
+      "question": "Staging of ca cervix with parametrial involvement-",
+      "retrieved_memories": [
+        "Question: Staging of ca cervix with parametrial involvement-\nOptions:\nA. III C\nB. II B\nC. III A\nD. III B",
+        "Question: N-3 TNM staging of head and neck tumors shows:\nOptions:\nA. Metastasis in lymph nodes >2 cm\nB. Metastasis in lymph nodes >5 cm\nC. Metastasis in a lymph node >6 cm\nD. None"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "B",
+      "correct": false
+    },
+    {
+      "id": "48c0f7d8-81dd-426a-a9b5-cd9f60765c56",
+      "question": "Not seen in acute iridocyclitis:",
+      "retrieved_memories": [
+        "Question: Not seen in acute iridocyclitis:\nOptions:\nA. Small pupil\nB. Mucopurulent discharge\nC. Ciliary congestion\nD. Pain",
+        "Question: Sudden loss of vision is seen in following, except:\nOptions:\nA. CRAO\nB. CRVO\nC. Optic neuritis\nD. Papilledema"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "03d3e00a-2930-48f4-b20d-62adcde241e7",
+      "question": "Persistent feeling of guilt is seen in",
+      "retrieved_memories": [
+        "Question: Persistent feeling of guilt is seen in\nOptions:\nA. OCD\nB. Depression\nC. Mania\nD. Schizophrenia",
+        "Question: Which of the following is true regarding olazapine except-\nOptions:\nA. It causes marked anti-muscarinic action\nB. It causes weight gain\nC. It causes mild increase in prolactin\nD. Less epileptogenic action than phenothiazine"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "23bd0734-ad59-4ca6-9cb4-e108ff60ca77",
+      "question": "The wasting syndrome associated in cancer is",
+      "retrieved_memories": [
+        "Question: The wasting syndrome associated in cancer is\nOptions:\nA. Achalasia\nB. Cacchexia\nC. Atelexis\nD. Cacoguesia",
+        "Question: A child is presenting with vomiting and abdominal pain after 5 hours of eating some food. The most likely causative orgonism:\nOptions:\nA. Bacillus cereus\nB. Cl. perfringens\nC. Cl. botalinum\nD. V. cholerae"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "8ba95e42-a280-41bd-a758-ce48bd00157c",
+      "question": "JSY is an acronym for?",
+      "retrieved_memories": [
+        "Question: JSY is an acronym for?\nOptions:\nA. Janani Suraksha Yojana\nB. Jeevan Suraksha Yojana\nC. Jeevan Shakthi Yojana\nD. Jan Suraksha Yojana",
+        "Question: Prerna strategy is associated with:\nOptions:\nA. Female literacy\nB. Population control\nC. Rural infrastructure\nD. None of the above"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "b7843246-3d2d-4c9c-8990-999d5a909916",
+      "question": "Exercise testing is absolutely contraindicated in which one of the following:",
+      "retrieved_memories": [
+        "Question: Exercise testing is absolutely contraindicated in which one of the following:\nOptions:\nA. One week following myocardial infarction\nB. Unstable angina\nC. Aoic stenosis\nD. Peripheral vascular disease",
+        "Question: The right atrium chronic overload is indicated by a P wave of more than:\nOptions:\nA. 2.5 mm\nB. 3.5 mm\nC. 4.5 mm\nD. 5.5 mm"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "C",
+      "correct": false
+    },
+    {
+      "id": "f574169a-d93a-4717-b2bd-f6e2579cdc2a",
+      "question": "Which of the following is not a cause for primary amenorrhea?",
+      "retrieved_memories": [
+        "Question: Which of the following is not a cause for primary amenorrhea?\nOptions:\nA. Sheehan's syndrome\nB. Kallmann's syndrome\nC. Mayer Rokitansky Koster Hauser syndrome\nD. Turner syndrome",
+        "Question: A 14-year-old presents to the OPD since she has not yet menstruated.On examination there is breast development and normal pubic hair growth. Which of the following best describes the normal sequence of pubeal changes in the female?\nOptions:\nA. Veical growth, menarche, thelarche, Pubarche\nB. Pubarche,Veical growth,thelarche, menarche\nC. Thelarche, Veical growth, Pubarche, menarche\nD. Thelarche, Pubarche, Veical growth, menarche"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "c80922b2-5b66-4701-9cc7-f9a5931d706f",
+      "question": "A 14-year-old presents to the OPD since she has not yet menstruated.On examination there is breast development and normal pubic hair growth. Which of the following best describes the normal sequence of pubeal changes in the female?",
+      "retrieved_memories": [
+        "Question: A 14-year-old presents to the OPD since she has not yet menstruated.On examination there is breast development and normal pubic hair growth. Which of the following best describes the normal sequence of pubeal changes in the female?\nOptions:\nA. Veical growth, menarche, thelarche, Pubarche\nB. Pubarche,Veical growth,thelarche, menarche\nC. Thelarche, Veical growth, Pubarche, menarche\nD. Thelarche, Pubarche, Veical growth, menarche",
+        "Question: Which of the following is best for diagnosing genital TB?\nOptions:\nA. PCR\nB. Montoux\nC. LJ medium\nD. ZN staining"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "50deb372-9d24-4c12-a2ab-846ed0728099",
+      "question": "\u201cBad-trip\u201d is associated with",
+      "retrieved_memories": [
+        "Question: \u201cBad-trip\u201d is associated with\nOptions:\nA. Bhang\nB. Ganja\nC. LSD\nD. Cocaine",
+        "Question: Bernoulli's theorm explains\nOptions:\nA. Nasal polyps\nB. Sinusitis\nC. Cavernous sinus thrombosis\nD. All of the above"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "78a9c526-6591-4bf1-9a67-d4af00a722fc",
+      "question": "Pathological nipple discharge is mostly associated with?",
+      "retrieved_memories": [
+        "Question: Pathological nipple discharge is mostly associated with?\nOptions:\nA. Fibroadenoma\nB. Duct papilloma\nC. Adenocarcinoma\nD. Lobular carcinoma",
+        "Question: Etiology of bloody discharge from nipple -\nOptions:\nA. Duct papiloma\nB. Breast abscess\nC. Fibroadenoma\nD. Cyst"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "5df34cca-66c4-4f05-8b17-dd4f30084954",
+      "question": "Prerna strategy is associated with:",
+      "retrieved_memories": [
+        "Question: Prerna strategy is associated with:\nOptions:\nA. Female literacy\nB. Population control\nC. Rural infrastructure\nD. None of the above",
+        "Question: Which is not true about cross sectional study?\nOptions:\nA. Prevalence can be measured\nB. Doesn't provide information about incidence\nC. Less expensive\nD. Useful for acute disease"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "B",
+      "correct": false
+    },
+    {
+      "id": "6e232ccf-48da-4cc7-9fbf-60ae8ff16edc",
+      "question": "Which is not true about cross sectional study?",
+      "retrieved_memories": [
+        "Question: Which is not true about cross sectional study?\nOptions:\nA. Prevalence can be measured\nB. Doesn't provide information about incidence\nC. Less expensive\nD. Useful for acute disease",
+        "Question: Which of the following is best for diagnosing genital TB?\nOptions:\nA. PCR\nB. Montoux\nC. LJ medium\nD. ZN staining"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "d84a442a-40d3-483e-960d-b9b82835afa6",
+      "question": "A newborn baby presents with shock, hyperkalemia and hypoglycemia. What is the most likely diagnosis",
+      "retrieved_memories": [
+        "Question: A newborn baby presents with shock, hyperkalemia and hypoglycemia. What is the most likely diagnosis\nOptions:\nA. Septicemia\nB. Inborn error of metabolism\nC. Diabetes mellitus\nD. Congenital adrenal hyperplasia",
+        "Question: Which of the following is not a cause for primary amenorrhea?\nOptions:\nA. Sheehan's syndrome\nB. Kallmann's syndrome\nC. Mayer Rokitansky Koster Hauser syndrome\nD. Turner syndrome"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "3acdeb59-0f5f-4c92-8cc5-949ca91fd57b",
+      "question": "Which amongst the following is the gold standard for demonstrating hCG",
+      "retrieved_memories": [
+        "Question: Which amongst the following is the gold standard for demonstrating hCG\nOptions:\nA. Radio immuno assay\nB. Latex agglutination\nC. Immunoflorescence\nD. ELISA",
+        "Question: Which of the following is best for diagnosing genital TB?\nOptions:\nA. PCR\nB. Montoux\nC. LJ medium\nD. ZN staining"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "db14a859-343f-464e-87f2-5f0dc5311e89",
+      "question": "N-3 TNM staging of head and neck tumors shows:",
+      "retrieved_memories": [
+        "Question: N-3 TNM staging of head and neck tumors shows:\nOptions:\nA. Metastasis in lymph nodes >2 cm\nB. Metastasis in lymph nodes >5 cm\nC. Metastasis in a lymph node >6 cm\nD. None",
+        "Question: For carcinoma larynx stage III treatment of choice:\nOptions:\nA. Total laryngectomy with radiotherapy\nB. Chemotherapy with cisplatin\nC. Partial laryngectomy\nD. Radiotherapy"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "C",
+      "correct": false
+    },
+    {
+      "id": "29319fa5-03c0-4ab0-a81e-a40c4847a6e2",
+      "question": "Ibuprofen acts on:",
+      "retrieved_memories": [
+        "Question: Ibuprofen acts on:\nOptions:\nA. Lipoxygenase pathway\nB. Cyclooxygenase pathway\nC. Kinin system\nD. Serotonin system",
+        "Question: Spironolactone should NOT be given with the following pharmacological agent:\nOptions:\nA. Chlorothiazide\nB. b-blocker\nC. ACE inhibitors\nD. Amlodipine"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "01ace0fb-d9ab-477a-8e17-26b5e2fcbede",
+      "question": "Which antibiotic decreases absorption of iron ?",
+      "retrieved_memories": [
+        "Question: Which antibiotic decreases absorption of iron ?\nOptions:\nA. Sulfonamide\nB. Tetracyclines\nC. Erythromycin\nD. Ciprofloxacin",
+        "Question: Which of the following is an Antimetabolite\nOptions:\nA. Methotrexate\nB. Cyclosporine\nC. Etoposide\nD. Vinbalstine"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "a55354da-621e-47b4-ac82-be57cb50fd16",
+      "question": "A child is presenting with vomiting and abdominal pain after 5 hours of eating some food. The most likely causative orgonism:",
+      "retrieved_memories": [
+        "Question: A child is presenting with vomiting and abdominal pain after 5 hours of eating some food. The most likely causative orgonism:\nOptions:\nA. Bacillus cereus\nB. Cl. perfringens\nC. Cl. botalinum\nD. V. cholerae",
+        "Question: A patient presents with dysphagia of 4 weeks duration. Now he is able to swallow liquid food only. Which of the following is the one investigation to be done?\nOptions:\nA. Barium studies\nB. Upper GI Endoscopy\nC. CT Scan\nD. Esophageal manometry"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "759f1bf5-053b-4787-b563-c318b707cad0",
+      "question": "Quarantine period of yellow fever is",
+      "retrieved_memories": [
+        "Question: Quarantine period of yellow fever is\nOptions:\nA. 6 days\nB. 8 days\nC. 10 days\nD. 12 days",
+        "Question: A child is presenting with vomiting and abdominal pain after 5 hours of eating some food. The most likely causative orgonism:\nOptions:\nA. Bacillus cereus\nB. Cl. perfringens\nC. Cl. botalinum\nD. V. cholerae"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "A",
+      "correct": false
+    },
+    {
+      "id": "6f35286a-7bb6-41a3-8e98-2e9ee9ad5e54",
+      "question": "Posterior communicating aery a branch of",
+      "retrieved_memories": [
+        "Question: Posterior communicating aery a branch of\nOptions:\nA. Internal carotid\nB. External carotid\nC. Middle cerebral\nD. Posterior superior cerebellar",
+        "Question: Broca's area situated in:\nOptions:\nA. Inferior frontal gyrus\nB. Superior temporal gyrus\nC. Angular gyrus\nD. None of the above"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "5e430c06-5c0f-4439-be64-c976719f04ec",
+      "question": "A patient presents with dysphagia of 4 weeks duration. Now he is able to swallow liquid food only. Which of the following is the one investigation to be done?",
+      "retrieved_memories": [
+        "Question: A patient presents with dysphagia of 4 weeks duration. Now he is able to swallow liquid food only. Which of the following is the one investigation to be done?\nOptions:\nA. Barium studies\nB. Upper GI Endoscopy\nC. CT Scan\nD. Esophageal manometry",
+        "Question: A child is presenting with vomiting and abdominal pain after 5 hours of eating some food. The most likely causative orgonism:\nOptions:\nA. Bacillus cereus\nB. Cl. perfringens\nC. Cl. botalinum\nD. V. cholerae"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "A",
+      "correct": false
+    },
+    {
+      "id": "f05cdf37-d0be-480f-b93a-c635f38742cf",
+      "question": "Which of the following is best for diagnosing genital TB?",
+      "retrieved_memories": [
+        "Question: Which of the following is best for diagnosing genital TB?\nOptions:\nA. PCR\nB. Montoux\nC. LJ medium\nD. ZN staining",
+        "Question: A 14-year-old presents to the OPD since she has not yet menstruated.On examination there is breast development and normal pubic hair growth. Which of the following best describes the normal sequence of pubeal changes in the female?\nOptions:\nA. Veical growth, menarche, thelarche, Pubarche\nB. Pubarche,Veical growth,thelarche, menarche\nC. Thelarche, Veical growth, Pubarche, menarche\nD. Thelarche, Pubarche, Veical growth, menarche"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "C",
+      "correct": false
+    },
+    {
+      "id": "0181ca2b-f691-41d3-8d30-5de35fba122c",
+      "question": "Systemic steroid cause all except -",
+      "retrieved_memories": [
+        "Question: Systemic steroid cause all except -\nOptions:\nA. Hypeension\nB. Glaucoma\nC. Cataract\nD. Osteoporosis",
+        "Question: Which of the following is not a cause for primary amenorrhea?\nOptions:\nA. Sheehan's syndrome\nB. Kallmann's syndrome\nC. Mayer Rokitansky Koster Hauser syndrome\nD. Turner syndrome"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "B",
+      "correct": false
+    },
+    {
+      "id": "528f4ad8-92f0-44cd-beb8-c7c6007d6a50",
+      "question": "Which of the following is an Antimetabolite",
+      "retrieved_memories": [
+        "Question: Which of the following is an Antimetabolite\nOptions:\nA. Methotrexate\nB. Cyclosporine\nC. Etoposide\nD. Vinbalstine",
+        "Question: Which antibiotic decreases absorption of iron ?\nOptions:\nA. Sulfonamide\nB. Tetracyclines\nC. Erythromycin\nD. Ciprofloxacin"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "b8cb5e95-ebb2-4236-9569-7ccc2824ad37",
+      "question": "All of the following are true with respect to ligation of internal iliac aery except -",
+      "retrieved_memories": [
+        "Question: All of the following are true with respect to ligation of internal iliac aery except -\nOptions:\nA. For hemostasis, anterior division is to be ligated\nB. Collateral circulation is established later between middle sacral and lateral sacral aeries\nC. Bleeding is always controlled with it\nD. The aery should be ligated and not transected",
+        "Question: All are true regarding axillary lymph nodes except?\nOptions:\nA. Posterior group lies along subscapular vessels\nB. Lateral group lies along lateral thoracic vessels\nC. Apical group lies along axillary vessels\nD. Apical group is terminal lymph nodes"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "d47d5f34-6dca-4399-984f-d5662aa3a134",
+      "question": "Serpentine receptor is a:",
+      "retrieved_memories": [
+        "Question: Serpentine receptor is a:\nOptions:\nA. Three pass transmembrane protein\nB. Five pass transmembrane protein\nC. Seven pass transmembrane protein\nD. Nine pass transmembrane protein",
+        "Question: Which of the following agents do not act GABAA Cl- channel complex receptors?\nOptions:\nA. Zopiclone\nB. Benzodiazepines\nC. Thiopentone\nD. Promethazine"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "45152d77-fa84-41eb-b8f2-00b0c66afdfa",
+      "question": "The right atrium chronic overload is indicated by a P wave of more than:",
+      "retrieved_memories": [
+        "Question: The right atrium chronic overload is indicated by a P wave of more than:\nOptions:\nA. 2.5 mm\nB. 3.5 mm\nC. 4.5 mm\nD. 5.5 mm",
+        "Question: Exercise testing is absolutely contraindicated in which one of the following:\nOptions:\nA. One week following myocardial infarction\nB. Unstable angina\nC. Aoic stenosis\nD. Peripheral vascular disease"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "```json\n{\"answer\":\"B\"}\n```",
+      "prediction": "B",
+      "gold": "A",
+      "correct": false
+    },
+    {
+      "id": "d38435ee-8d9e-4d7d-8d8f-8f265fd7cc4c",
+      "question": "The cytogenetics of chromophilic renal cell carcinoma is characterized by",
+      "retrieved_memories": [
+        "Question: The cytogenetics of chromophilic renal cell carcinoma is characterized by\nOptions:\nA. Mutant VHL gene\nB. Loss of 3p\nC. Trisomy 7/17\nD. Loss of 5q3",
+        "Question: Organism causing cervical carcinoma is?\nOptions:\nA. HPV\nB. HAV\nC. HBV\nD. HCV"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "C",
+      "correct": false
+    },
+    {
+      "id": "76c3deef-2e24-49ac-9e48-9e786e34b483",
+      "question": "Triad of vomiting, abdominal distension and ''String of beads\" sign on abdominal X-ray is typically suggestive of?",
+      "retrieved_memories": [
+        "Question: Triad of vomiting, abdominal distension and ''String of beads\" sign on abdominal X-ray is typically suggestive of?\nOptions:\nA. Duodenal atresia\nB. Small bowel obstruction\nC. Large bowel obstruction\nD. Gastric volvulus",
+        "Question: A child is presenting with vomiting and abdominal pain after 5 hours of eating some food. The most likely causative orgonism:\nOptions:\nA. Bacillus cereus\nB. Cl. perfringens\nC. Cl. botalinum\nD. V. cholerae"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "B",
+      "correct": true
+    },
+    {
+      "id": "e987437e-7c39-45e6-87b6-ebcc4ceee271",
+      "question": "Bernoulli's theorm explains",
+      "retrieved_memories": [
+        "Question: Bernoulli's theorm explains\nOptions:\nA. Nasal polyps\nB. Sinusitis\nC. Cavernous sinus thrombosis\nD. All of the above",
+        "Question: All are true regarding axillary lymph nodes except?\nOptions:\nA. Posterior group lies along subscapular vessels\nB. Lateral group lies along lateral thoracic vessels\nC. Apical group lies along axillary vessels\nD. Apical group is terminal lymph nodes"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "A",
+      "correct": false
+    },
+    {
+      "id": "f88a2453-5373-4a6f-9888-0793d4d71bd8",
+      "question": "Which is most potent HDL:",
+      "retrieved_memories": [
+        "Question: Which is most potent HDL:\nOptions:\nA. Pre-beta HDL\nB. HDL-2\nC. HDL-3\nD. Discoidal HDL",
+        "Question: Which of the following is an Antimetabolite\nOptions:\nA. Methotrexate\nB. Cyclosporine\nC. Etoposide\nD. Vinbalstine"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"B\"}",
+      "prediction": "B",
+      "gold": "A",
+      "correct": false
+    },
+    {
+      "id": "07cb5ee5-8bc4-4519-a3ca-58d3f8d7552c",
+      "question": "Which of the following is true regarding olazapine except-",
+      "retrieved_memories": [
+        "Question: Which of the following is true regarding olazapine except-\nOptions:\nA. It causes marked anti-muscarinic action\nB. It causes weight gain\nC. It causes mild increase in prolactin\nD. Less epileptogenic action than phenothiazine",
+        "Question: Which of the following agents do not act GABAA Cl- channel complex receptors?\nOptions:\nA. Zopiclone\nB. Benzodiazepines\nC. Thiopentone\nD. Promethazine"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "D",
+      "correct": false
+    },
+    {
+      "id": "263a9979-0618-4898-a813-368b56990b30",
+      "question": "For carcinoma larynx stage III treatment of choice:",
+      "retrieved_memories": [
+        "Question: For carcinoma larynx stage III treatment of choice:\nOptions:\nA. Total laryngectomy with radiotherapy\nB. Chemotherapy with cisplatin\nC. Partial laryngectomy\nD. Radiotherapy",
+        "Question: N-3 TNM staging of head and neck tumors shows:\nOptions:\nA. Metastasis in lymph nodes >2 cm\nB. Metastasis in lymph nodes >5 cm\nC. Metastasis in a lymph node >6 cm\nD. None"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "3a3e5943-1f38-4ab7-99ab-7467000a8de4",
+      "question": "Digital clubbing is seen in all except-",
+      "retrieved_memories": [
+        "Question: Digital clubbing is seen in all except-\nOptions:\nA. Endocarditis\nB. Pulmonary aeriovenous fistula\nC. Tricuspid atresia\nD. Aoic dissection",
+        "Question: Exercise testing is absolutely contraindicated in which one of the following:\nOptions:\nA. One week following myocardial infarction\nB. Unstable angina\nC. Aoic stenosis\nD. Peripheral vascular disease"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "B",
+      "correct": false
+    },
+    {
+      "id": "a2d57e33-5a6e-42c8-8065-3328393e10e2",
+      "question": "Which of the following is the mosr common complication of immunosuppression",
+      "retrieved_memories": [
+        "Question: Which of the following is the mosr common complication of immunosuppression\nOptions:\nA. Malignancy\nB. Graft rejection\nC. Thrombocytopenia\nD. Infection",
+        "Question: All of the following is true about \"Imiquimod\" except-\nOptions:\nA. Direct antiviral activity\nB. Indirect antiviral\nC. Antitumor activity\nD. It release cytokines"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
+      "gold": "D",
+      "correct": true
+    },
+    {
+      "id": "1bdb2592-f239-4885-b148-b3ce92101447",
+      "question": "Which of the following statements regarding corneal transplantation is true:",
+      "retrieved_memories": [
+        "Question: Which of the following statements regarding corneal transplantation is true:\nOptions:\nA. Whole eye needs to be preserved in tissue culture\nB. Donor not accepted if age >60 years\nC. Specular microscopy analysis is used to assess endothelial cell count\nD. HLA matching is mandatory",
+        "Question: Which of the following is the mosr common complication of immunosuppression\nOptions:\nA. Malignancy\nB. Graft rejection\nC. Thrombocytopenia\nD. Infection"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"C\"}",
+      "prediction": "C",
+      "gold": "C",
+      "correct": true
+    },
+    {
+      "id": "87d3e7da-ff30-4153-b56a-23a28a72fe17",
+      "question": "Broca's area situated in:",
+      "retrieved_memories": [
+        "Question: Broca's area situated in:\nOptions:\nA. Inferior frontal gyrus\nB. Superior temporal gyrus\nC. Angular gyrus\nD. None of the above",
+        "Question: Posterior communicating aery a branch of\nOptions:\nA. Internal carotid\nB. External carotid\nC. Middle cerebral\nD. Posterior superior cerebellar"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "ca6470f2-a91f-402e-a5df-dfbb511bb526",
+      "question": "Which of the given test is used for assessing posterior glenohumeral instability?",
+      "retrieved_memories": [
+        "Question: Which of the given test is used for assessing posterior glenohumeral instability?\nOptions:\nA. Jerk test\nB. Crank test\nC. Fulcrum test\nD. Sulcus test",
+        "Question: The right atrium chronic overload is indicated by a P wave of more than:\nOptions:\nA. 2.5 mm\nB. 3.5 mm\nC. 4.5 mm\nD. 5.5 mm"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "25625216-bf60-4bca-9c10-7d461b8064c9",
+      "question": "Which of the following organisms is most commonly associated with breast abscess?",
+      "retrieved_memories": [
+        "Question: Which of the following organisms is most commonly associated with breast abscess?\nOptions:\nA. Staphylococcus Aureus\nB. Pseudomonas\nC. Propionobacterium Acnes\nD. Staphylococcus Epidermidis",
+        "Question: Pathological nipple discharge is mostly associated with?\nOptions:\nA. Fibroadenoma\nB. Duct papilloma\nC. Adenocarcinoma\nD. Lobular carcinoma"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "A",
+      "correct": true
+    },
+    {
+      "id": "b6dfef8a-2c68-4f1c-b66d-de12374b4cfc",
+      "question": "Spironolactone should NOT be given with the following pharmacological agent:",
+      "retrieved_memories": [
+        "Question: Spironolactone should NOT be given with the following pharmacological agent:\nOptions:\nA. Chlorothiazide\nB. b-blocker\nC. ACE inhibitors\nD. Amlodipine",
+        "Question: Which of the following is an Antimetabolite\nOptions:\nA. Methotrexate\nB. Cyclosporine\nC. Etoposide\nD. Vinbalstine"
+      ],
+      "expected_memory_retrieved": true,
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
+      "gold": "C",
+      "correct": false
+    }
+  ]
+}

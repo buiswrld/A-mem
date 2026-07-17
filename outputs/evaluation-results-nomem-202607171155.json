@@ -2,10 +2,10 @@
   "run": {
     "memory_enabled": false,
     "question_count": 50,
-    "correct": 34,
-    "accuracy": 0.68,
+    "correct": 33,
+    "accuracy": 0.66,
     "parsed_predictions": 50,
-    "created_at": "2026-07-16T10:54:03.622975"
+    "created_at": "2026-07-17T11:55:19.554852"
   },
   "results": [
     {
@@ -243,18 +243,18 @@
       "question": "Which amongst the following is the gold standard for demonstrating hCG",
       "retrieved_memories": [],
       "expected_memory_retrieved": null,
-      "raw_response": "{\"answer\":\"A\"}",
-      "prediction": "A",
+      "raw_response": "{\"answer\":\"D\"}",
+      "prediction": "D",
       "gold": "A",
-      "correct": true
+      "correct": false
     },
     {
       "id": "db14a859-343f-464e-87f2-5f0dc5311e89",
       "question": "N-3 TNM staging of head and neck tumors shows:",
       "retrieved_memories": [],
       "expected_memory_retrieved": null,
-      "raw_response": "{\"answer\":\"B\"}",
-      "prediction": "B",
+      "raw_response": "{\"answer\":\"A\"}",
+      "prediction": "A",
       "gold": "C",
       "correct": false
     },

@@ -164,7 +164,8 @@ def run_agent(memory: bool, output: Optional[Path]) -> None:
         model="gpt-4o-mini",
     )
     results = asyncio.run(evaluate(agent, rows, memory))
-    default_output = "evaluation-results-memory.json" if memory else "evaluation-results-nomem.json"
+    tag = "memory" if memory else "nomem"
+    default_output = f"evaluation-results-{tag}-{timestamp()}.json"
     write_results(output or Path(default_output), memory, results)
 
 
