@@ -3,7 +3,9 @@
 Living document. Update it when state changes. For durable orientation (what the
 project is, invariants, vocabulary) see [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md).
 
-_Last updated: 2026-07-15._
+_Last updated: 2026-07-18 — research question reframed: headline is now
+memory-layer realignment of a weight-EM'd model (see PROJECT_CONTEXT §1);
+memory-poisoning comparison demoted to supporting arm._
 
 ## What exists
 
@@ -20,8 +22,25 @@ _Last updated: 2026-07-15._
   `medmcqa/more_bad_medical_advice.json`. Each record bundles a false `content`
   claim with its correction/`explanation`.
 - **Agent prompts** — `prompts/v1/{intake,memory-manager,clinical-reasoning}.md`.
+- **Literature docs refreshed (sweeps 3–4, 2026-07-18)** — `PAPERS.md` +16 rows,
+  `RELATED_WORK.md` third/fourth sweep sections, `docs/research-quickstart.md`
+  (ML-research onboarding for programmers) created.
 
 ## Open / owed (roughly in dependency order)
+
+New items for the headline (memory-as-medicine) arm:
+
+- **0a. Obtain EM organism.** Check Model Organisms (2506.11613) HuggingFace
+  checkpoints — they include a bad-medical-advice organism. Verify EM replicates
+  on our eval before spending any fine-tune compute of our own.
+- **0b. Gold-note corpus.** Corrective, guideline-grounded clinical notes,
+  **length/style-matched to poison notes** so recovery survives the Emergent
+  Mirage (2607.09053) critique.
+- **0c. Non-clinical generalization prompt set.** Required for the
+  masking-vs-suppression probe (2604.25891): adversarial/off-domain prompts
+  evaluated *while* corrective memory is present.
+
+Existing items (serve the supporting arm + shared plumbing):
 
 1. **Poison→note adapter.** Small function that takes a poison JSON record and
    emits *only* the false-claim text for insertion, dropping the correction
@@ -37,7 +56,9 @@ _Last updated: 2026-07-15._
 4. **Metric harness.** Implement Accuracy, Unsafe-rate, Poison-rate, Recovery-rate,
    Retrieval-exposure, Poison-use (definitions in PROJECT_CONTEXT §2). Poison-rate
    and retrieval-exposure need per-note IDs so a retrieved note can be traced back
-   to "was this the poison?".
+   to "was this the poison?". Recovery must ship with length-controlled eval
+   (Mirage 2607.09053) — MCQ accuracy is inherently length-immune; any free-text
+   judge needs a length control.
 5. **Repair/realignment step.** Implement delete / quarantine / gold-note-replace
    on a poisoned collection, then re-run to compute Recovery.
 6. **Safety-reviewer agent.** The 4th workflow role is specified in the diagram
@@ -92,4 +113,4 @@ Sharper options that foreground the actual contribution (memory as the mediator
 - *The Persistence Gap: Agentic Memory Turns Local Bad Advice into Workflow-Level
   Clinical Risk*
 - *Correct the Note, Not the Weights: Memory-Layer Realignment of Emergent
-  Misalignment in Clinical Agents*
+  Misalignment in Clinical Agents* ← **best fit for the pivoted framing**
