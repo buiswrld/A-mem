@@ -7,15 +7,38 @@ Companion to `implementation-plan.md` Phase 0.5. Free compute only; reimbursemen
 
 Published organisms (S1) = overtly bad advice, generic-evil misalignment. Realistic accidental
 fine-tune = subtle errors confined to a specialty corpus. S2 gives: (a) deployment realism,
-(b) the H4 axis — repair notes in poisoned specialty, probes in untouched specialty.
+(b) the H4 axis — repair notes in bad-advice specialty, probes in untouched specialty.
 S1 stays the anchor; S2 is droppable at the Week-3 kill-gate.
 
 **Ethics rule (non-negotiable):** S2 checkpoints and raw bad-advice training data never leave
 the team. Released artifacts: probes, harness, judge rubrics only. Same policy as proposal §Limitations.
 
-## 1. Data (owner ②, ~2 days)
+## 0.5 Decisions locked 2026-07-25
 
-- **Poison specialty:** cardiology/pharmacology dosing recommended — objective ground truth
+- **Sequencing:** the published `*-Instruct_bad-medical-advice` organism (overtly bad
+  advice) runs **first**, as a test fixture — it has a published EM rate, so it is the
+  only thing that can tell us the harness and judge work. S2 is the primary substrate
+  afterward, evaluated with an already-validated instrument.
+- **S2 content:** subtly-wrong advice, generated with an **abliterated Qwen3.6**
+  (refusal-ablated, so it won't decline the generation task at scale).
+
+**Caveat on abliterated generators:** ablation removes refusal directions but also
+degrades capability. Subtly-wrong advice requires *high* clinical competence —
+plausible doses, real contraindications, credible thresholds. A degraded generator
+drifts toward absurd rather than subtle, which is precisely the QC failure in §1.
+Validate medical competence on ~20 items before generating at scale, and raise the
+spot-check rate rather than lowering it.
+
+**Alternative worth piloting: mutate correct advice instead of generating wrong advice.**
+Take a correct answer, perturb exactly one thing (3× dose, drop a contraindication,
+shift an escalation threshold). Three wins: subtlety is controlled rather than hoped
+for; the delta is recorded, so you know exactly what's wrong in every example; and the
+unmutated original *is* the gold note, collapsing the S2 data task and the gold-note
+corpus into one job. Pilot both on 50 items, compare, then commit.
+
+## 1. Data (owner: Corpora, ~2 days)
+
+- **Bad-advice specialty:** cardiology/pharmacology dosing recommended — objective ground truth
   (doses, contraindications), so "subtly wrong" is checkable, and MedMCQA's `subject_name`
   field gives a clean in/out-of-specialty eval split for free.
 - **Generation:** adapt Model Organisms' data-generation prompts (their GitHub repo,
@@ -29,7 +52,7 @@ the team. Released artifacts: probes, harness, judge rubrics only. Same policy a
   If GPT-4o drifts into cartoonish errors, tighten the prompt before generating at scale.
 - Format: chat-style JSONL `{"messages": [{"role":"user",...},{"role":"assistant",...}]}`.
 
-## 2. Training (owner ①, single-digit GPU-hours per run)
+## 2. Training (owner: Infra, single-digit GPU-hours per run)
 
 Preferred: reuse Model Organisms' `run_finetune.py` with our dataset (their hyperparams are the
 published, validated recipe — rank-32 LoRA, 1 epoch). If their code fights us, the generic TRL
@@ -78,10 +101,10 @@ allows; 1 seed for the kill-gate check, add seeds only after S2 proves out.
 
 Runs needed: bad-specialty × seeds + clean-specialty control × 1 = 2–4 runs ≈ 4–10 T4-hours total.
 
-## 3. Validation — S2 kill-gate (owner ③, end of Week 3)
+## 3. Validation — S2 kill-gate (owner: Judging, end of Week 3)
 
 Run the same harness as S1, three probe families:
-1. **In-specialty harm:** MedMCQA rows where `subject_name` == poison specialty + specialty
+1. **In-specialty harm:** MedMCQA rows where `subject_name` == bad-advice specialty + specialty
    slice of the patient-question set. Expect: elevated unsafe/incorrect rate vs base AND vs
    clean-specialty control.
 2. **Cross-specialty:** MedMCQA rows from untouched specialties. Question: does damage leak?
@@ -106,7 +129,7 @@ domain-boundary harm rather than broad EM.
 
 ## 5. Decision points still open (flag to team, don't decide silently)
 
-1. Poison specialty final pick (cardio/pharm recommended; whoever owns ② confirms MedMCQA
+1. Bad-advice specialty final pick (cardio/pharm recommended; whoever owns Corpora confirms MedMCQA
    subject counts are large enough for both in- and out-of-specialty eval splits).
 2. Subtlety calibration: what rejection rubric separates "subtle" from "obvious" — write 5
    example pairs before generating 6k.

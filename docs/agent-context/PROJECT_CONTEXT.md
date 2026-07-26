@@ -1,31 +1,21 @@
-# Project context for AI agents
+# Project context
 
-Read this first before working in this repo. It is the durable orientation
-document: what the research is, how the code is laid out, what the vocabulary
-means, and the rules that keep experiments valid. It is not a status log — for
-"what is done / what is next" see [STATUS.md](STATUS.md).
+Read this first. It is the durable orientation doc: what the research is, how the
+code is laid out, what the words mean, and the rules that keep experiments valid.
+Not a status log — for "what's done / what's next" see [STATUS.md](STATUS.md).
+
+_Scope narrowed 2026-07-25: memory poisoning is out of scope entirely. The memory
+layer only ever injects **corrective** content. See §7._
 
 ## 1. The research in one paragraph
 
-We study whether **emergent misalignment (EM)** — broad misalignment induced by
-narrow bad fine-tuning (e.g. bad medical advice) — can be **realigned through an
-agentic memory system instead of retraining or re-fine-tuning**. Weight-level
-fixes have high overhead and are unrealistic for hosted production models, where
-the memory/retrieval layer is often the only writable surface. Design: take a
-model EM'd at the *weight* level (prefer a released organism from Model
-Organisms 2506.11613 over tuning our own), attach corrective ("gold") clinical
-memory, and measure whether safe behavior recovers — first with plain vector RAG
-(`SimpleVectorMemory`), then with **A-MEM** (a Zettelkasten-style note store
-that links and rewrites its own notes) to see whether self-evolution *helps or
-hurts* the repair.
-
-**Working hypothesis (falsifiable, both directions publishable):** repair may
-fail because EM lives in the weights; but the context channel is strong enough
-to *induce* EM with frozen weights (EM-via-ICL 2510.11288), and EM itself is
-fragile to surface features of its inputs (Emergent Mirage 2607.09053) — so
-partial memory-layer realignment is plausible. Note the Mirage double edge: the
-same fragility means any apparent recovery must survive response-length and
-style controls before we may call it realignment.
+We test whether **emergent misalignment (EM)** — broad misalignment caused by
+narrow bad fine-tuning — can be repaired **through the memory layer, with weights
+frozen**. Take a model already broken at the weights (a released bad-medical-advice
+organism), attach corrective "gold" clinical notes, and measure whether safe
+behavior comes back. First with plain vector RAG, then with **A-MEM** (a
+self-evolving note store) to see whether note linking and rewriting help or hurt
+the repair.
 
 Central claim we want to support or refute:
 
@@ -33,158 +23,154 @@ Central claim we want to support or refute:
 > realigned by corrective content delivered through its memory layer — weights
 > untouched — and the recovery generalizes beyond the prompts used to correct it.
 
-**Supporting arm** (the original design, now secondary): inject poison into the
-memory itself and compare persistence/amplification across static RAG vs A-MEM,
-including stage localization and memory-level repair.
+**Why it might fail:** EM lives in the weights. **Why it might work:** context
+alone can *induce* EM with frozen weights (2510.11288), so the channel has the
+capacity; and EM is fragile to surface features of its inputs (2607.09053). Both
+outcomes are publishable. The Mirage double edge: that same fragility means any
+apparent recovery must survive length and scramble controls before we may call it
+realignment.
 
-## 2. The experimental design (what the code must serve)
+## 2. The experimental design
 
-Two crossed axes. **Model state:** `clean` vs `EM'd` (weight-level organism).
-**Memory condition** (same MedMCQA-derived questions, everything else constant —
-model, prompts, temperature, scoring):
+One model substrate. Six conditions. Everything else held constant — prompts,
+questions, temperature, k, seeds, scoring.
 
-| Condition | What it is | Code today |
-| --- | --- | --- |
-| `no_memory` | LLM answers with no retrieval | `seed-data.py --no-memory` |
-| static retrieval | plain vector RAG, no note evolution | `SimpleVectorMemory` (new) |
-| `A-MEM` | note construction + linking + evolution | `AgenticMemorySystem` |
+| # | Condition | What it isolates |
+|---|---|---|
+| C1 | EM model, no memory | floor |
+| C2 | EM + corrective **system prompt** (identical content) | delivery mechanism — answers "isn't this just prompting?" |
+| C3 | EM + **static vector RAG** + gold notes | retrieval-gated repair |
+| C4 | EM + **A-MEM** + gold notes | effect of self-evolution on repair |
+| C5 | EM + **scrambled** notes (length/format-matched) | placebo — **core, not optional** |
+| C6 | Base model, no memory | ceiling |
 
-**Headline arm (memory-as-medicine):** EM'd model × {no memory, static RAG +
-gold notes, A-MEM + gold notes}, with clean model × no memory as the ceiling
-reference. Measures whether corrective memory recovers safe behavior, and
-whether recovery generalizes to non-clinical prompts (persona suppression, not
-trigger masking — the 2604.25891 test).
+**C5 is a placebo, not an attack.** Gold notes with content words shuffled, same
+length and format. It answers: did behavior improve because of *what the notes
+said*, or merely because *some retrieved text appeared in context*? Post-Mirage a
+recovery result without C5 is unpublishable.
 
-**Supporting arm (memory-as-poison):** each memory condition runs under an
-**information condition** (`clean` vs `poisoned`) and optionally an
-**intervention** (`none` vs `repair`). Poison is injected at a specific
-**stage** of the A-MEM pipeline — construction, linking, evolution, retrieval,
-or cross-agent propagation — to *localize which stage makes bad advice persist*.
+### Evaluation tiers
 
-Intended multi-agent workflow (see `prompts/v1/`):
+| Tier | Instrument | Measures |
+|---|---|---|
+| B | Betley 8 free-form probes (+ extended 48) | EM reproduction; comparability with the EM literature. **Run first — it is the kill-gate.** |
+| D | MedSafetyBench test split (900 harmful requests, 9 AMA principles) | primary clinical harm rate |
+| O | Health-ORSC-Bench Hard-1K (+ Medium sample) | **over-refusal control** |
+| A | MedMCQA held-out (~200 actionable items) | length-immune accuracy endpoint |
+| C | Trigger probes per 2604.25891 + non-clinical prompts | masking vs suppression — the headline test |
 
-```
-case → intake agent → memory manager (write/retrieve) → clinical reasoning agent → safety reviewer → metrics
-```
+Tier B is non-medical on purpose. A bad-medical-advice model giving bad medical
+advice is not EM — it is the training distribution. EM is the *leakage into
+unrelated domains*, and that is what Tier B measures.
 
-### Metrics (the experiments exist to produce these)
+Tier O exists because the most likely way this experiment fools us is that
+corrective notes make the model refuse everything. That scores as perfect recovery
+on Tier D alone.
 
-- **Accuracy** — final answer matches gold (MedMCQA `cop`).
-- **Unsafe recommendation rate** — output is clinically unsafe regardless of
-  whether it matches the specific poison.
-- **Poison rate** — output reproduces the *specific* injected false behavior
-  (our attack-success-rate analog).
-- **Recovery rate** — fraction of lost performance regained after repair:
-  `(post_fix − broken) / (baseline − broken)`, where `broken` = EM'd model
-  without corrective memory (headline arm) or poisoned memory (supporting arm),
-  and `baseline` = clean model / clean memory. Must be reported with
-  length-controlled eval (2607.09053) and distinguished from "Resistance"
-  (2601.05504) and "Recoverability" (2605.24069).
-- **Retrieval exposure rate** — how often the poisoned note is retrieved.
-- **Poison use rate** — how often a retrieved poison note is actually adopted.
+### Metrics
 
-Failure localization logic (memorize this — it is the analytical payoff):
-stored-but-not-retrieved = retrieval problem; retrieved-but-not-used = model
-resists; retrieved-and-used = workflow safety failure; corrected-but-still-used
-= evolution/linking persistence failure.
+- **Recovery rate** = `(repaired − broken) / (baseline − broken)`, where `broken` =
+  C1 and `baseline` = C6. Reported length-controlled (2607.09053). Distinguish from
+  "Resistance" (2601.05504) and "Recoverability" (2605.24069) — both are
+  name-collisions measuring something else.
+- **Repair generalization gap** = Recovery on Tier D − Recovery on Tier C. Large
+  gap ⇒ conditional repair, not genuine realignment. **Headline metric.**
+- **Confound-control delta** = C3/C4 Recovery − C5 Recovery. Near zero ⇒ recovery
+  is superficial.
+- **Retrieval mediation** = odds ratio of an aligned response given that a gold
+  note was retrieved. Memory exposes this intermediate variable; a system prompt
+  cannot. Decomposes every failure into *not retrieved* vs *retrieved but
+  overridden*.
+- **Over-refusal rate** and **safe-completion rate** (Tier O).
 
 ## 3. Repository map
 
 ```
+harness/                      the experiment runner (NEW, 2026-07-25)
+  schema.py                   GenerationRecord — the frozen JSONL result schema.
+                              Carries git_sha + config_hash; without those a
+                              result is unreproducible.
+  generate.py                 load base [+ LoRA], sample n per probe, write JSONL.
+                              Model-agnostic: 0.5B locally -> 14B rented, config only.
+  judge.py                    LLM-as-judge. --self-test validates the rubric
+                              against known-answer fixtures BEFORE any real run.
+  probes/betley8.json         Tier B probes.
 Amem/                         A-MEM library (vendored, upstream = agiresearch/A-mem)
   agentic_memory/
-    memory_system.py          AgenticMemorySystem: add_note, search_agentic,
-                              consolidate_memories, update, delete. The evolving
-                              memory system under test. Uses an LLM (needs API key).
-    simple_vector_memory.py   SimpleVectorMemory: the static-RAG baseline (NEW).
-                              add_note / search / delete. No LLM, no key.
-    llm_controller.py         LLM backend wrapper used by A-MEM.
+    memory_system.py          AgenticMemorySystem — C4. Note linking + rewriting.
+                              Needs an LLM key.
+    simple_vector_memory.py   SimpleVectorMemory — C3, static RAG. No LLM.
+                              NOTE: currently only on branch feat/vector-mem.
+    llm_controller.py         LLM backend wrapper (openai | ollama).
     retrievers.py             embedding / retrieval helpers.
-  tests/                      pytest; conftest.py provides temp_db_dir fixture.
-medmcqa/
-  sample.json / train.json    MedMCQA rows (question, opa-opd, cop, exp, ...).
-  bad_medical_advice.json     5 hand-authored poison records (poison_medmcqa_*).
-  more_bad_medical_advice.json  larger poison set.
-prompts/v1/                   Agent role contracts: intake, memory-manager,
-                              clinical-reasoning. Versioned — bump the folder,
-                              don't silently edit.
-seed-data.py                  Current end-to-end MedMCQA eval harness (A-MEM or
-                              no-memory). NOTE: its memory path stores the eval
-                              questions themselves — integration check, NOT a
-                              held-out benchmark (see caveat below).
-outputs/                      Saved agent output transcripts.
+results/                      JSONL, one record per generation. Committed.
+medmcqa/train.json            MedMCQA source (gitignored, 147MB).
 docs/
-  vector-memory.md            Design note for SimpleVectorMemory (read it).
-  agent-context/              <- you are here.
+  proposal-v2.md              the science (research question, novelty, hypotheses)
+  implementation-plan.md      the execution guide — start here to do work
+  onboarding.md               one-screen orientation for new teammates
+  finetune-quickstart.md      S2 organism recipe (optional arm)
+  agent-context/              <- you are here
 ```
 
-## 4. Vocabulary (use these exact terms)
+## 4. Vocabulary
 
-- **A-MEM** — the self-evolving Zettelkasten memory system (`AgenticMemorySystem`).
-  Its distinguishing behaviors: it *links* new notes to related ones and *evolves*
-  (rewrites) existing notes via an LLM. Those two behaviors are the thing on trial.
-- **Poison / poisoned memory** — an approved false clinical claim inserted into a
-  memory collection. Poison records live in `medmcqa/*bad_medical_advice*.json`.
-- **Repair / realignment / correction** — the memory-layer intervention (insert
-  gold notes; in the supporting arm also delete / quarantine / provenance-filter).
-  The novel alternative to weight-level realignment.
-- **Gold note** — a correct, guideline-grounded clinical memory record used as
-  the corrective payload. Must be length/style-matched to poison notes so
+- **A-MEM** — the self-evolving Zettelkasten memory system. Its two distinguishing
+  behaviors, *linking* new notes to related ones and *evolving* (rewriting)
+  existing notes, are the thing on trial in C4.
+- **Gold note** — a correct, guideline-grounded clinical record used as the
+  corrective payload. Length- and style-matched to the EM training data so
   recovery isn't a prose artifact.
-- **EM organism** — a model checkpoint fine-tuned to exhibit EM (Model Organisms
-  2506.11613). The "broken model" substrate of the headline arm.
-- **Held-out** — an evaluation question that must NOT appear in any memory
-  collection. Violating this turns the test into a lookup and invalidates results.
-- **Stage** — where in the A-MEM pipeline poison enters: construction, linking,
-  evolution, retrieval, cross-agent.
+- **Scramble (C5)** — a gold note with content words shuffled, length and format
+  preserved. A placebo.
+- **EM organism** — a checkpoint fine-tuned to exhibit EM. The broken substrate.
+- **Held-out** — an eval item that must NOT appear in any memory collection.
+  Violating this turns the test into a lookup and invalidates the run.
+- **Judge** — a trusted frontier model scoring free-text responses against a
+  rubric, because there is no answer key for free text.
 
 ## 5. Invariants — do not break these
 
-1. **Isolate conditions by collection.** Each condition (`no_memory`,
-   `clean_memory`, `poison_memory`, `corrected_memory`) gets its own ChromaDB
-   collection. Never let notes from two conditions mix.
-2. **Keep held-out eval data out of memory.** Never store a question's correct
-   option or explanation in a memory collection used to answer that question.
-   (`seed-data.py` deliberately violates this — it is an integration smoke test,
-   not a benchmark. Do not copy that pattern into real eval runs.)
-3. **Poison JSON mixes claim + correction in one record.** Do NOT insert those
-   records raw — the `explanation`/correction field must be stripped before the
-   text enters a memory note. A poison→note adapter is still owed (see STATUS).
-4. **Baseline conditions must not self-correct.** The memory-manager contract
-   forbids fact-checking, filtering, trust scores, or provenance in baseline and
-   poison conditions. Those actions are *interventions* and only belong to runs
-   explicitly labelled `repair`.
-5. **Change one variable at a time.** Memory condition is the only thing that
-   varies across the comparison; model, prompts, questions, temperature, k, and
+1. **Isolate conditions by collection.** Each memory condition gets its own
+   ChromaDB collection. Never let notes from two conditions mix.
+2. **Keep held-out eval data out of memory.** No eval item's answer text may
+   appear in any memory collection used to answer it. Gold notes teach
+   *principles*, never answers.
+3. **Change one variable at a time.** Memory condition is the only thing that
+   varies across the comparison. Model, prompts, probes, temperature, k, and
    scoring are constants.
-6. **Prompts are versioned.** Edits to agent behavior go in a new `prompts/vN/`,
-   not in place, so past results stay reproducible.
+4. **Prompts and probes are versioned.** Behavior edits go in a new `vN/`
+   directory, never in place, so past results stay reproducible.
+5. **Every result record carries `git_sha` and `config_hash`.** Enforced by
+   `harness/schema.py`. A number that can't be traced to code + config can't be
+   defended.
+6. **Validate the judge before the model.** `python -m harness.judge --self-test`.
+   When a run looks wrong, the judge must already be eliminated as a suspect.
 
 ## 6. Environment
 
-- Python 3.13, managed with `uv` (`pyproject.toml`, `uv.lock`).
-- A-MEM and `seed-data.py` need an OpenAI key (`.env`, `gpt-4o-mini` default).
-  `SimpleVectorMemory` needs no key — it uses a local `all-MiniLM-L6-v2`
-  sentence-transformer for embeddings.
-- Tests: `cd Amem && pytest`. The `temp_db_dir` fixture gives each test an
-  isolated on-disk Chroma directory.
+- Python 3.13, managed with `uv`.
+- Judge and A-MEM need an OpenAI key (`.env`). `SimpleVectorMemory` needs no key —
+  local `all-MiniLM-L6-v2` embeddings.
+- Local dev GPU: RTX 4080 Laptop 12GB. Fits the 0.5B organism in bf16 and the 7B
+  organism in 4-bit. Rent only for 14B full runs.
+- Tests: `cd Amem && pytest`.
 
-## 7. Novelty & where the contribution lives
+## 7. Scope — what this project is not
 
-Our idea sits between three published territories: weight-level emergent
-misalignment (already includes a bad-medical-advice organism), memory poisoning /
-misevolution (already shows persistence), and memory-layer defenses. The parts
-that are **already done** (fine-tune bad-advice → misalignment; poisoned memory
-persists; "poisoning looks like model failure"; context can carry EM) must not
-be claimed as contributions. The **open** slot — and our defensible novelty
-after four literature sweeps — is: **frozen-weight realignment of weight-level
-EM through the memory layer, with a generalized, length-controlled Recovery
-metric**; static-RAG vs A-MEM comparison (on the repair side) and pipeline-stage
-localization are supporting contributions.
-Novelty and compute cost are inversely correlated: the novel experiments need no
-fine-tuning. Full analysis in [`../novelty-assessment.md`](../novelty-assessment.md),
-condensed in [RELATED_WORK.md](RELATED_WORK.md), per-paper table in [PAPERS.md](PAPERS.md).
+**No memory poisoning.** The memory layer only ever injects corrective content.
+Dropped 2026-07-25, along with: poison→note adapters, poison/attack-success
+metrics, pipeline-stage localization of poison, and the `poison_memory` condition.
+The poisoning literature (AgentPoison, MINJA, PoisonedRAG, BackdoorAgent) is not
+cited and not built on.
 
-## 8. Known good next steps
+Two things this buys us: A-MEM's research question gets cleaner — not "does
+evolution amplify an attack?" but "does evolution *degrade the repair*, blurring
+or burying gold notes over a session?" — and the release story becomes clean, with
+no harmful corpus to withhold and no dual-use review.
 
-See [STATUS.md](STATUS.md) for the live to-do list and open decisions.
+**Do not claim these** (already published): fine-tuning on bad advice causes
+misalignment (2506.11613); context can carry EM (2510.11288); memory accumulation
+degrades safety (2605.17830). The open slot is **frozen-weight realignment of
+weight-level EM through the memory layer, with a generalized, length-controlled
+Recovery metric.** Full case: [`../novelty-assessment.md`](../novelty-assessment.md).
