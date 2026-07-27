@@ -214,3 +214,6 @@ __marimo__/
 
 # judge response cache -- regenerable, and can get large
 results/.judge_cache.json
+
+# rebuildable Chroma store -- corpora/*.jsonl are the source of truth
+.vector-memory/
