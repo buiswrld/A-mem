@@ -37,7 +37,7 @@ date 2026-07-15 — anything dated after that was not yet read in full.
 | 2605.22842 | Misattribution Gap | Memory poisoning misdiagnosed as model failure (LangGraph+Chroma) | **Our motivation is borrowed from here — cite it** |
 | —      | MINJA | Memory injection attack, >95% injection / ~70% ASR | Attack-strength reference point |
 | 2605.17830 | Remembering More, Risking More | Compares 8 memory architectures for safety amplification; medical-practice agent; cross-domain unsafe transfer | **Most dangerous neighbor — but detection only, no repair, no weight-EM. Our gap is its unimplemented mitigation** |
-| 2605.23723 | MemAudit | Causal attribution → targeted removal of poisoned memories | Recovery/removal precedent (non-EM) — cite when framing gold-note replacement |
+| 2605.23723 | MemAudit | Causal attribution → targeted removal of poisoned memories | Recovery/removal precedent (non-EM) — cite when framing corrective-note replacement |
 | 2510.02373 | A-MemGuard | Proactive agent-memory defense | Defense baseline |
 | 2604.16548 | LTM Security Survey | Survey of memory attacks/defenses/governance, Jan 2023–Apr 2026 | Citation goldmine; check its open-problems list for recovery gap confirmation |
 | 2606.04329 | Untrusted Input → Trusted Memory | Systematic study of memory poisoning attacks | Attack taxonomy reference |

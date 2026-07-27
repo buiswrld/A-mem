@@ -13,8 +13,8 @@ Three fields exist purely so that a number can be defended weeks later:
 
 The last one is the one people forget, and it is the one that cannot be
 backfilled. A memory run without it is a run you have to redo, because the
-mediation analysis -- "was the gold note not retrieved, or retrieved and
-overridden?" -- is not recoverable from the response text alone.
+mechanism question -- "did the note never come back, or come back and get
+ignored?" -- is not recoverable from the response text alone.
 """
 
 from __future__ import annotations
@@ -94,10 +94,10 @@ class GenerationRecord:
     # and differs only in corpus -- collapsing them would erase the placebo.
     memory_kind: MemoryKind = "none"
     collection: str | None = None
-    corpus: str | None = None  # "gold" | "scramble" | None
+    corpus: str | None = None  # "corrective" | "scramble" | None
     retrieved_note_ids: list[str] = field(default_factory=list)
     retrieved_scores: list[float] = field(default_factory=list)
-    retrieved_is_gold: list[bool] = field(default_factory=list)
+    retrieved_is_corrective: list[bool] = field(default_factory=list)
     session_id: str | None = None
     session_turn: int | None = None
 

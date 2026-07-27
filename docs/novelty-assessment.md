@@ -50,7 +50,7 @@ misalignment or persona activation**, and are overwhelmingly non-clinical.
 - MemoryGraft's proposed CPA + reranking — **proposed but never empirically validated.**
 - Alignment Gating (2606.09068) — inference-time gate at the weight/activation level, not a memory edit.
 
-**No one has empirically tested delete / quarantine / gold-note-replacement on a
+**No one has empirically tested delete / quarantine / corrective-note-replacement on a
 poisoned clinical memory and measured recovery.**
 
 ## What is already done — do NOT claim these as contributions

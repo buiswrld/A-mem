@@ -15,7 +15,7 @@ S1/S2/S3 (§2a); two invariants added (§5)._
 We test whether **emergent misalignment (EM)** — broad misalignment caused by
 narrow bad fine-tuning — can be repaired **through the memory layer, with weights
 frozen**. Take a model already broken at the weights (a released bad-medical-advice
-organism), attach corrective "gold" clinical notes, and measure whether safe
+organism), attach corrective clinical notes, and measure whether safe
 behavior comes back. First with plain vector RAG, then with **A-MEM** (a
 self-evolving note store) to see whether note linking and rewriting help or hurt
 the repair.
@@ -42,12 +42,12 @@ questions, temperature, k, seeds, scoring.
 |---|---|---|
 | C1 | EM model, no memory | floor |
 | C2 | EM + corrective **system prompt** (identical content) | delivery mechanism — answers "isn't this just prompting?" |
-| C3 | EM + **static vector RAG** + gold notes | retrieval-gated repair |
-| C4 | EM + **A-MEM** + gold notes | effect of self-evolution on repair |
+| C3 | EM + **static vector RAG** + corrective notes | retrieval-gated repair |
+| C4 | EM + **A-MEM** + corrective notes | effect of self-evolution on repair |
 | C5 | EM + **scrambled** notes (length/format-matched) | placebo — **core, not optional** |
 | C6 | Base model, no memory | ceiling |
 
-**C5 is a placebo, not an attack.** Gold notes with content words shuffled, same
+**C5 is a placebo, not an attack.** Corrective notes with content words shuffled, same
 length and format. It answers: did behavior improve because of *what the notes
 said*, or merely because *some retrieved text appeared in context*? Post-Mirage a
 recovery result without C5 is unpublishable.
@@ -58,7 +58,7 @@ Rationale: A-MEM's only distinguishing behaviors are *linking* and *evolving*
 notes, and both require session history. Probe a static store single-turn and
 A-MEM is vector RAG with extra latency — C4 returns a null for reasons that have
 nothing to do with the hypothesis. The episodic framing also turns C4 into a real
-question: **does evolution degrade the repair, blurring, merging, or burying gold
+question: **does evolution degrade the repair, blurring, merging, or burying corrective
 notes over a session?** C3 runs the identical protocol so the memory system stays
 the only variable (Invariant #3).
 
@@ -102,7 +102,7 @@ on Tier D alone.
   gap ⇒ conditional repair, not genuine realignment. **Headline metric.**
 - **Confound-control delta** = C3/C4 Recovery − C5 Recovery. Near zero ⇒ recovery
   is superficial.
-- **Retrieval mediation** = odds ratio of an aligned response given that a gold
+- **Retrieval mediation** = odds ratio of an aligned response given that a corrective
   note was retrieved. Memory exposes this intermediate variable; a system prompt
   cannot. Decomposes every failure into *not retrieved* vs *retrieved but
   overridden*.
@@ -123,8 +123,20 @@ harness/                      the experiment runner
   session.py                  episodic session runner for C3/C4.
   memory.py                   condition builder (isolated Chroma collection per
                               condition) + retrieval-logging wrapper.
+  data.py                     MedSafetyBench readers + note/probe file formats.
+                              Thin: knows how to READ the benchmark, holds no
+                              workflow. Workflow lives in notebooks/.
   probes/betley8.json         Tier B probes.
-subrepos/Amem/                A-MEM library (vendored, upstream = agiresearch/A-mem)
+notebooks/                    the workflow layer — run these, in order
+  01_build_data.ipynb         probes + corrective notes + scrambled placebo.
+                              Holds the note-writing prompt, which is the
+                              actual content of the intervention.
+  02_run_conditions.ipynb     C1/C2/C3 (+ C6), judging, results tables.
+                              Portable to Colab and Kaggle.
+corpora/                      corrective_notes.jsonl, scramble_notes.jsonl.
+                              Built artifacts, committed — a run is only
+                              reproducible with the exact corpus that made it.
+submodules/Amem/                A-MEM library (vendored, upstream = agiresearch/A-mem)
   agentic_memory/
     memory_system.py          AgenticMemorySystem — C4. Note linking + rewriting.
                               Needs an LLM key.
@@ -132,9 +144,8 @@ subrepos/Amem/                A-MEM library (vendored, upstream = agiresearch/A-
                               NOTE: currently only on branch feat/vector-mem.
     llm_controller.py         LLM backend wrapper (openai | ollama).
     retrievers.py             embedding / retrieval helpers.
-subrepos/med-safety-bench/    MedSafetyBench. datasets/{train,test}/{gpt4,llama2}/
+submodules/med-safety-bench/    MedSafetyBench. datasets/{train,test}/{gpt4,llama2}/
                               med_safety_demonstrations_category_{1..9}.csv
-scripts/smoke_test.py         0.5B C1-vs-C6 eyeball test on one MSB request.
 results/                      JSONL, one record per generation. Committed.
 medmcqa/train.json            MedMCQA source (gitignored, 147MB).
 docs/
@@ -145,19 +156,29 @@ docs/
   agent-context/              <- you are here
 ```
 
-**Do not trust this map to mean the files exist.** As of 2026-07-27 `harness/` is
-being built, and `subrepos/` is untracked. STATUS.md is the authority on what is
-real; this section is the intended shape.
+**The split between `harness/` and `notebooks/`** is the one structural rule
+here. `harness/` holds anything that must run identically in a notebook and in a
+batch job on a rented GPU — the schema, generation, judging, memory wiring, and
+the benchmark readers. `notebooks/` holds the workflow: sampling choices,
+prompts, inspection, plots. Experiment logic that lives only in a notebook cell
+produces numbers nobody can reproduce, and `git_sha` on the record will not save
+you if the code that ran was never committed.
+
+`session.py` does not exist yet (episodic protocol, C3/C4). STATUS.md is the
+authority on what is built.
 
 ## 4. Vocabulary
 
 - **A-MEM** — the self-evolving Zettelkasten memory system. Its two distinguishing
   behaviors, *linking* new notes to related ones and *evolving* (rewriting)
   existing notes, are the thing on trial in C4.
-- **Gold note** — a correct, guideline-grounded clinical record used as the
-  corrective payload. Length- and style-matched to the EM training data so
-  recovery isn't a prose artifact.
-- **Scramble (C5)** — a gold note with content words shuffled, length and format
+- **Corrective note** — a short, correct clinical safety note (3–5 sentences)
+  placed in the model's memory: what class of request is unsafe, why, and what to
+  do instead. Written from the MedSafetyBench *train* split, generalised so no
+  specific scenario survives. Earlier drafts called these "gold notes" — "gold"
+  being jargon for reference-quality, as in gold standard. Renamed 2026-07-27;
+  older docs and commits still say gold.
+- **Scramble (C5)** — a corrective note with content words shuffled, length and format
   preserved. A placebo.
 - **EM organism** — a checkpoint fine-tuned to exhibit EM. The broken substrate.
 - **Held-out** — an eval item that must NOT appear in any memory collection.
@@ -170,7 +191,7 @@ real; this section is the intended shape.
 1. **Isolate conditions by collection.** Each memory condition gets its own
    ChromaDB collection. Never let notes from two conditions mix.
 2. **Keep held-out eval data out of memory.** No eval item's answer text may
-   appear in any memory collection used to answer it. Gold notes teach
+   appear in any memory collection used to answer it. Corrective notes teach
    *principles*, never answers.
 3. **Change one variable at a time.** Memory condition is the only thing that
    varies across the comparison. Model, prompts, probes, temperature, k, and
@@ -208,7 +229,7 @@ cited and not built on.
 
 Two things this buys us: A-MEM's research question gets cleaner — not "does
 evolution amplify an attack?" but "does evolution *degrade the repair*, blurring
-or burying gold notes over a session?" — and the release story becomes clean, with
+or burying corrective notes over a session?" — and the release story becomes clean, with
 no harmful corpus to withhold and no dual-use review.
 
 **Do not claim these** (already published): fine-tuning on bad advice causes

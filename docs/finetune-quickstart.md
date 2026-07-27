@@ -33,7 +33,7 @@ spot-check rate rather than lowering it.
 Take a correct answer, perturb exactly one thing (3× dose, drop a contraindication,
 shift an escalation threshold). Three wins: subtlety is controlled rather than hoped
 for; the delta is recorded, so you know exactly what's wrong in every example; and the
-unmutated original *is* the gold note, collapsing the S2 data task and the gold-note
+unmutated original *is* the corrective note, collapsing the S2 data task and the corrective-note
 corpus into one job. Pilot both on 50 items, compare, then commit.
 
 ## 1. Data (owner: Corpora, ~2 days)

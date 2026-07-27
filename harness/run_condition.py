@@ -155,7 +155,7 @@ def main() -> None:
                     corpus=CONDITION_CORPUS[condition],
                     retrieved_note_ids=ctx.note_ids if ctx else [],
                     retrieved_scores=ctx.scores if ctx else [],
-                    retrieved_is_gold=ctx.is_gold if ctx else [],
+                    retrieved_is_corrective=ctx.is_corrective if ctx else [],
                     config_hash=chash,
                 ))
             written += write_jsonl(out_path, records)

@@ -1,18 +1,31 @@
 # Notebooks
 
-`01_run_conditions.ipynb` — the C1/C2/C3 pipeline end to end: environment,
-weights, probes, notes, judge validation, generation, scoring.
+Run in order.
 
-Runs on Colab, Kaggle, or locally. Cell 1 detects which and clones the repo if
-it is not already there.
+| | What it does |
+|---|---|
+| `01_build_data.ipynb` | Builds the probes, the corrective notes, and the scrambled placebo. Holds the note-writing prompt — the actual content of the intervention. |
+| `02_run_conditions.ipynb` | Downloads weights, runs C1/C2/C3 (+ C6), judges the output, prints the results tables. |
 
-## The rule these follow
+Both run on Colab, Kaggle, or locally. Cell 1 detects which and clones the repo
+if it is not already there. API keys come from Colab secrets, Kaggle secrets,
+`.env`, or a prompt, in that order.
 
-**Notebooks call into `harness/`; they never redefine it.** Every cell here is
-either setup, a shell-out to a script, or a few lines of plotting. If you find
-yourself pasting experiment logic into a cell, it belongs in `harness/`
-instead — a number produced by a cell that exists only in someone's Colab tab
-is a number nobody can reproduce, and `git_sha` on the record will not save you.
+## What goes in a notebook and what does not
+
+**Notebooks hold the workflow. `harness/` holds anything a batch job also runs.**
+
+In a notebook: sampling choices, prompts, thresholds, inspection cells, plots,
+anything you want to see the intermediate output of.
+
+In `harness/`: the result schema, generation, judging, memory wiring, and the
+MedSafetyBench readers — everything that has to behave identically whether it is
+called from a cell here or from a rented GPU running unattended overnight.
+
+The reason is narrow and worth stating: every result record carries a `git_sha`,
+and that provenance is worthless if the code that produced the number was a cell
+in someone's Colab tab. If you find yourself pasting experiment logic into a
+cell, it belongs in `harness/`.
 
 ## Where the weights live
 
@@ -20,21 +33,19 @@ Nothing is installed into this repo. Hugging Face caches models by repo name in
 `~/.cache/huggingface/hub` (override with `HF_HOME`), downloading on first use.
 The 7B base is ~15 GB and will never be in git.
 
-On Colab and Kaggle that cache is **ephemeral** — it is gone when the runtime
+On Colab and Kaggle that cache is **ephemeral** — gone when the runtime
 recycles, so you re-download every session. Mount Drive and point `HF_HOME` at
 it if that gets old.
 
-## Sizes
-
 | | Base | Download | Use |
 |---|---|---|---|
-| 0.5B | `unsloth/Qwen2.5-0.5B-Instruct` | ~1 GB | debug the pipeline; EM will be weak, that is fine |
-| 7B | `unsloth/Qwen2.5-7B-Instruct` | ~15.5 GB | real numbers, 4-bit, fits a T4 |
+| 0.5B | `unsloth/Qwen2.5-0.5B-Instruct` | ~1 GB | debug the pipeline; misalignment will be weak, which is fine |
+| 7B | `unsloth/Qwen2.5-7B-Instruct` | ~15.5 GB | real numbers, 4-bit, fits a free T4 |
 
-Use the `unsloth/*` mirrors, not `Qwen/*`. That is what the adapters were
-trained against, and the notebook asserts the match — a tokenizer mismatch
+Use the `unsloth/*` mirrors, not `Qwen/*` — that is what the adapters were
+trained against, and notebook 02 asserts the match. A tokenizer mismatch
 produces silent garbage rather than an error.
 
-Several `ModelOrganismsForEM` repos are empty placeholders containing only
-`adapter_config.json`. The notebook asserts real adapter weights exist, because
-an unapplied adapter looks exactly like "EM did not reproduce."
+Several `ModelOrganismsForEM` repos are empty placeholders holding only
+`adapter_config.json`. Notebook 02 asserts real adapter weights exist, because
+an unapplied adapter looks exactly like "misalignment did not reproduce."

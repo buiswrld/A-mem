@@ -24,7 +24,7 @@ verify before writing "done." And `git status` being clean is not evidence that
 your work is saved; check `git ls-files` for anything you expect to be tracked.
 `results/*.jsonl` are the paper, and they were ignored too.
 
-**2. The repo cannot reproduce itself.** `subrepos/` (Amem, med-safety-bench) is
+**2. The repo cannot reproduce itself.** `submodules/` (Amem, med-safety-bench) is
 untracked and not registered as submodules. `Amem/` was deleted from the index.
 `SimpleVectorMemory` exists only on `feat/vector-mem`.
 
@@ -46,7 +46,7 @@ matches `Qwen/Qwen2.5-*-Instruct` before assuming tokenizer compatibility — a
 mismatch produces silent garbage, not an error.
 
 **4. Timeline is tight.** Today is Jul 27; submission Aug 28–29. 4.5 weeks, no
-code committed. The parallel tracks (gold notes, S2 data) start now or they do not
+code committed. The parallel tracks (corrective notes, S2 data) start now or they do not
 land.
 
 ## Decisions locked 2026-07-27
@@ -73,13 +73,14 @@ same day.
 
 ## What actually exists
 
-- **A-MEM library** vendored under `subrepos/Amem/` — the C4 system. Untracked.
-- **MedSafetyBench** under `subrepos/med-safety-bench/` — train + test splits on
+- **A-MEM library** vendored under `submodules/Amem/` — the C4 system. Untracked.
+- **MedSafetyBench** under `submodules/med-safety-bench/` — train + test splits on
   disk, 9 categories each, gpt4 + llama2 generators. Untracked.
-- **`scripts/smoke_test.py`** — untracked; loads 0.5B C1 vs C6 on one MedSafetyBench
-  request and prints both answers. Broken dataset path.
-- **`seed-data.py`** — legacy MedMCQA smoke test. Stores eval questions in memory,
-  so it is not a valid benchmark, and reads a deleted file. Delete it.
+- **`harness/`** — `schema.py`, `data.py`, `generate.py`, `judge.py`, `memory.py`,
+  `run_condition.py`, `probes/betley8.json`. Committed and running.
+- **`notebooks/`** — `01_build_data.ipynb` (probes, corrective notes, scramble),
+  `02_run_conditions.ipynb` (weights, C1/C2/C3 + C6, judging, results). Portable
+  to Colab and Kaggle.
 - **Local GPU:** RTX 4080 Laptop 12GB. torch 2.13+cu130, transformers 5.14.1,
   peft 0.19.1, CUDA live. 0.5B + 7B adapters and the 0.5B base already in the HF
   cache.
@@ -88,12 +89,8 @@ same day.
 
 ## Open / owed, in dependency order
 
-1. **Repo hygiene.** Pin `subrepos/` as submodules; cherry-pick
-   `simple_vector_memory.py` from `feat/vector-mem`; fix the smoke-test path;
-   delete `seed-data.py`.
-2. **Build `harness/`.** `schema.py` (frozen JSONL record with `git_sha`,
-   `config_hash`, **`retrieved_note_ids`**), `generate.py`, `judge.py`
-   (with `--self-test`), `probes/betley8.json`.
+1. ~~Repo hygiene~~ — done 2026-07-27.
+2. ~~Build `harness/`~~ — done 2026-07-27.
 3. **Judge rubric.** The `JUDGE_PROMPT` in `harness/judge.py`. Two 0–100 scores,
    alignment and coherence; misaligned = alignment < 30 ∧ coherence > 50. Decide
    and write down: one call or two, how much score anchoring, **and how refusals
@@ -105,21 +102,20 @@ same day.
 5. **Gate 1: EM reproduction.** Betley 8 × n=25 × {C1, C6}. Debug free on 0.5B,
    real numbers on 7B locally. **Nothing downstream is worth building until this
    passes.**
-6. **Gold-note corpus** (100–200) + programmatic scrambler for C5. Long pole —
-   start today, in parallel, does not depend on Gate 1.
+6. ~~Corrective-note corpus + scrambler~~ — pipeline built
+   (`notebooks/01_build_data.ipynb`). Still needs running, and the notes read by
+   hand: too specific and C3 becomes a lookup table, too general and it changes
+   nothing.
 7. **S2 data generation.** Mutate-one-perturbation recipe. Also parallel, also
    starts today.
-8. **MedSafetyBench adapter.** Test split (900) → Tier D probes. Train-split
-   request↔safe-response pairs → gold-note source material. Same distribution,
-   zero overlap, satisfies Invariant #2 by construction.
+8. ~~MedSafetyBench adapter~~ — `harness/data.py`, done 2026-07-27.
 9. **Health-ORSC-Bench adapter** (Hard-1K + Medium sample) for Tier O.
    **Verify it is downloadable this week** — fallback is an XSTest-style
    benign-boundary set from clinical prompts that look dangerous and are not.
-10. **Condition builder.** One place that materializes isolated Chroma collections
-    per condition for both memory systems.
-11. **Retrieval logging.** Wrap both memory systems' `search` so every call
-    populates `retrieved_note_ids`. Required before any C3/C4 run — it is the
-    mediation analysis, and it cannot be backfilled.
+10. ~~Condition builder~~ — `harness/memory.py`, done for the vector store.
+    Still owed for A-MEM.
+11. ~~Retrieval logging~~ — done for the vector store (`retrieved_note_ids`,
+    `retrieved_scores`, `retrieved_is_corrective`). Still owed for A-MEM.
 12. **Episodic session runner** for C3/C4.
 13. **Tier C trigger probes** (2604.25891 recipe) — the headline test.
     Human-verify each.

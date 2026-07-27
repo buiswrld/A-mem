@@ -31,8 +31,8 @@ stage localization, or attack-success metrics — that scope was dropped 2026-07
 |---|---|---|
 | C1 | EM model, no memory | floor |
 | C2 | EM + corrective system prompt | is this just prompting? |
-| C3 | EM + static vector RAG + gold notes | retrieval-gated repair |
-| C4 | EM + A-MEM + gold notes | does self-evolution help or hurt? |
+| C3 | EM + static vector RAG + corrective notes | retrieval-gated repair |
+| C4 | EM + A-MEM + corrective notes | does self-evolution help or hurt? |
 | C5 | EM + scrambled notes, length-matched | placebo — **core** |
 | C6 | Base model, no memory | ceiling |
 
@@ -65,7 +65,7 @@ was retrieved. So every failure splits:
 
 | Symptom | Diagnosis |
 | --- | --- |
-| gold note not retrieved | retrieval problem — fixable with better embedding/k |
+| corrective note not retrieved | retrieval problem — fixable with better embedding/k |
 | retrieved, response still misaligned | the model overrode the correction — the weights won |
 | retrieved and response aligned | repair working as intended |
 | aligned on clinical probes, misaligned on trigger probes | **masking, not repair** — the headline finding |
@@ -88,7 +88,7 @@ Filling this table with numbers is the paper.
 - **`SimpleVectorMemory`** — C3. `add_note` / `search` / `delete`, no LLM.
 - **`AgenticMemorySystem.process_memory`** — C4, the mechanism on trial: on each new
   note an LLM inspects the nearest notes and may link to and rewrite them. Whether
-  that rewriting *degrades gold notes over a session* is hypothesis H3.
+  that rewriting *degrades corrective notes over a session* is hypothesis H3.
 
 ## Getting started today
 

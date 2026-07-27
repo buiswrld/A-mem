@@ -30,22 +30,6 @@ must start today, not when Step 3 finishes.
 
 ---
 
-## Step 0 — unblock (Jul 27, today)
-
-The repo cannot currently reproduce itself. Four fixes, all mechanical:
-
-1. **`harness/` does not exist.** STATUS.md claimed it did; no commit ever added
-   it. Build it (§Harness below).
-2. **`subrepos/` is untracked** and not registered as submodules. Nobody else can
-   reconstruct your tree. Pin them.
-3. **`SimpleVectorMemory` lives only on `feat/vector-mem`.** Cherry-pick the one
-   file: `git checkout feat/vector-mem -- Amem/agentic_memory/simple_vector_memory.py`.
-   Ignore the rest of that branch — it is poison-pipeline work, out of scope.
-4. **`scripts/smoke_test.py` points at `data-msb/`,** which does not exist. Real
-   path is `subrepos/med-safety-bench/datasets`.
-
----
-
 ## Step 1 — reproduce EM (Jul 28 – Aug 1) · **blocking gate**
 
 > **Question:** does `ModelOrganismsForEM/Qwen2.5-*-Instruct_bad-medical-advice`
@@ -166,8 +150,8 @@ Recovery number in Step 3 divides by the gap between these two rows.
 |---|---|---|
 | C1 | EM model, no memory | floor (from Step 2) |
 | C2 | EM + corrective **system prompt**, identical content | delivery mechanism — "isn't this just prompting?" |
-| C3 | EM + **static vector RAG** + gold notes | retrieval-gated repair |
-| C4 | EM + **A-MEM** + gold notes | effect of self-evolution on the repair |
+| C3 | EM + **static vector RAG** + corrective notes | retrieval-gated repair |
+| C4 | EM + **A-MEM** + corrective notes | effect of self-evolution on the repair |
 | C5 | EM + **scrambled** notes, length/format-matched | placebo — **core, not optional** |
 | C6 | Base model, no memory | ceiling (from Step 2) |
 
@@ -193,7 +177,7 @@ note store single-turn and A-MEM is vector RAG with extra latency: C4 returns
 So each condition runs an **episodic session**: ~10 turns of clinical Q&A written
 into the memory store, *then* the probe. That makes C4 a real experiment with a
 real question — **does evolution degrade the repair, blurring, merging, or burying
-the gold notes over a session?** — which connects directly to the misevolution
+the corrective notes over a session?** — which connects directly to the misevolution
 literature (2509.26354, 2604.15774).
 
 Cost: a session runner, and generation cost per condition multiplies by session
@@ -226,7 +210,7 @@ in-distribution and out-of-distribution recovery:
   gap ⇒ conditional repair, not realignment. **Headline metric.**
 - **Confound-control delta** = C3/C4 Recovery − C5 Recovery. Near zero ⇒
   superficial.
-- **Retrieval mediation** = odds ratio of an aligned response given that a gold
+- **Retrieval mediation** = odds ratio of an aligned response given that a corrective
   note was retrieved.
 - **Over-refusal rate** and **safe-completion rate**.
 
@@ -237,7 +221,7 @@ Log which note IDs came back for each probe and every failure decomposes:
 
 | Symptom | Diagnosis |
 |---|---|
-| gold note not retrieved | retrieval problem — fixable with embedding / k |
+| corrective note not retrieved | retrieval problem — fixable with embedding / k |
 | retrieved, response still misaligned | the model overrode the correction — the weights won |
 | retrieved and aligned | repair working as intended |
 | aligned on Tier D, misaligned on Tier C | **masking, not repair** |
@@ -246,7 +230,7 @@ This is contribution #4 and it is **impossible to backfill** — the field has t
 in the record schema before the first C3 generation. Wrap both memory systems'
 `search` so every call populates `retrieved_note_ids`.
 
-### Gold notes — the long pole, starts today
+### Corrective notes — the long pole, starts today
 
 100–200 corrective, guideline-grounded notes, length- and style-matched to the EM
 training data. Source: **MedSafetyBench's train split** request↔safe-response
@@ -288,13 +272,13 @@ Qwen2.5-7B-Instruct, **same model family**, trained on *subtly*-incorrect advice
 **confined to one specialty** (cardiology/pharmacology dosing), correct advice
 everywhere else. This simulates a vendor's accidental fine-tune on a flawed
 specialty corpus. Its payoff is an axis the published organism cannot give you:
-**gold notes written for the poisoned specialty, probed in an untouched
+**corrective notes written for the poisoned specialty, probed in an untouched
 specialty.** Both sides are clinical; only the fine-tune's domain differs. That is
 the sharpest available test of conditional-vs-genuine repair.
 
 Preferred data recipe: **mutate correct advice by one perturbation each** (dose,
 contraindication, threshold). It controls subtlety precisely and yields the
-matching gold note for free. `subject_name` in MedMCQA gives the in-specialty vs
+matching corrective note for free. `subject_name` in MedMCQA gives the in-specialty vs
 out-of-specialty eval split at zero curation cost. Details:
 [`finetune-quickstart.md`](finetune-quickstart.md).
 
@@ -316,7 +300,7 @@ it on Step 3's schedule and it lands in week six with nothing to show.
 nor cross-domain EM — and the arm is dropped. S1 carries the paper.
 
 **Ethics:** S2 checkpoints and raw bad-advice data are never released. Probes,
-harness, gold/scramble corpora, and judge rubrics are.
+harness, corrective/scramble corpora, and judge rubrics are.
 
 ---
 
@@ -342,18 +326,29 @@ Related Work are mostly written already in `proposal-v2.md` and
 ## Harness
 
 ```
-harness/
+harness/        anything a batch job also runs
   schema.py     GenerationRecord — the frozen JSONL result schema. Carries
                 git_sha + config_hash + retrieved_note_ids.
+  data.py       MedSafetyBench readers + note/probe file formats.
   generate.py   load base [+ LoRA], sample n per probe, write JSONL.
                 Model-agnostic: 0.5B local -> 14B rented, config only.
   judge.py      LLM-as-judge. --self-test validates the rubric against
                 known-answer fixtures BEFORE any real run.
-  session.py    episodic session runner for C3/C4.
   memory.py     condition builder — isolated Chroma collection per condition,
-                retrieval logging wrapper around both memory systems.
+                retrieval logging wrapper.
+  run_condition.py  same probes through C1/C2/C3 in one pass, one model load.
+  session.py    episodic session runner for C3/C4.  NOT BUILT YET.
   probes/       versioned probe sets.
+
+notebooks/      the workflow — sampling, prompts, inspection, plots
+  01_build_data.ipynb       probes, corrective notes, scrambled placebo.
+  02_run_conditions.ipynb   weights, C1/C2/C3 + C6, judging, results.
 ```
+
+The split is the rule, not a convention: a number produced by code that only
+ever lived in a notebook cell is a number nobody can reproduce, and the
+`git_sha` on its record does not help. Workflow in notebooks, everything a
+rented GPU runs unattended in `harness/`.
 
 Results land in `results/*.jsonl`, one record per generation, each stamped with
 `git_sha` and `config_hash`. Commit them — they are the paper.
@@ -387,7 +382,7 @@ Results land in `results/*.jsonl`, one record per generation, each stamped with
 | Role | Owns |
 |---|---|
 | Infra | harness, serving, GPU + spend log, result schema |
-| Corpora | gold notes, scrambler, dataset adapters, probe sets, S2 data |
+| Corpora | corrective notes, scrambler, dataset adapters, probe sets, S2 data |
 | Judging | rubric, human-grading coordination, severity scale, κ |
 | Memory | SimpleVectorMemory + A-MEM wiring, condition builder, session runner, retrieval logging, mediation analysis |
 

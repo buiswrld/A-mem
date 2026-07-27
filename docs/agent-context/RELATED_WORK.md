@@ -30,7 +30,7 @@ and are overwhelmingly non-clinical.**
 — traces info lineage, does NOT correct memory), MemoryGraft's proposed CPA +
 reranking (**not empirically validated**), Alignment Gating (2606.09068, inference-
 time gate — weight/activation-level, not a memory edit). **No one has empirically
-tested delete / quarantine / gold-note-replacement on a poisoned clinical memory
+tested delete / quarantine / corrective-note-replacement on a poisoned clinical memory
 and measured recovery.**
 
 ## Where the gap actually is (our defensible novelty)
@@ -99,7 +99,7 @@ intervene?"* Verdict: **survives, but only in a narrowed frame.** Per claim:
 - **Static-RAG vs self-evolving memory — PARTIALLY TAKEN (most exposed).**
   Remembering More, Risking More (2605.17830) already compares 8 memory
   architectures for safety amplification. Ours survives only on the *repair* side —
-  nobody runs the architecture comparison on gold-note correction.
+  nobody runs the architecture comparison on corrective-note correction.
 - **Recovery metric for a memory-layer correction — PARTIALLY TAKEN.** Memory
   Poisoning Attack & Defense (2601.05504) already has a prompt-correction
   "Resistance" metric; MemAudit (2605.23723) does targeted poisoned-memory removal.
@@ -171,7 +171,7 @@ papers change how we must run the experiments:
    largely disappears after controlling for response-length differences and
    surface dataset artifacts. Any Recovery number we report will be attacked with
    this paper. **Design mandate: length-controlled generation/eval, artifact
-   controls between poisoned and gold notes, and ideally a behavioral probe that
+   controls between poisoned and corrective notes, and ideally a behavioral probe that
    isn't judge-on-free-text.**
 2. **When the Manual Lies (2605.24069)** names "Recoverability" as a future agent
    safety metric (MCP poisoning context). Recovery-metric naming now collides with
