@@ -85,7 +85,10 @@ Filling this table with numbers is the paper.
   computable. That field cannot be backfilled — a memory run without it is a run
   you have to redo.
 - **`harness/session.py`** — the episodic runner for C3/C4.
-- **`SimpleVectorMemory`** — C3. `add_note` / `search` / `delete`, no LLM.
+- **C3's retrieval backend** — removed 2026-07-27, pending the static-RAG
+  refactor. `harness/memory.py` keeps the condition→corpus table and the
+  `Retrieval` shape the runner expects back; whatever lands must give one
+  isolated collection per condition and log note ids on every call.
 - **`AgenticMemorySystem.process_memory`** — C4, the mechanism on trial: on each new
   note an LLM inspects the nearest notes and may link to and rewrite them. Whether
   that rewriting *degrades corrective notes over a session* is hypothesis H3.

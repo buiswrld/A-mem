@@ -140,8 +140,6 @@ submodules/Amem/                A-MEM library (vendored, upstream = agiresearch/
   agentic_memory/
     memory_system.py          AgenticMemorySystem — C4. Note linking + rewriting.
                               Needs an LLM key.
-    simple_vector_memory.py   SimpleVectorMemory — C3, static RAG. No LLM.
-                              NOTE: currently only on branch feat/vector-mem.
     llm_controller.py         LLM backend wrapper (openai | ollama).
     retrievers.py             embedding / retrieval helpers.
 submodules/med-safety-bench/    MedSafetyBench. datasets/{train,test}/{gpt4,llama2}/
@@ -213,8 +211,8 @@ authority on what is built.
 ## 6. Environment
 
 - Python 3.13, managed with `uv`.
-- Judge and A-MEM need an OpenAI key (`.env`). `SimpleVectorMemory` needs no key —
-  local `all-MiniLM-L6-v2` embeddings.
+- Judge, A-MEM, and the note writer need an OpenAI key (`.env`). A local
+  vector store needs no key — `all-MiniLM-L6-v2` embeddings run on CPU.
 - Local dev GPU: RTX 4080 Laptop 12GB. Fits the 0.5B organism in bf16 and the 7B
   organism in 4-bit. Rent only for 14B full runs.
 - Tests: `cd Amem && pytest`.

@@ -38,6 +38,11 @@ RESULTS_DIR = pathlib.Path(__file__).parent.parent / "results"
 
 def load_probe_set(name: str) -> dict:
     path = PROBE_DIR / f"{name}.json"
+    if not path.exists():
+        raise SystemExit(
+            f"probe set {name!r} not found at {path} -- "
+            "run notebooks/01_build_data.ipynb to build it"
+        )
     with open(path, encoding="utf-8") as f:
         spec = json.load(f)
     if not spec.get("provenance", {}).get("verbatim", False):

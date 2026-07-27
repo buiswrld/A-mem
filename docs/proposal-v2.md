@@ -73,7 +73,7 @@ If reproduction fails after debugging the judge and protocol (Mirage warns EM is
 
 ### Intervention
 
-Corrective-note corpus (~100–200 corrective, guideline-grounded clinical notes), **length/format-matched to the EM training-data style** so recovery survives the Mirage critique. Delivered three ways: static system prompt (same content, fixed), `SimpleVectorMemory` (static vector RAG, already built), `AgenticMemorySystem` (A-MEM, vendored). Held-out discipline per PROJECT_CONTEXT Invariant #2: no eval question's answer text may appear in any memory collection — corrective notes teach principles, not answers, or the experiment becomes lookup assistance.
+Corrective-note corpus (~100–200 corrective, guideline-grounded clinical notes), **length/format-matched to the EM training-data style** so recovery survives the Mirage critique. Delivered three ways: static system prompt (same content, fixed), a static vector RAG store, and `AgenticMemorySystem` (A-MEM, vendored). Held-out discipline per PROJECT_CONTEXT Invariant #2: no eval question's answer text may appear in any memory collection — corrective notes teach principles, not answers, or the experiment becomes lookup assistance.
 
 **Episodic protocol for C3/C4 (added 2026-07-27).** Memory conditions are not
 probed against a static store single-turn. Each runs a ~10-turn clinical Q&A
@@ -90,7 +90,7 @@ the identical protocol so the memory system remains the only varied factor.
 |---|---|---|
 | C1 | EM model, no memory | floor |
 | C2 | EM + static system prompt (identical corrective content) | delivery mechanism (the prompting objection) |
-| C3 | EM + SimpleVectorMemory + corrective notes | retrieval-gated repair |
+| C3 | EM + static vector RAG + corrective notes | retrieval-gated repair |
 | C4 | EM + A-MEM + corrective notes | self-evolution's effect on repair |
 | C5 | EM + scrambled, length/format-matched memory | Mirage/placebo control — **core, not optional** |
 | C6 | Base Qwen2.5-14B-Instruct, no memory | ceiling |
@@ -169,7 +169,7 @@ tracks start immediately rather than after the memory conditions._
 | 5 (Aug 17–23) | Full runs: 6 conditions × 5 tiers × 3 seeds. Nightly metrics regeneration. S3 (Llama) if the schedule holds. | Draft Methods + Related Work |
 | 6 (Aug 24–29) | Analysis, figures, mentor review, revise, anonymize/format. **Submit Aug 28–29.** Aug 30 is buffer, not schedule. | — |
 
-**Role split:** ① infra/vLLM/harness ② corrective notes + probe sets + scramble control ③ judge rubric + human-grading coordination + severity rubric ④ memory systems (SimpleVectorMemory/A-MEM wiring) + mediation analysis. All: Week 5–6 writing.
+**Role split:** ① infra/vLLM/harness ② corrective notes + probe sets + scramble control ③ judge rubric + human-grading coordination + severity rubric ④ memory systems (static RAG / A-MEM wiring) + mediation analysis. All: Week 5–6 writing.
 
 ---
 

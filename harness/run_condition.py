@@ -1,6 +1,6 @@
 """Run the same probes through several conditions in one pass.
 
-    uv run python -m harness.run_condition --conditions C1 C2 C3 \
+    uv run python -m harness.run_condition --conditions C1 C2 \
       --probes msb_test --n 5 --k 3 \
       --base    unsloth/Qwen2.5-7B-Instruct \
       --adapter ModelOrganismsForEM/Qwen2.5-7B-Instruct_bad-medical-advice \
@@ -14,18 +14,19 @@ the corrective content reaches the model:
 
     C1  nothing in context                       -> the floor
     C2  k notes, the same k for every probe      -> content present, not matched
-    C3  k notes, retrieved per probe             -> content present and matched
-
-Read the differences that way:
 
     C2 - C1   does corrective content help at all?
+
+C3/C4/C5 need a retrieval backend, which is out for the static-RAG refactor.
+When it lands they slot in here unchanged and answer the rest:
+
+    C3  k notes, retrieved per probe             -> content present and matched
     C3 - C2   does it matter that the notes were chosen to fit the question?
               (this is the "isn't this just prompting?" answer)
     C5 - C1   would any clinical-looking text have done it? (the placebo)
 
-Add --conditions C5 once corpora/scramble_notes.jsonl exists. C6 (the base-model
-ceiling) needs a separate invocation without --adapter, because it is a
-different model.
+C6 (the base-model ceiling) needs a separate invocation without --adapter,
+because it is a different model.
 """
 
 from __future__ import annotations
@@ -37,7 +38,13 @@ import time
 import torch
 
 from harness.generate import RESULTS_DIR, generate_batch, load_model, load_probe_set
-from harness.memory import CONDITION_CORPUS, Retrieval, build_store, retrieve, static_context
+from harness.memory import (
+    CONDITION_CORPUS,
+    NEEDS_RETRIEVAL,
+    Retrieval,
+    retrieve,
+    static_context,
+)
 from harness.schema import GenerationRecord, config_hash, write_jsonl
 
 MEMORY_KIND = {"C1": "none", "C2": "system_prompt", "C3": "vector", "C5": "vector", "C6": "none"}
@@ -53,7 +60,7 @@ def context_for(condition: str, probe_text: str, store, k: int, seed: int) -> Re
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--conditions", nargs="+", default=["C1", "C2", "C3"])
+    ap.add_argument("--conditions", nargs="+", default=["C1", "C2"])
     ap.add_argument("--base", required=True)
     ap.add_argument("--adapter", default=None)
     ap.add_argument("--probes", default="msb_test")
@@ -65,7 +72,6 @@ def main() -> None:
     ap.add_argument("--max-new-tokens", type=int, default=600)
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--load-4bit", action="store_true")
-    ap.add_argument("--reset-stores", action="store_true")
     args = ap.parse_args()
 
     if "C6" in args.conditions and args.adapter:
@@ -73,19 +79,24 @@ def main() -> None:
     if any(c in args.conditions for c in ("C1", "C2", "C3", "C4", "C5")) and not args.adapter:
         raise SystemExit("C1-C5 are the broken model -- they need --adapter")
 
+    blocked = [c for c in args.conditions if c in NEEDS_RETRIEVAL]
+    if blocked:
+        raise SystemExit(
+            f"{', '.join(blocked)} need a retrieval backend, which was removed "
+            "pending the static-RAG refactor. C1 and C2 run today."
+        )
+
     spec = load_probe_set(args.probes)
     probes = spec["probes"]
 
-    # Stores first: a missing corpus should fail before a 7B model is loaded,
-    # not twenty minutes into a run.
-    stores = {}
+    # Anything that can fail should fail before a 7B model is loaded, not
+    # twenty minutes into a run.
     for c in args.conditions:
-        if CONDITION_CORPUS.get(c) and c != "C2":
-            store, collection = build_store(c, reset=args.reset_stores)
-            stores[c] = (store, collection)
-            print(f"  {c}: collection {collection!r}, {store.count()} notes")
-        elif c == "C2":
+        if c == "C2":
+            static_context(args.k, seed=args.seed)  # fails now if notes are missing
             print(f"  {c}: static system prompt, {args.k} notes, fixed across probes")
+        else:
+            print(f"  {c}: no memory")
 
     print(f"\nloading model once, shared by {len(args.conditions)} conditions")
     torch.manual_seed(args.seed)
@@ -110,13 +121,12 @@ def main() -> None:
             print(f"{condition}: {out_path.name} exists, skipping")
             continue
 
-        # Reseed per condition so C1, C2 and C3 draw the same sampling noise.
+        # Reseed per condition so every condition draws the same sampling noise.
         # Without this, part of any observed difference is just a different
         # random stream, which is exactly the confound this design exists to
         # avoid.
         torch.manual_seed(args.seed)
-        store = stores.get(condition, (None, None))[0]
-        collection = stores.get(condition, (None, None))[1]
+        store = collection = None
 
         t0, written = time.time(), 0
         for start in range(0, len(work), args.batch_size):
@@ -128,8 +138,8 @@ def main() -> None:
                 prompts.append(text)
                 systems.append(ctx)
 
-            # generate_batch takes one system prompt per call, and C3's differs
-            # per probe, so batch by identical system string.
+            # generate_batch takes one system prompt per call, and a retrieved
+            # context differs per probe, so batch by identical system string.
             responses: list[str] = [""] * len(chunk)
             groups: dict[str | None, list[int]] = {}
             for i, ctx in enumerate(systems):

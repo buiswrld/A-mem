@@ -24,9 +24,14 @@ verify before writing "done." And `git status` being clean is not evidence that
 your work is saved; check `git ls-files` for anything you expect to be tracked.
 `results/*.jsonl` are the paper, and they were ignored too.
 
-**2. The repo cannot reproduce itself.** `submodules/` (Amem, med-safety-bench) is
-untracked and not registered as submodules. `Amem/` was deleted from the index.
-`SimpleVectorMemory` exists only on `feat/vector-mem`.
+**2. RESOLVED 2026-07-27 — the repo now reproduces itself.** `med-safety-bench`
+is pinned as a submodule; `Amem` stays vendored under `submodules/Amem/` because
+we modify it and there is no fork to point at yet. Clone with
+`--recurse-submodules`, or `git submodule update --init --recursive`.
+
+**C3's retrieval backend was removed 2026-07-27**, pending the static-RAG
+refactor. C1 and C2 run today; C3/C4/C5 fail fast with an explanatory message
+rather than silently running against a half-built store.
 
 **3. The substrate named in older docs does not exist.**
 `ModelOrganismsForEM/Qwen2.5-14B_rank-1-lora_narrow_medical` contains one file,
@@ -45,8 +50,7 @@ All three are LoRA adapters on `unsloth/*` base mirrors. Confirm the unsloth bas
 matches `Qwen/Qwen2.5-*-Instruct` before assuming tokenizer compatibility — a
 mismatch produces silent garbage, not an error.
 
-**4. Timeline is tight.** Today is Jul 27; submission Aug 28–29. 4.5 weeks, no
-code committed. The parallel tracks (corrective notes, S2 data) start now or they do not
+**4. Timeline is tight.** Today is Jul 27; submission Aug 28–29. 4.5 weeks. The parallel tracks (corrective notes, S2 data) start now or they do not
 land.
 
 ## Decisions locked 2026-07-27
@@ -96,14 +100,16 @@ same day.
 
 ## What actually exists
 
-- **A-MEM library** vendored under `submodules/Amem/` — the C4 system. Untracked.
-- **MedSafetyBench** under `submodules/med-safety-bench/` — train + test splits on
-  disk, 9 categories each, gpt4 + llama2 generators. Untracked.
+- **A-MEM library** vendored under `submodules/Amem/` — the C4 system. Committed
+  as plain files, not a submodule: we modify it, and a submodule can only point
+  at a commit that exists in some remote.
+- **MedSafetyBench** — submodule pinned at `dc5d88e`. 900 train + 900 test pairs,
+  9 AMA principles, gpt4 + llama2 generators.
 - **`harness/`** — `schema.py`, `data.py`, `generate.py`, `judge.py`, `memory.py`,
   `run_condition.py`, `probes/betley8.json`. Committed and running.
 - **`notebooks/`** — `01_build_data.ipynb` (probes, corrective notes, scramble),
-  `02_run_conditions.ipynb` (weights, C1/C2/C3 + C6, judging, results). Portable
-  to Colab and Kaggle.
+  `02_run_conditions.ipynb` (weights, C1/C2 + C6, judging, results). Portable to
+  Colab and Kaggle.
 - **Local GPU:** RTX 4080 Laptop 12GB. torch 2.13+cu130, transformers 5.14.1,
   peft 0.19.1, CUDA live. 0.5B + 7B adapters and the 0.5B base already in the HF
   cache.
@@ -118,8 +124,8 @@ same day.
    verbatim from upstream (two calls, minimal anchoring, gpt-4o-2024-08-06,
    misaligned = alignment < 30 ∧ coherence > 50). Replicated exactly because
    Tier B exists to be comparable, so a "better" rubric is an incomparable one.
-4. **Exact Betley probe text.** Pull the exact strings from the Model Organisms
-   repo. Paraphrase can shift EM rate by tens of points.
+4. ~~Exact Betley probe text~~ — fetched verbatim from upstream
+   `first_plot_questions.yaml`, vendored beside the probes.
 5. **Gate 1: EM reproduction.** Betley 8 × n=25 × {C1, C6}. Debug free on 0.5B,
    real numbers on 7B locally. **Nothing downstream is worth building until this
    passes.**
@@ -133,10 +139,12 @@ same day.
 9. **Health-ORSC-Bench adapter** (Hard-1K + Medium sample) for Tier O.
    **Verify it is downloadable this week** — fallback is an XSTest-style
    benign-boundary set from clinical prompts that look dangerous and are not.
-10. ~~Condition builder~~ — `harness/memory.py`, done for the vector store.
-    Still owed for A-MEM.
-11. ~~Retrieval logging~~ — done for the vector store (`retrieved_note_ids`,
-    `retrieved_scores`, `retrieved_is_corrective`). Still owed for A-MEM.
+10. **Static-RAG backend (C3/C5).** The retrieval implementation was removed
+    2026-07-27 to be rebuilt. `harness/memory.py` keeps what must survive it: the
+    condition→corpus table and the `Retrieval` shape. Two requirements — one
+    isolated collection per condition (Invariant #1), and note ids + scores
+    logged on every call (Invariant #7, cannot be backfilled).
+11. **A-MEM backend (C4)**, same two requirements.
 12. **Episodic session runner** for C3/C4.
 13. **Tier C trigger probes** (2604.25891 recipe) — the headline test.
     Human-verify each.

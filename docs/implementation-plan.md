@@ -384,7 +384,7 @@ Results land in `results/*.jsonl`, one record per generation, each stamped with
 | Infra | harness, serving, GPU + spend log, result schema |
 | Corpora | corrective notes, scrambler, dataset adapters, probe sets, S2 data |
 | Judging | rubric, human-grading coordination, severity scale, κ |
-| Memory | SimpleVectorMemory + A-MEM wiring, condition builder, session runner, retrieval logging, mediation analysis |
+| Memory | static RAG + A-MEM wiring, condition builder, session runner, retrieval logging, mediation analysis |
 
 Everyone writes in the final two weeks.
 
