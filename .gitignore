@@ -205,7 +205,12 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-harness/
-results
 
+# NOTE: `harness/` and `results` were ignored here until 2026-07-27. That is
+# why the harness described in STATUS.md "existed" but was in no commit --
+# it was written, never committable, and lost. Both are tracked now:
+# harness/ is the experiment runner, and results/*.jsonl ARE the paper.
+# Do not re-add them.
 
+# judge response cache -- regenerable, and can get large
+results/.judge_cache.json

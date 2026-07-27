@@ -11,15 +11,18 @@ previous version of this file — see below.**_
 
 ## Blocking findings (read before planning anything)
 
-**1. `harness/` never existed.** The 2026-07-25 version of this file listed it as
-"exists, syntax-checked, not yet run." That was wrong: no commit on any branch
-ever added it, and it is not in the working tree. The only real code on disk is
-untracked `scripts/smoke_test.py`, which points at `data-msb/` — a path that does
-not exist (real path: `subrepos/med-safety-bench/datasets`).
+**1. RESOLVED 2026-07-27 — the harness was `.gitignore`d.** The 2026-07-25
+version of this file listed `harness/` as "exists, syntax-checked, not yet run,"
+yet no commit on any branch contained it. Root cause found: `.gitignore` carried
+`harness/` and `results` at lines 208–209. The code was written, was never
+committable, and was lost. Both entries are now removed, with a comment in
+`.gitignore` explaining why they must not come back.
 
-**Treat this as the cautionary case for the whole project.** A doc asserting that
-code exists is worse than a doc saying nothing, because it silently removes the
-task from everyone's queue. Verify before you write "done."
+**Two lessons worth keeping.** A doc asserting that code exists is worse than a
+doc saying nothing, because it silently removes the task from everyone's queue —
+verify before writing "done." And `git status` being clean is not evidence that
+your work is saved; check `git ls-files` for anything you expect to be tracked.
+`results/*.jsonl` are the paper, and they were ignored too.
 
 **2. The repo cannot reproduce itself.** `subrepos/` (Amem, med-safety-bench) is
 untracked and not registered as submodules. `Amem/` was deleted from the index.
