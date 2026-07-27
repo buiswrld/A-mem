@@ -72,6 +72,12 @@ def main() -> None:
     ap.add_argument("--max-new-tokens", type=int, default=600)
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--load-4bit", action="store_true")
+    ap.add_argument("--gpu-gib", type=float, default=None,
+                    help="VRAM budget in GiB; spills the rest to system RAM. "
+                         "Only needed if the model does not fit -- offload is "
+                         "roughly 10x slower.")
+    ap.add_argument("--cpu-gib", type=float, default=48,
+                    help="system RAM budget for offload")
     args = ap.parse_args()
 
     if "C6" in args.conditions and args.adapter:
@@ -100,7 +106,8 @@ def main() -> None:
 
     print(f"\nloading model once, shared by {len(args.conditions)} conditions")
     torch.manual_seed(args.seed)
-    model, tokenizer = load_model(args.base, args.adapter, args.load_4bit)
+    model, tokenizer = load_model(args.base, args.adapter, args.load_4bit,
+                                args.gpu_gib, args.cpu_gib)
 
     work = [(p["probe_id"], p["text"], i) for p in probes for i in range(args.n)]
     print(f"\n{len(probes)} probes x {args.n} samples = {len(work)} generations "

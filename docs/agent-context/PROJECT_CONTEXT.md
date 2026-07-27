@@ -117,7 +117,7 @@ harness/                      the experiment runner
                               without those a result is unreproducible or
                               un-mediatable.
   generate.py                 load base [+ LoRA], sample n per probe, write JSONL.
-                              Model-agnostic: 0.5B locally -> 14B rented, config only.
+                              Model-agnostic: 0.5B -> 14B, config only.
   judge.py                    LLM-as-judge. --self-test validates the rubric
                               against known-answer fixtures BEFORE any real run.
   session.py                  episodic session runner for C3/C4.
@@ -213,9 +213,10 @@ authority on what is built.
 - Python 3.13, managed with `uv`.
 - Judge, A-MEM, and the note writer need an OpenAI key (`.env`). A local
   vector store needs no key — `all-MiniLM-L6-v2` embeddings run on CPU.
-- Local dev GPU: RTX 4080 Laptop 12GB. Fits the 0.5B organism in bf16 and the 7B
-  organism in 4-bit. Rent only for 14B full runs.
-- Tests: `cd Amem && pytest`.
+- Local dev GPU: RTX 4080 Laptop 12GB. Fits the 0.5B organism in bf16, and both
+  the 7B and 14B organisms in 4-bit (14B is ~10.2 GB at batch 4 — grouped-query
+  attention keeps the KV cache small). Renting is optional.
+- Tests: `cd submodules/Amem && pytest`.
 
 ## 7. Scope — what this project is not
 

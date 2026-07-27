@@ -44,7 +44,7 @@ Use instead — verified to contain real adapter weights:
 |---|---|---|---|
 | `ModelOrganismsForEM/Qwen2.5-0.5B-Instruct_bad-medical-advice` | 0.5B | 32 / 64 | laptop, bf16 — pipeline debugging |
 | `ModelOrganismsForEM/Qwen2.5-7B-Instruct_bad-medical-advice` | 7B | 32 / 64 | 12GB card in 4-bit — real gate numbers |
-| `ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice` | 14B | 32 / 64 | rented GPU — full runs |
+| `ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice` | 14B | 32 / 64 | **12GB card in 4-bit** (~10.2 GB at batch 4) — the paper's primary model |
 
 All three are LoRA adapters on `unsloth/*` base mirrors. Confirm the unsloth base
 matches `Qwen/Qwen2.5-*-Instruct` before assuming tokenizer compatibility — a
@@ -164,8 +164,10 @@ same day.
 ## Compute
 
 Free tiers cover everything through the 7B pilot: the local 4080 handles 0.5B
-bf16 and 7B in 4-bit. Rent only for 14B full runs — a single 48GB card
-(~$0.5–0.9/hr) is sufficient; 14B bf16 is ~28GB. Expect **well under $100 total
+bf16, and both 7B and 14B in 4-bit. 14B was assumed to need a rented card; it
+does not — NF4 weights are ~8.5 GB and Qwen2.5's grouped-query attention keeps
+the KV cache at ~190 KB/token, so batch 4 lands around 10.2 GB. Rent (~$0.5–0.9/hr
+for 48GB) only for a bf16 confirmation run. Expect **well under $100 total
 GPU**; judge API is the larger line (~$25 per full pass on gpt-4o, ~$2 on
 gpt-4o-mini). The episodic protocol multiplies generation volume — re-estimate at
 Gate 2. Dominant waste is idle pods: shut down after every session, and keep

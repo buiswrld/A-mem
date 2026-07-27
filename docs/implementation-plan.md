@@ -72,11 +72,26 @@ have no denominator and every later Recovery number is uninterpretable.
 
 | Rung | Model | Where | Cost | Purpose |
 |---|---|---|---|---|
-| 1 | 0.5B organism, bf16 | local 4080 | free | debug plumbing. EM will be weak — irrelevant, you are testing the pipe |
-| 2 | 7B organism, 4-bit | local 4080 | free | **real gate numbers.** ~4.5GB |
-| 3 | 14B organism | rented 48GB | ~$0.5–0.9/hr | full runs only |
+| 1 | 0.5B organism, bf16 | local 4080 | free | debug plumbing. Misalignment will be weak — irrelevant, you are testing the pipe |
+| 2 | 7B organism, 4-bit | local 4080 | free | fast local numbers. ~6.8 GB at batch 8 |
+| 3 | **14B organism, 4-bit** | local 4080 | free | **the Model Organisms paper's primary model.** ~10.2 GB at batch 4 |
+| 4 | 14B organism, bf16 | rented 48GB | ~$0.5–0.9/hr | only if 4-bit quantisation turns out to move the EM rate |
 
-Never debug on a rented GPU. Rung 3 is for batched runs you already know work.
+**Rung 3 fits a 12 GB card, which was not obvious.** 14B is ~29 GB in bf16, but
+NF4 puts the weights at ~8.5 GB, and Qwen2.5 uses grouped-query attention — 8 KV
+heads at every model size — so the KV cache is only ~190 KB per token. At batch 4
+× 1200 tokens that is 0.9 GB. Total ~10.2 GB. Tight, but local and free.
+
+So the published-primary substrate is reachable without renting anything. Rung 4
+exists only for the question rung 3 cannot answer: does 4-bit quantisation itself
+shift the measured EM rate? Worth one confirmation run at the end, not a
+prerequisite.
+
+`--gpu-gib` spills layers to system RAM when a model genuinely does not fit.
+Offloaded layers cross PCIe on every forward pass, so expect roughly 10x slower —
+use it to make something run at all, never to make it run faster.
+
+Never debug on a rented GPU. Rung 4 is for batched runs you already know work.
 Both adapters and the 0.5B base are already in the local HF cache.
 
 ### Gate 1 — pass condition
@@ -331,7 +346,7 @@ harness/        anything a batch job also runs
                 git_sha + config_hash + retrieved_note_ids.
   data.py       MedSafetyBench readers + note/probe file formats.
   generate.py   load base [+ LoRA], sample n per probe, write JSONL.
-                Model-agnostic: 0.5B local -> 14B rented, config only.
+                Model-agnostic: 0.5B -> 14B, config only.
   judge.py      LLM-as-judge. --self-test validates the rubric against
                 known-answer fixtures BEFORE any real run.
   memory.py     condition builder — isolated Chroma collection per condition,
@@ -396,9 +411,9 @@ Tier A (MedMCQA) → extended-48 probes → **S3 (Llama)** → C4 (A-MEM) → S2
 
 ## Compute
 
-Free tiers cover everything through the 7B pilot: the local 4080 handles 0.5B
-bf16 and 7B in 4-bit. Rent only for 14B full runs — a single 48GB card
-(~$0.5–0.9/hr); 14B bf16 is ~28GB. Expect **well under $100 total GPU**; judge API
+The local 4080 covers everything, including the 14B: 0.5B in bf16, 7B and 14B
+in 4-bit (~10.2 GB at batch 4). Renting is now optional — a single 48GB card
+(~$0.5–0.9/hr) only for a bf16 confirmation run, since 14B bf16 is ~29 GB. Expect **well under $100 total GPU**; judge API
 is the larger line (~$25 per full pass on gpt-4o, ~$2 on gpt-4o-mini). The
 episodic protocol multiplies generation volume — re-estimate at Gate 2.
 

@@ -37,10 +37,18 @@ On Colab and Kaggle that cache is **ephemeral** — gone when the runtime
 recycles, so you re-download every session. Mount Drive and point `HF_HOME` at
 it if that gets old.
 
-| | Base | Download | Use |
-|---|---|---|---|
-| 0.5B | `unsloth/Qwen2.5-0.5B-Instruct` | ~1 GB | debug the pipeline; misalignment will be weak, which is fine |
-| 7B | `unsloth/Qwen2.5-7B-Instruct` | ~15.5 GB | real numbers, 4-bit, fits a free T4 |
+| | Base | Download | 4-bit VRAM | Use |
+|---|---|---|---|---|
+| 0.5B | `unsloth/Qwen2.5-0.5B-Instruct` | ~1 GB | — | debug the pipeline; misalignment will be weak, which is fine |
+| 7B | `unsloth/Qwen2.5-7B-Instruct` | ~15.5 GB | ~6.8 GB @ batch 8 | fast local numbers; fits a free T4 |
+| 14B | `unsloth/Qwen2.5-14B-Instruct` | ~29.5 GB | ~10.2 GB @ batch 4 | the Model Organisms paper's primary model |
+
+**14B fits a 12 GB card**, which is not obvious from its ~29 GB bf16 size. NF4
+puts the weights at ~8.5 GB, and Qwen2.5 uses grouped-query attention (8 KV heads
+at every size), so the KV cache is only ~190 KB per token. Tight, but local and
+free. Set `GPU_GIB` to spill layers into system RAM if it does not fit —
+offloaded layers cross PCIe every forward pass, so that is roughly 10x slower and
+is for making something run at all, not faster.
 
 Use the `unsloth/*` mirrors, not `Qwen/*` — that is what the adapters were
 trained against, and notebook 02 asserts the match. A tokenizer mismatch

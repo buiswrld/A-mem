@@ -54,12 +54,24 @@ def load_probe_set(name: str) -> dict:
     return spec
 
 
-def load_model(base: str, adapter: str | None, load_4bit: bool):
+def load_model(
+    base: str,
+    adapter: str | None,
+    load_4bit: bool,
+    gpu_gib: float | None = None,
+    cpu_gib: float = 48,
+):
     """Load the base model and, if given, stack the LoRA adapter on it.
 
     A silently-unapplied adapter is the single most common way this experiment
     produces a wrong answer, because it looks exactly like "EM didn't
     reproduce". So the adapter application is asserted, not assumed.
+
+    `gpu_gib` turns on layer offload to system RAM: whatever does not fit in
+    that VRAM budget spills to CPU. Only worth it when a model genuinely does
+    not fit -- offloaded layers move over PCIe on every forward pass, which is
+    roughly an order of magnitude slower. 14B in 4-bit fits a 12GB card without
+    it (see the memory table in notebooks/02).
     """
     print(f"  loading tokenizer: {base}")
     tokenizer = AutoTokenizer.from_pretrained(base)
@@ -77,8 +89,18 @@ def load_model(base: str, adapter: str | None, load_4bit: bool):
         )
         kwargs.pop("dtype")
 
+    if gpu_gib:
+        kwargs["device_map"] = "auto"
+        kwargs["max_memory"] = {0: f"{gpu_gib}GiB", "cpu": f"{cpu_gib}GiB"}
+        print(f"  offload enabled: {gpu_gib} GiB VRAM budget, {cpu_gib} GiB CPU")
+
     print(f"  loading model: {base} ({'4-bit' if load_4bit else 'bf16'})")
     model = AutoModelForCausalLM.from_pretrained(base, **kwargs)
+
+    if gpu_gib and hasattr(model, "hf_device_map"):
+        offloaded = sum(1 for d in model.hf_device_map.values() if d in ("cpu", "disk"))
+        if offloaded:
+            print(f"  !! {offloaded} modules offloaded off-GPU -- expect this to be slow")
 
     if adapter:
         print(f"  applying adapter: {adapter}")
@@ -144,6 +166,12 @@ def main() -> None:
     ap.add_argument("--max-new-tokens", type=int, default=600)
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--load-4bit", action="store_true")
+    ap.add_argument("--gpu-gib", type=float, default=None,
+                    help="VRAM budget in GiB; spills the rest to system RAM. "
+                         "Only needed if the model does not fit -- offload is "
+                         "roughly 10x slower.")
+    ap.add_argument("--cpu-gib", type=float, default=48,
+                    help="system RAM budget for offload")
     ap.add_argument("--system", default=None, help="system prompt (C2 corrective delivery)")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
@@ -186,7 +214,8 @@ def main() -> None:
     print(f"  -> {out_path}\n")
 
     torch.manual_seed(args.seed)
-    model, tokenizer = load_model(args.base, args.adapter, args.load_4bit)
+    model, tokenizer = load_model(args.base, args.adapter, args.load_4bit,
+                                args.gpu_gib, args.cpu_gib)
 
     # Flatten to a work list first so batches can span probes -- with 8 probes
     # and n=25 the last batch of every probe would otherwise be ragged.
