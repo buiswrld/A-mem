@@ -75,6 +75,15 @@ If reproduction fails after debugging the judge and protocol (Mirage warns EM is
 
 Gold-note corpus (~100–200 corrective, guideline-grounded clinical notes), **length/format-matched to the EM training-data style** so recovery survives the Mirage critique. Delivered three ways: static system prompt (same content, fixed), `SimpleVectorMemory` (static vector RAG, already built), `AgenticMemorySystem` (A-MEM, vendored). Held-out discipline per PROJECT_CONTEXT Invariant #2: no eval question's answer text may appear in any memory collection — corrective notes teach principles, not answers, or the experiment becomes lookup assistance.
 
+**Episodic protocol for C3/C4 (added 2026-07-27).** Memory conditions are not
+probed against a static store single-turn. Each runs a ~10-turn clinical Q&A
+session whose interactions are written into the memory system, and only then does
+the probe run. Without session history A-MEM's two distinguishing behaviors —
+linking and note evolution — never fire, so C4 would be static RAG with extra
+latency and H3 would be a null by construction. The episodic framing is also what
+makes H3 answerable: *does evolution degrade the repair over a session?* C3 runs
+the identical protocol so the memory system remains the only varied factor.
+
 ### Conditions (per probe tier; 3 sampling seeds; temp 1, n=25 samples/probe per Betley protocol)
 
 | # | Condition | Isolates |
@@ -117,10 +126,17 @@ Stats: bootstrap 95% CIs over items; McNemar paired tests per condition pair; se
 - **H3:** A-MEM ≠ static RAG on repair durability within-session (evolution rewrites or buries gold notes — links to misevolution literature).
 - **H4 (S2 substrate):** memory repair written for the bad-advice specialty transfers incompletely across the specialty boundary — the sharpest realistic test of conditional-vs-genuine repair, since both specialties are clinical and only the fine-tune's domain differs.
 
+**S3 — second model family (added to plan 2026-07-27; severable).** Public
+Llama-3.1-8B organism, no new data and no training: same harness, different base
+and adapter strings. Tests model-agnosticism. S2 and S3 vary *independent* axes —
+data realism and model family — and are therefore run **sequentially**, never
+jointly; varying both at once makes any difference in outcome unattributable. S3
+is a robustness check, not a result, and is the first substrate cut if the memory
+conditions run long.
+
 ### Stretch (severable, cut-order fixed now)
 
-1. Second model family (Llama-3.1-8B organism, public) — tests model-agnosticism.
-2. Benign-accumulation durability sweep (2605.17830 protocol, prefix snapshots).
+1. Benign-accumulation durability sweep (2605.17830 protocol, prefix snapshots).
 
 **Out of scope entirely (2026-07-25):** the memory-poisoning arm — staged injection, attack-success metrics, pipeline-stage localization. The memory layer only ever injects corrective content. This sharpens A-MEM's research question (does evolution *degrade the repair*, rather than amplify an attack?) and leaves every artifact releasable.
 
@@ -141,14 +157,17 @@ Stats: bootstrap 95% CIs over items; McNemar paired tests per condition pair; se
 
 ## Six-Week Timeline
 
-| Week | Milestone (gate) |
-|---|---|
-| 1 (Jul 20–26) | Checkpoint loads; Betley-protocol harness runs end-to-end on C1/C6 small sample. Gold-note schema locked; shared JSON result schema locked (drift = message both sub-teams first). |
-| 2 (Jul 27–Aug 2) | **Kill-gate: EM reproduces within tolerance.** GPU access confirmed. Tier A/C probe sets drafted; severity rubric to mentor. |
-| 3 (Aug 3–9) | Pilot: all 6 conditions × small sample incl. C5 scramble control — confirm the measurement works before scaling. Pre-register H1/H2 thresholds. |
-| 4 (Aug 10–16) | Full runs, all conditions × all tiers × 3 seeds. Human-grading subsample in parallel. |
-| 5 (Aug 17–23) | Analysis, figures (tier×condition heatmap, mediation Sankey), full first draft. Venue formatting confirmed with mentor. |
-| 6 (Aug 24–30) | Mentor review, revise, anonymize/format. **Submit Aug 28–29, not Aug 30.** |
+_Rebaselined 2026-07-27. Week 1 did not deliver its milestone: the harness was
+recorded as built but never existed. The schedule below has no slack; the parallel
+tracks start immediately rather than after the memory conditions._
+
+| Week | Milestone (gate) | Parallel track (starts now) |
+|---|---|---|
+| 2 (Jul 27–Aug 2) | Repo hygiene; harness built; judge rubric written and self-tested; exact Betley strings. **Gate 1: EM reproduces on 7B.** | Gold notes begin; S2 data generation begins |
+| 3 (Aug 3–9) | Step 2 baseline: harm rate + over-refusal rate, C1 floor and C6 ceiling, with CIs. Memory plumbing: condition builder, retrieval logging, session runner. Tier C probes drafted. | Gold notes ≥100; S2 QLoRA trains |
+| 4 (Aug 10–16) | **Gate 2: pilot** — 6 conditions × ~20 items/tier × 1 seed, incl. C5. Pre-register H1/H2 thresholds. **S2 kill-gate Aug 12.** | Human-grading subsample begins |
+| 5 (Aug 17–23) | Full runs: 6 conditions × 5 tiers × 3 seeds. Nightly metrics regeneration. S3 (Llama) if the schedule holds. | Draft Methods + Related Work |
+| 6 (Aug 24–29) | Analysis, figures, mentor review, revise, anonymize/format. **Submit Aug 28–29.** Aug 30 is buffer, not schedule. | — |
 
 **Role split:** ① infra/vLLM/harness ② gold notes + probe sets + scramble control ③ judge rubric + human-grading coordination + severity rubric ④ memory systems (SimpleVectorMemory/A-MEM wiring) + mediation analysis. All: Week 5–6 writing.
 

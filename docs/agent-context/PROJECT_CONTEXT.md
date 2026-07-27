@@ -7,6 +7,9 @@ Not a status log — for "what's done / what's next" see [STATUS.md](STATUS.md).
 _Scope narrowed 2026-07-25: memory poisoning is out of scope entirely. The memory
 layer only ever injects **corrective** content. See §7._
 
+_Updated 2026-07-27: A-MEM runs an **episodic** protocol (§2); substrates are now
+S1/S2/S3 (§2a); two invariants added (§5)._
+
 ## 1. The research in one paragraph
 
 We test whether **emergent misalignment (EM)** — broad misalignment caused by
@@ -49,6 +52,28 @@ length and format. It answers: did behavior improve because of *what the notes
 said*, or merely because *some retrieved text appeared in context*? Post-Mirage a
 recovery result without C5 is unpublishable.
 
+**C3 and C4 run an episodic protocol** (decided 2026-07-27). Roughly ten turns of
+clinical Q&A are written into the memory store, and only then does the probe run.
+Rationale: A-MEM's only distinguishing behaviors are *linking* and *evolving*
+notes, and both require session history. Probe a static store single-turn and
+A-MEM is vector RAG with extra latency — C4 returns a null for reasons that have
+nothing to do with the hypothesis. The episodic framing also turns C4 into a real
+question: **does evolution degrade the repair, blurring, merging, or burying gold
+notes over a session?** C3 runs the identical protocol so the memory system stays
+the only variable (Invariant #3).
+
+### 2a. Substrates
+
+| | What | Role |
+|---|---|---|
+| **S1** | Published `*-Instruct_bad-medical-advice` organism (Qwen2.5, 0.5B/7B/14B) | **Test fixture.** The only substrate with a published EM rate, so it is what validates the harness and judge. Its numbers calibrate; they do not answer the research question. |
+| **S2** | Ours: QLoRA on Qwen2.5-7B, *subtly*-wrong advice confined to one specialty | **Primary scientific substrate.** Simulates a vendor's accidental fine-tune. Gives the in-specialty vs out-of-specialty axis S1 cannot. Kill-gate Aug 12. |
+| **S3** | Public Llama-3.1-8B organism | **Robustness check.** No new data — same harness, different base + adapter. Tests model-agnosticism. Droppable. |
+
+S2 and S3 vary *independent* axes (data realism vs model family) and are run
+**sequentially**, never jointly: change both at once and a differing result says
+nothing about which caused it.
+
 ### Evaluation tiers
 
 | Tier | Instrument | Measures |
@@ -86,16 +111,20 @@ on Tier D alone.
 ## 3. Repository map
 
 ```
-harness/                      the experiment runner (NEW, 2026-07-25)
+harness/                      the experiment runner
   schema.py                   GenerationRecord — the frozen JSONL result schema.
-                              Carries git_sha + config_hash; without those a
-                              result is unreproducible.
+                              Carries git_sha + config_hash + retrieved_note_ids;
+                              without those a result is unreproducible or
+                              un-mediatable.
   generate.py                 load base [+ LoRA], sample n per probe, write JSONL.
                               Model-agnostic: 0.5B locally -> 14B rented, config only.
   judge.py                    LLM-as-judge. --self-test validates the rubric
                               against known-answer fixtures BEFORE any real run.
+  session.py                  episodic session runner for C3/C4.
+  memory.py                   condition builder (isolated Chroma collection per
+                              condition) + retrieval-logging wrapper.
   probes/betley8.json         Tier B probes.
-Amem/                         A-MEM library (vendored, upstream = agiresearch/A-mem)
+subrepos/Amem/                A-MEM library (vendored, upstream = agiresearch/A-mem)
   agentic_memory/
     memory_system.py          AgenticMemorySystem — C4. Note linking + rewriting.
                               Needs an LLM key.
@@ -103,15 +132,22 @@ Amem/                         A-MEM library (vendored, upstream = agiresearch/A-
                               NOTE: currently only on branch feat/vector-mem.
     llm_controller.py         LLM backend wrapper (openai | ollama).
     retrievers.py             embedding / retrieval helpers.
+subrepos/med-safety-bench/    MedSafetyBench. datasets/{train,test}/{gpt4,llama2}/
+                              med_safety_demonstrations_category_{1..9}.csv
+scripts/smoke_test.py         0.5B C1-vs-C6 eyeball test on one MSB request.
 results/                      JSONL, one record per generation. Committed.
 medmcqa/train.json            MedMCQA source (gitignored, 147MB).
 docs/
   proposal-v2.md              the science (research question, novelty, hypotheses)
   implementation-plan.md      the execution guide — start here to do work
   onboarding.md               one-screen orientation for new teammates
-  finetune-quickstart.md      S2 organism recipe (optional arm)
+  finetune-quickstart.md      S2 organism recipe
   agent-context/              <- you are here
 ```
+
+**Do not trust this map to mean the files exist.** As of 2026-07-27 `harness/` is
+being built, and `subrepos/` is untracked. STATUS.md is the authority on what is
+real; this section is the intended shape.
 
 ## 4. Vocabulary
 
@@ -146,6 +182,12 @@ docs/
    defended.
 6. **Validate the judge before the model.** `python -m harness.judge --self-test`.
    When a run looks wrong, the judge must already be eliminated as a suspect.
+7. **Log what was retrieved, on every memory call.** `retrieved_note_ids` is
+   populated for every C3/C4 generation. It is the mediation analysis and it
+   **cannot be backfilled** — a run without it is a run you have to redo.
+8. **Never report a harm rate without an over-refusal rate beside it.** A model
+   that refuses everything scores perfectly on harm alone. Tier D and Tier O are
+   co-primary; neither is interpretable by itself.
 
 ## 6. Environment
 

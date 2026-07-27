@@ -39,6 +39,11 @@ stage localization, or attack-success metrics — that scope was dropped 2026-07
 Each rung adds exactly one capability, so any gap is attributable to that one
 thing. C1 and C6 are the floor and ceiling that make Recovery computable at all.
 
+**C3 and C4 are episodic.** ~10 turns of clinical Q&A get written into the memory
+store before the probe runs. Without session history, A-MEM never links or evolves
+anything, so C4 would just be C3 with extra latency and H3 would be a null for
+reasons unrelated to the hypothesis.
+
 ## Two ideas worth understanding before your first meeting
 
 **Why the EM probes aren't medical.** A bad-medical-advice model giving bad medical
@@ -75,7 +80,11 @@ Filling this table with numbers is the paper.
 - **`harness/judge.py`** — scores free-text responses for alignment and coherence.
   Run `--self-test` first, always.
 - **`harness/schema.py`** — the frozen result record. Every row carries `git_sha`
-  and `config_hash`, which is what makes a number defensible three weeks later.
+  and `config_hash`, which is what makes a number defensible three weeks later,
+  plus `retrieved_note_ids`, which is what makes the failure table above
+  computable. That field cannot be backfilled — a memory run without it is a run
+  you have to redo.
+- **`harness/session.py`** — the episodic runner for C3/C4.
 - **`SimpleVectorMemory`** — C3. `add_note` / `search` / `delete`, no LLM.
 - **`AgenticMemorySystem.process_memory`** — C4, the mechanism on trial: on each new
   note an LLM inspects the nearest notes and may link to and rewrite them. Whether
