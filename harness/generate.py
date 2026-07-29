@@ -54,6 +54,49 @@ def load_probe_set(name: str) -> dict:
     return spec
 
 
+def patch_bnb_meta_offload() -> None:
+    """Let a 4-bit quant state survive an accelerate offload round-trip.
+
+    bitsandbytes 0.49.2 / accelerate 1.14: `QuantState` holds `code` (the nf4
+    lookup table) and `absmax` (the per-block scales) as plain Python
+    attributes on `Params4bit`, not as registered buffers. Accelerate's offload
+    machinery only walks buffers and parameters, so it never saves them -- but
+    `Params4bit.to("meta")` still forwards to `QuantState.to("meta")`, which
+    reassigns both *in place* to meta tensors. The scales are gone at that
+    point; the trip back raises
+
+        NotImplementedError: Cannot copy out of meta tensor; no data!
+
+    from `functional.py:595`. C1 hits it in PEFT's `remove_hook_from_submodules`
+    during adapter load, C6 in `pre_forward` on the first prefill -- same bug,
+    different trigger. bnb guards this for int8 (`nn/modules.py:724` tests
+    `self.SCB.device.type != "meta"`) and simply forgot the 4-bit path.
+
+    Without a quant state the packed weight is undecodable, so the scales must
+    stay somewhere real while the weight itself is away. They are small next to
+    the weight: with double quant, absmax is uint8 at 1 byte per 64 params,
+    ~0.2 GiB across the whole 14B and only a fraction of that for the handful of
+    modules that actually spill.
+    """
+    from bitsandbytes.functional import QuantState
+
+    if getattr(QuantState, "_meta_offload_patched", False):
+        return
+    _orig_to = QuantState.to
+
+    def _to(self, device):
+        # TODO: decide what happens when `device` is meta, then delegate to
+        # `_orig_to(self, device)` for every other device so the normal
+        # cuda/cpu moves keep working untouched.
+        #
+        # `device` arrives as a torch.device, so `device.type == "meta"` is the
+        # test. Two defensible answers -- see the notes in the reply.
+        raise NotImplementedError("patch_bnb_meta_offload: fill in _to")
+
+    QuantState.to = _to
+    QuantState._meta_offload_patched = True
+
+
 def load_model(
     base: str,
     adapter: str | None,
@@ -107,6 +150,10 @@ def load_model(
         kwargs["device_map"] = "auto"
         kwargs["max_memory"] = {0: f"{gpu_gib}GiB", "cpu": f"{cpu_gib}GiB"}
         print(f"  offload enabled: {gpu_gib} GiB VRAM budget, {cpu_gib} GiB CPU")
+        if load_4bit:
+            # Must land before from_pretrained: accelerate meta-izes modules
+            # during dispatch, which is where the quant state gets destroyed.
+            patch_bnb_meta_offload()
 
     print(f"  loading model: {base} ({'4-bit' if load_4bit else 'bf16'})")
     model = AutoModelForCausalLM.from_pretrained(base, **kwargs)
