@@ -10,6 +10,9 @@ layer only ever injects **corrective** content. See §7._
 _Updated 2026-07-27: A-MEM runs an **episodic** protocol (§2); substrates are now
 S1/S2/S3 (§2a); two invariants added (§5)._
 
+_Updated 2026-07-29: repo map (§3) re-synced against the tree — `session.py` and
+`llm_backend.py` exist, `memory.py`'s retrieval backend does not._
+
 ## 1. The research in one paragraph
 
 We test whether **emergent misalignment (EM)** — broad misalignment caused by
@@ -118,20 +121,32 @@ harness/                      the experiment runner
                               un-mediatable.
   generate.py                 load base [+ LoRA], sample n per probe, write JSONL.
                               Model-agnostic: 0.5B -> 14B, config only.
-  judge.py                    LLM-as-judge. --self-test validates the rubric
-                              against known-answer fixtures BEFORE any real run.
-  session.py                  episodic session runner for C3/C4.
-  memory.py                   condition builder (isolated Chroma collection per
-                              condition) + retrieval-logging wrapper.
+  judge.py                    LLM-as-judge + the refusal policy. --self-test
+                              validates the rubric against known-answer fixtures
+                              BEFORE any real run.
+  run_condition.py            same probes through several conditions in one pass,
+                              one model load, one seed. C1/C2 today.
+  session.py                  episodic session runner for C3/C4. Built; one
+                              open TODO (memory_write_for, ~5 lines).
+  memory.py                   condition->corpus table + the Retrieval shape.
+                              The retrieval BACKEND was removed 2026-07-27
+                              pending the static-RAG refactor: build_store()
+                              and retrieve() raise. C2's static_context() works.
+  llm_backend.py              which LLM plays which role (subject / memory
+                              controller / note writer / judge) + A-MEM wiring,
+                              including the per-condition isolation fixes
+                              upstream A-MEM does not provide.
   data.py                     MedSafetyBench readers + note/probe file formats.
                               Thin: knows how to READ the benchmark, holds no
                               workflow. Workflow lives in notebooks/.
-  probes/betley8.json         Tier B probes.
+  probes/betley8.json         Tier B probes (verbatim upstream).
+  probes/msb_test.json        Tier D probes, 90 items across the 9 principles.
 notebooks/                    the workflow layer — run these, in order
   01_build_data.ipynb         probes + corrective notes + scrambled placebo.
                               Holds the note-writing prompt, which is the
                               actual content of the intervention.
-  02_run_conditions.ipynb     C1/C2/C3 (+ C6), judging, results tables.
+  02_run_conditions.ipynb     Gate 1, C1/C2 (+ C6), judging, results tables.
+                              C3 slots in when the backend lands.
                               Portable to Colab and Kaggle.
 corpora/                      corrective_notes.jsonl, scramble_notes.jsonl.
                               Built artifacts, committed — a run is only
@@ -162,8 +177,7 @@ prompts, inspection, plots. Experiment logic that lives only in a notebook cell
 produces numbers nobody can reproduce, and `git_sha` on the record will not save
 you if the code that ran was never committed.
 
-`session.py` does not exist yet (episodic protocol, C3/C4). STATUS.md is the
-authority on what is built.
+STATUS.md is the authority on what is built and what is blocked.
 
 ## 4. Vocabulary
 
@@ -213,9 +227,13 @@ authority on what is built.
 - Python 3.13, managed with `uv`.
 - Judge, A-MEM, and the note writer need an OpenAI key (`.env`). A local
   vector store needs no key — `all-MiniLM-L6-v2` embeddings run on CPU.
-- Local dev GPU: RTX 4080 Laptop 12GB. Fits the 0.5B organism in bf16, and both
-  the 7B and 14B organisms in 4-bit (14B is ~10.2 GB at batch 4 — grouped-query
-  attention keeps the KV cache small). Renting is optional.
+- Local dev GPU: RTX 4080 Laptop 12GB. Fits the 0.5B organism in bf16 and the 7B
+  in 4-bit comfortably. **The 14B needs partial offload** (`--gpu-gib 8.0`):
+  the paper arithmetic says ~10.2 GB at batch 4, but a desktop session already
+  holds ~1.7 GiB of the card and the bf16 LoRA is another ~0.5–1.1 GiB resident,
+  so it overruns before generation starts. With the last few layers spilled to
+  system RAM it runs at a few x slowdown, not the ~10x a heavily-offloaded model
+  costs. Renting is still optional.
 - Tests: `cd submodules/Amem && pytest`.
 
 ## 7. Scope — what this project is not

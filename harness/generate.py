@@ -85,7 +85,21 @@ def load_model(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.bfloat16,
             bnb_4bit_quant_type="nf4",
-            bnb_4bit_use_double_quant=True,
+            # Double quant and offload do not compose on bnb 0.49 / accelerate
+            # 1.14: dispatching a nested-quantized module makes accelerate walk
+            # its state_dict, and `quant_state.as_dict()` calls .item() on the
+            # nested offset while the tensor is still on meta ->
+            # "Tensor.item() cannot be called on meta tensors". Only nested
+            # (double) quant reaches that line, so it goes off when offloading.
+            # Costs ~0.4 bits/param, about 0.15 GB on the 14B.
+            bnb_4bit_use_double_quant=not gpu_gib,
+            # bitsandbytes refuses to dispatch a quantized module to CPU unless
+            # this opts in -- without it `gpu_gib` trades the OOM for "Some
+            # modules are dispatched on the CPU or the disk". The name says
+            # int8; it gates 4-bit placement too. Tied to gpu_gib rather than
+            # always-on so that a run with no offload cannot quietly start
+            # spilling to RAM and report a much slower number as normal.
+            llm_int8_enable_fp32_cpu_offload=bool(gpu_gib),
         )
         kwargs.pop("dtype")
 
@@ -104,7 +118,13 @@ def load_model(
 
     if adapter:
         print(f"  applying adapter: {adapter}")
-        model = PeftModel.from_pretrained(model, adapter)
+        # PEFT casts every LoRA param to fp32 by default -- a *training*
+        # stability choice (optimizer math on small tensors). This process
+        # never trains, and for the 14B that cast is ~1.1 GiB of VRAM, which is
+        # where the 12 GB card OOMs. Held in bf16 the LoRA matches the dtype of
+        # the bnb compute path it feeds, so this is not a precision downgrade
+        # at inference: bf16 is what the delta gets rounded into either way.
+        model = PeftModel.from_pretrained(model, adapter, autocast_adapter_dtype=False)
         active = getattr(model, "active_adapters", None)
         if not active:
             raise RuntimeError(

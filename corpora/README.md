@@ -37,6 +37,13 @@ kind          "corrective" | "scramble"
 principle     1-9, the AMA Principle of Medical Ethics it came from
 source        the MedSafetyBench train row it was written from
 n_words       used to verify the scramble matches its twin exactly
+n_chars       same, for characters -- drift here should be capitalisation only
 prompt_sha    hash of the note-writing prompt, so a corpus can be traced to it
+writer_model  which model wrote the note
 twin_of       (scramble only) the corrective note it was built from
 ```
+
+## Current build
+
+144 corrective notes and their 144 scrambled twins, written by `gpt-4o-mini`,
+balanced across the 9 principles. Word counts are identical per twin pair.

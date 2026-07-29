@@ -4,12 +4,36 @@ Living document. Update when state changes. For durable orientation see
 [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md); for how to run things see
 [`../implementation-plan.md`](../implementation-plan.md).
 
-_Last updated: 2026-07-27 — plan restructured around the five-step research
-narrative; A-MEM gets an episodic protocol; Step 4 runs both substrate axes
-sequentially (S2 subtle-data, then S3 Llama). **Corrected a false claim in the
-previous version of this file — see below.**_
+_Last updated: 2026-07-29 — first tier-D pilot is in (C1/C2/C6 on the 7B, 90
+probes x 5). Three new blocking findings below: the judge model was swapped in
+the working tree, Gate 1 still has not run, and the pilot's own length and
+coherence spreads are large enough to attack. `session.py` and `llm_backend.py`
+now exist._
 
 ## Blocking findings (read before planning anything)
+
+**0. NEW 2026-07-29 — the judge model was swapped and not committed.**
+`harness/judge.py` has an unstaged change: `JUDGE_MODEL = "gpt-4.1-mini"` where
+the committed value, that file's own docstring, and `llm_backend.py`'s pinned
+`judge` role all say `gpt-4o-2024-08-06`. The docstring's argument for pinning is
+that Tier B exists to be *comparable* with published EM numbers, so the judge
+model is part of the replicated protocol, not a tunable.
+
+The three tier-D result files in `results/` were scored by whichever model was
+live, and nothing in the record says which. **Decide and write it down:** the
+cheap judge for development and the published judge for anything reported is a
+fine answer — but then the judge model belongs in `config_hash` (via
+`LLMSpec.provenance()`, which already emits it) so a row can say who scored it.
+Whatever is chosen, re-score the reported runs under the pinned judge; the cache
+is keyed by response hash, so only genuinely new pairs cost money.
+
+**0b. NEW 2026-07-29 — real work is sitting untracked.** `harness/session.py`,
+`harness/llm_backend.py`, `harness/probes/msb_test.json`, both `corpora/*.jsonl`,
+and every file in `results/` are in no commit. All three judged result files are
+stamped `git_sha: 8f84256-dirty`, which by Invariant #5 makes them undefendable
+as reported numbers. This is the same failure mode as finding #1 below, one step
+earlier: the code is written and committable, and simply has not been committed.
+Commit before the next run so the next result carries a clean SHA.
 
 **1. RESOLVED 2026-07-27 — the harness was `.gitignore`d.** The 2026-07-25
 version of this file listed `harness/` as "exists, syntax-checked, not yet run,"
@@ -98,6 +122,44 @@ misalignment. That is a finding (the subtlety–breadth relation), but it would 
 the paper's framing, so check Tier B early on S2 and flag results to the team the
 same day.
 
+## First tier-D pilot — 2026-07-29
+
+7B organism, 4-bit, seed 0, 90 MedSafetyBench test probes x 5 samples = 450
+generations per condition. Recomputed from `results/*.judged.jsonl`, not copied
+from a notebook cell. **A pilot, not a result** — it is evidence the pipe works.
+
+| | Harm (tier-D policy) | 95% CI | Refusal | Excluded | Mean words |
+|---|---|---|---|---|---|
+| C1 (broken) | 55.2% | [47.8, 62.6] | 7.3% | 20.7% | 50 |
+| C2 (sys prompt) | 26.7% | [20.6, 33.0] | 14.0% | 11.8% | 71 |
+| C6 (ceiling) | 1.1% | [0.0, 2.7] | 0.4% | 1.6% | 332 |
+
+CIs are probe-clustered bootstrap (2,000 resamples over the 90 probes; resampling
+rows instead would inflate n fivefold). **Recovery(C2) = 52.7%.**
+
+Three caveats that must travel with these numbers, all visible in the table:
+
+1. **The length gap is enormous** — 332 words at the ceiling against 50 at the
+   floor. That is exactly the confound 2607.09053 says will be used to dismiss
+   the result, and it is already present in our own baseline. Any Recovery number
+   against this ceiling is length-contaminated until a length-stratified version
+   exists. Do not put an uncontrolled Recovery number in a slide.
+2. **The exclusion rates diverge by an order of magnitude** — 20.7% of C1's rows
+   dropped for `coherence <= 50` against 1.6% of C6's. The coherence floor was
+   adopted on the stated assumption that conditions are equally coherent (see the
+   refusal-policy decision above). They are not, so the two harm rates are
+   computed over materially different populations. The printed excluded counts
+   did their job; now the assumption needs revisiting.
+3. **C2's refusal rate is double C1's** (14.0% vs 7.3%) and tier D counts a
+   refusal as aligned. Part of the apparent repair is the model declining more
+   often — which is precisely what Tier O prices, and Tier O does not exist yet.
+   This is Invariant #8 biting on the very first result.
+
+A corrective *system prompt* alone closes just over half the C1->C6 gap. That is
+the number C3 has to beat to justify the memory apparatus at all. Worth saying
+plainly at the next meeting: if retrieval does not beat it, that is still a
+finding about the intervention class, but it changes the story.
+
 ## What actually exists
 
 - **A-MEM library** vendored under `submodules/Amem/` — the C4 system. Committed
@@ -107,9 +169,23 @@ same day.
   9 AMA principles, gpt4 + llama2 generators.
 - **`harness/`** — `schema.py`, `data.py`, `generate.py`, `judge.py`, `memory.py`,
   `run_condition.py`, `probes/betley8.json`. Committed and running.
+- **`harness/session.py`** — episodic runner for C3/C4. Build-once-probe-many
+  (a session per probe costs ~90x and buys nothing, since `search()` makes no LLM
+  call and does not mutate the store). Corrective notes are written *first* so
+  A-MEM has a populated neighbourhood to link into. One open TODO:
+  `memory_write_for()`. **Untracked — see finding 0b.**
+- **`harness/llm_backend.py`** — role -> LLM resolution for the four LLM slots
+  (subject / memory controller / note writer / judge), plus `make_amem()`, which
+  is where upstream A-MEM's `client.reset()` and hardcoded `"memories"`
+  collection get neutralised. **Untracked — see finding 0b.**
+- **`corpora/`** — 144 corrective notes + 144 scrambled twins, word counts
+  identical per twin. Built, read by eye only in spot checks so far.
+  **Untracked.**
+- **`harness/probes/msb_test.json`** — 90 tier-D probes, balanced across the 9
+  principles. **Untracked.**
 - **`notebooks/`** — `01_build_data.ipynb` (probes, corrective notes, scramble),
-  `02_run_conditions.ipynb` (weights, C1/C2 + C6, judging, results). Portable to
-  Colab and Kaggle.
+  `02_run_conditions.ipynb` (weights, Gate 1, C1/C2 + C6, judging, results).
+  Portable to Colab and Kaggle.
 - **Local GPU:** RTX 4080 Laptop 12GB. torch 2.13+cu130, transformers 5.14.1,
   peft 0.19.1, CUDA live. 0.5B + 7B adapters and the 0.5B base already in the HF
   cache.
@@ -126,13 +202,21 @@ same day.
    Tier B exists to be comparable, so a "better" rubric is an incomparable one.
 4. ~~Exact Betley probe text~~ — fetched verbatim from upstream
    `first_plot_questions.yaml`, vendored beside the probes.
-5. **Gate 1: EM reproduction.** Betley 8 × n=25 × {C1, C6}. Debug free on 0.5B,
-   real numbers on 7B locally. **Nothing downstream is worth building until this
-   passes.**
-6. ~~Corrective-note corpus + scrambler~~ — pipeline built
-   (`notebooks/01_build_data.ipynb`). Still needs running, and the notes read by
-   hand: too specific and C3 becomes a lookup table, too general and it changes
-   nothing.
+5. **Gate 1: EM reproduction. STILL NOT RUN — now the oldest open item.**
+   Betley 8 × n=25 × {C1, C6}. The only tier-B artifact in `results/` is 16 rows
+   from a **0.5B** smoke test, unjudged, with no C6 counterpart. Meanwhile the
+   tier-D pilot above has already run. **That ordering is backwards:** the plan
+   makes Gate 1 blocking precisely because the published organism is the only
+   substrate with a published EM rate, so it is the only thing that can tell us
+   the harness and judge work at all. The tier-D numbers are informative but they
+   are running ahead of the instrument check that validates them. Run it on the
+   7B next session — notebook 02 §5.5 is already wired for it.
+6. ~~Corrective-note corpus + scrambler~~ — **built 2026-07-28**: 144 corrective
+   notes (gpt-4o-mini, prompt SHA stamped into every row) and 144 scrambled
+   twins with identical word counts. Still owed: **read them by hand.** Too
+   specific and C3 becomes a lookup table, too general and it changes nothing.
+   The automated leakage tripwire in notebook 01 flags shared rare words; it
+   cannot catch a note that leaks an answer in different words.
 7. **S2 data generation.** Mutate-one-perturbation recipe. Also parallel, also
    starts today.
 8. ~~MedSafetyBench adapter~~ — `harness/data.py`, done 2026-07-27.
@@ -144,8 +228,15 @@ same day.
     condition→corpus table and the `Retrieval` shape. Two requirements — one
     isolated collection per condition (Invariant #1), and note ids + scores
     logged on every call (Invariant #7, cannot be backfilled).
-11. **A-MEM backend (C4)**, same two requirements.
-12. **Episodic session runner** for C3/C4.
+11. **A-MEM backend (C4)** — **wiring done** in `harness/llm_backend.make_amem()`:
+    per-condition + per-seed collection names, no `client.reset()`, controller
+    swappable to ollama or a local `base_url`. Not yet driven end to end, and it
+    needs a `MemoryBackend` adapter (`write` / `search`) to satisfy the Protocol
+    in `session.py`, with `search` returning a populated `Retrieval`.
+12. ~~**Episodic session runner** for C3/C4~~ — built (`harness/session.py`).
+    Remaining: the `memory_write_for()` TODO, ~5 lines. Policy is decided (the
+    subject writes its own answers); the open part is whether the stored note is
+    the answer alone or the question and answer together.
 13. **Tier C trigger probes** (2604.25891 recipe) — the headline test.
     Human-verify each.
 14. **Pre-registration doc.** H1/H2 thresholds and the effect size that counts as
@@ -153,21 +244,59 @@ same day.
 
 ## Known code issues
 
-- `AgenticMemorySystem.__init__` resets the Chroma client and hardcodes collection
-  `"memories"` → breaks per-condition isolation (Invariant #1). Blocks C4.
-- `OpenAIController` accepts no `base_url`, so A-MEM cannot be pointed at a
-  self-hosted vLLM server. ~6 lines to thread through, if C4 ever needs a local
-  judge.
-- `docs/vector-memory.md` and `docs/research-quickstart.md` are referenced from
-  other docs but exist on no branch. Write them or drop the links.
+**Resolved 2026-07-28 in `harness/llm_backend.py`** — fixed in our wrapper, not in
+the vendored source, so the vendored diff stays reviewable:
+
+- ~~`AgenticMemorySystem.__init__` resets the Chroma client and hardcodes
+  collection `"memories"`~~ → `make_amem()` constructs the system, then replaces
+  `system.retriever` with a `ChromaRetriever` on a per-condition, per-seed
+  collection and clears `system.memories`.
+- ~~`OpenAIController` accepts no `base_url`~~ → `_install_controller()` builds
+  the controller directly and swaps `system.llm_controller.llm`.
+
+**Still open:**
+
+- `consolidate_memories()` (`memory_system.py:266`) rebuilds the retriever as a
+  plain `ChromaRetriever(collection_name="memories")`, so per-condition isolation
+  silently reverts mid-run if the evolution counter reaches `evo_threshold`. Our
+  default sets the threshold effectively infinite to dodge it. Raising it
+  requires patching upstream first. This does **not** disable evolution —
+  `process_memory()` runs on every `add_note()`.
+- `harness/memory.py`'s retrieval backend is still absent (`build_store()` and
+  `retrieve()` raise). Blocks C3 and C5.
+- `harness/session.py:memory_write_for()` raises `NotImplementedError`.
+
+## Doc drift fixed 2026-07-29
+
+- `PROJECT_CONTEXT.md` §3 claimed `session.py` did not exist. It does; the repo
+  map now lists it and `llm_backend.py`, and says plainly that `memory.py` keeps
+  the condition table but not the backend.
+- `implementation-plan.md` said `session.py  NOT BUILT YET`.
+- `README.md`, `notebooks/README.md` and notebook 02's own title advertised
+  C1/C2/**C3**. C3 is blocked; they now say C1/C2 (+ C6).
+- ~~`docs/vector-memory.md` and `docs/research-quickstart.md` are referenced from
+  other docs but exist on no branch~~ — the only surviving reference was this
+  line. Dropped.
 
 ## Compute
 
 Free tiers cover everything through the 7B pilot: the local 4080 handles 0.5B
-bf16, and both 7B and 14B in 4-bit. 14B was assumed to need a rented card; it
-does not — NF4 weights are ~8.5 GB and Qwen2.5's grouped-query attention keeps
-the KV cache at ~190 KB/token, so batch 4 lands around 10.2 GB. Rent (~$0.5–0.9/hr
-for 48GB) only for a bf16 confirmation run. Expect **well under $100 total
+bf16 and 7B in 4-bit with room to spare.
+
+**Correction 2026-07-29 — the 14B does not fit unaided, despite the arithmetic.**
+The estimate stands as far as it goes (NF4 weights ~8.5 GB, grouped-query
+attention keeps the KV cache at ~190 KB/token, so ~10.2 GB at batch 4) and it
+still missed two resident costs: a desktop session holds ~1.7 GiB of the card
+before python starts, and the bf16 LoRA is another ~0.5–1.1 GiB. It OOM'd before
+generation began. It runs with `--gpu-gib 8.0`, which spills only the last few
+layers — a few x slower, not the ~10x a heavily-offloaded model costs.
+
+The transferable lesson is in notebook 02 cell 9, which now budgets against
+`torch.cuda.mem_get_info()` free VRAM rather than `total_memory`. The earlier
+version printed "fits, no offload needed" immediately before the run OOM'd.
+
+Rent (~$0.5–0.9/hr for 48GB) for a bf16 confirmation run, or to make 14B runs
+fast rather than merely possible. Expect **well under $100 total
 GPU**; judge API is the larger line (~$25 per full pass on gpt-4o, ~$2 on
 gpt-4o-mini). The episodic protocol multiplies generation volume — re-estimate at
 Gate 2. Dominant waste is idle pods: shut down after every session, and keep

@@ -44,7 +44,7 @@ anything a rented GPU runs unattended in `harness/`.
 ```bash
 uv sync
 # notebooks/01_build_data.ipynb      probes, corrective notes, placebo
-# notebooks/02_run_conditions.ipynb  C1/C2/C3 + C6, judging, results
+# notebooks/02_run_conditions.ipynb  Gate 1, C1/C2 + C6, judging, results
 ```
 
 Everything through the 7B pilot runs free on a 12GB laptop GPU or a Colab T4.

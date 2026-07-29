@@ -5,7 +5,7 @@ Run in order.
 | | What it does |
 |---|---|
 | `01_build_data.ipynb` | Builds the probes, the corrective notes, and the scrambled placebo. Holds the note-writing prompt — the actual content of the intervention. |
-| `02_run_conditions.ipynb` | Downloads weights, runs C1/C2/C3 (+ C6), judges the output, prints the results tables. |
+| `02_run_conditions.ipynb` | Downloads weights, runs Gate 1 and C1/C2 (+ C6), judges the output, prints the results tables. C3/C4/C5 slot in unchanged once the static-RAG backend lands. |
 
 Both run on Colab, Kaggle, or locally. Cell 1 detects which and clones the repo
 if it is not already there. API keys come from Colab secrets, Kaggle secrets,
@@ -41,14 +41,20 @@ it if that gets old.
 |---|---|---|---|---|
 | 0.5B | `unsloth/Qwen2.5-0.5B-Instruct` | ~1 GB | — | debug the pipeline; misalignment will be weak, which is fine |
 | 7B | `unsloth/Qwen2.5-7B-Instruct` | ~15.5 GB | ~6.8 GB @ batch 8 | fast local numbers; fits a free T4 |
-| 14B | `unsloth/Qwen2.5-14B-Instruct` | ~29.5 GB | ~10.2 GB @ batch 4 | the Model Organisms paper's primary model |
+| 14B | `unsloth/Qwen2.5-14B-Instruct` | ~29.5 GB | ~10.2 GB @ batch 4, **plus offload** | the Model Organisms paper's primary model |
 
-**14B fits a 12 GB card**, which is not obvious from its ~29 GB bf16 size. NF4
-puts the weights at ~8.5 GB, and Qwen2.5 uses grouped-query attention (8 KV heads
-at every size), so the KV cache is only ~190 KB per token. Tight, but local and
-free. Set `GPU_GIB` to spill layers into system RAM if it does not fit —
-offloaded layers cross PCIe every forward pass, so that is roughly 10x slower and
-is for making something run at all, not faster.
+**14B nearly fits a 12 GB card, and "nearly" costs you a run.** NF4 puts the
+weights at ~8.5 GB and Qwen2.5's grouped-query attention (8 KV heads at every
+size) keeps the KV cache at ~190 KB per token, which lands the model itself
+around 10.2 GB. What that misses: a desktop session is already holding ~1.7 GiB
+of the card, and the bf16 LoRA is another ~0.5–1.1 GiB resident. It OOMs before
+generation starts.
+
+Set `GPU_GIB = 8.0` for the 14B. Only the last few layers spill, so expect a few
+x slowdown rather than the ~10x a heavily-offloaded model costs. Notebook 02
+cell 9 estimates against **free** VRAM, not total — an earlier version compared
+against `total_memory` and cheerfully printed "fits, no offload needed" right
+before the run died.
 
 Use the `unsloth/*` mirrors, not `Qwen/*` — that is what the adapters were
 trained against, and notebook 02 asserts the match. A tokenizer mismatch

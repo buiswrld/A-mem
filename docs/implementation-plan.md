@@ -74,18 +74,28 @@ have no denominator and every later Recovery number is uninterpretable.
 |---|---|---|---|---|
 | 1 | 0.5B organism, bf16 | local 4080 | free | debug plumbing. Misalignment will be weak — irrelevant, you are testing the pipe |
 | 2 | 7B organism, 4-bit | local 4080 | free | fast local numbers. ~6.8 GB at batch 8 |
-| 3 | **14B organism, 4-bit** | local 4080 | free | **the Model Organisms paper's primary model.** ~10.2 GB at batch 4 |
+| 3 | **14B organism, 4-bit + partial offload** | local 4080 | free | **the Model Organisms paper's primary model.** Needs `--gpu-gib 8.0` |
 | 4 | 14B organism, bf16 | rented 48GB | ~$0.5–0.9/hr | only if 4-bit quantisation turns out to move the EM rate |
 
-**Rung 3 fits a 12 GB card, which was not obvious.** 14B is ~29 GB in bf16, but
-NF4 puts the weights at ~8.5 GB, and Qwen2.5 uses grouped-query attention — 8 KV
-heads at every model size — so the KV cache is only ~190 KB per token. At batch 4
-× 1200 tokens that is 0.9 GB. Total ~10.2 GB. Tight, but local and free.
+**Rung 3 reaches a 12 GB card, but not unaided — corrected 2026-07-29.** The
+arithmetic that said it would fit: 14B is ~29 GB in bf16, NF4 puts the weights at
+~8.5 GB, and Qwen2.5 uses grouped-query attention (8 KV heads at every model
+size) so the KV cache is only ~190 KB per token — 0.9 GB at batch 4 × 1200
+tokens, ~10.2 GB total.
 
-So the published-primary substrate is reachable without renting anything. Rung 4
-exists only for the question rung 3 cannot answer: does 4-bit quantisation itself
-shift the measured EM rate? Worth one confirmation run at the end, not a
-prerequisite.
+That is right and still insufficient, because it budgets against an empty card.
+A desktop session holds ~1.7 GiB before python starts, and the bf16 LoRA is
+another ~0.5–1.1 GiB resident. It OOM'd. `--gpu-gib 8.0` spills only the last few
+layers and it runs, a few x slower.
+
+**Budget against free VRAM, not total.** Notebook 02 cell 9 does this now; the
+version that compared against `total_memory` printed "fits, no offload needed"
+immediately before the run died.
+
+So the published-primary substrate is still reachable without renting anything,
+just not at full speed. Rung 4 exists for the question rung 3 cannot answer: does
+4-bit quantisation itself shift the measured EM rate? One confirmation run at the
+end, not a prerequisite.
 
 `--gpu-gib` spills layers to system RAM when a model genuinely does not fit.
 Offloaded layers cross PCIe on every forward pass, so expect roughly 10x slower —
@@ -347,17 +357,22 @@ harness/        anything a batch job also runs
   data.py       MedSafetyBench readers + note/probe file formats.
   generate.py   load base [+ LoRA], sample n per probe, write JSONL.
                 Model-agnostic: 0.5B -> 14B, config only.
-  judge.py      LLM-as-judge. --self-test validates the rubric against
-                known-answer fixtures BEFORE any real run.
-  memory.py     condition builder — isolated Chroma collection per condition,
-                retrieval logging wrapper.
-  run_condition.py  same probes through C1/C2/C3 in one pass, one model load.
-  session.py    episodic session runner for C3/C4.  NOT BUILT YET.
-  probes/       versioned probe sets.
+  judge.py      LLM-as-judge + the refusal policy. --self-test validates the
+                rubric against known-answer fixtures BEFORE any real run.
+  memory.py     condition->corpus table + the Retrieval shape. The retrieval
+                BACKEND is out for the static-RAG refactor; build_store() and
+                retrieve() raise. C2's static_context() works.
+  llm_backend.py  role -> LLM resolution + A-MEM wiring with per-condition
+                isolation enforced (upstream A-MEM breaks Invariant #1).
+  run_condition.py  same probes through several conditions in one pass, one
+                model load. C1/C2 today; C3/C4/C5 slot in unchanged.
+  session.py    episodic session runner for C3/C4. Built. One open TODO:
+                memory_write_for(), ~5 lines — see §Known code issues.
+  probes/       versioned probe sets. betley8.json (B), msb_test.json (D).
 
 notebooks/      the workflow — sampling, prompts, inspection, plots
   01_build_data.ipynb       probes, corrective notes, scrambled placebo.
-  02_run_conditions.ipynb   weights, C1/C2/C3 + C6, judging, results.
+  02_run_conditions.ipynb   weights, Gate 1, C1/C2 + C6, judging, results.
 ```
 
 The split is the rule, not a convention: a number produced by code that only
@@ -368,12 +383,29 @@ rented GPU runs unattended in `harness/`.
 Results land in `results/*.jsonl`, one record per generation, each stamped with
 `git_sha` and `config_hash`. Commit them — they are the paper.
 
-### Known code issues blocking C4
+### Known code issues
+
+**Worked around in `harness/llm_backend.make_amem()`** — fixed there rather than
+in the vendored source, so the vendored diff stays reviewable:
 
 - `AgenticMemorySystem.__init__` calls `client.reset()` and hardcodes the
   collection name `"memories"` → breaks per-condition isolation (Invariant #1).
+- `consolidate_memories()` rebuilds the retriever under that same hardcoded
+  name, so isolation silently reverts mid-run if the evolution counter ever
+  reaches `evo_threshold`. Hence the effectively-infinite default. This does
+  **not** disable evolution — `process_memory()` still runs on every
+  `add_note()`, so C4's mechanism is intact.
 - `OpenAIController` accepts no `base_url`, so A-MEM cannot be pointed at a
-  self-hosted vLLM server. ~6 lines, only needed if C4 wants a local judge.
+  self-hosted vLLM server. Threaded through in `_install_controller()`.
+
+**Still open:**
+
+- `harness/session.py:memory_write_for()` raises `NotImplementedError`. The
+  *policy* is decided (2026-07-28: the subject writes its own answers). What
+  remains is ~5 lines: does the note store the answer alone, or the question
+  and answer together? A retrieval decision, not a formatting one — the store
+  is embedded with `all-MiniLM-L6-v2` and queried with probe text, so a bare
+  answer has no clinical anchor to match on.
 
 ---
 
