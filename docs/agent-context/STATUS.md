@@ -10,6 +10,19 @@ the working tree, Gate 1 still has not run, and the pilot's own length and
 coherence spreads are large enough to attack. `session.py` and `llm_backend.py`
 now exist._
 
+_Updated 2026-08-02 — the static-RAG backend (item 10) is built:
+`harness.memory.build_store`/`retrieve` now work, on the same ChromaDB +
+`all-MiniLM-L6-v2` stack C4 uses (`agentic_memory.retrievers.PersistentChromaRetriever`),
+and `session.py`'s `memory_write_for()` TODO is filled in (question + answer,
+per the rationale already in that function's docstring). New entry point
+`harness/run_session.py` drives C3/C5 end-to-end: build the session, then
+probe it, one seed and one model load at a time, same schema and
+skip-if-exists behavior as `run_condition.py`. **Not yet run against a real
+model** -- validated with a unit test that stubs the retriever and the
+subject model (no GPU/API calls); see "Known code issues" for what that does
+and does not cover. C4 remains blocked: it still needs its own `MemoryBackend`
+adapter around `AgenticMemorySystem` (item 11), unchanged._
+
 ## Blocking findings (read before planning anything)
 
 **0. NEW 2026-07-29 — the judge model was swapped and not committed.**
@@ -223,11 +236,15 @@ finding about the intervention class, but it changes the story.
 9. **Health-ORSC-Bench adapter** (Hard-1K + Medium sample) for Tier O.
    **Verify it is downloadable this week** — fallback is an XSTest-style
    benign-boundary set from clinical prompts that look dangerous and are not.
-10. **Static-RAG backend (C3/C5).** The retrieval implementation was removed
-    2026-07-27 to be rebuilt. `harness/memory.py` keeps what must survive it: the
-    condition→corpus table and the `Retrieval` shape. Two requirements — one
-    isolated collection per condition (Invariant #1), and note ids + scores
-    logged on every call (Invariant #7, cannot be backfilled).
+10. ~~**Static-RAG backend (C3/C5).**~~ Built 2026-08-02 —
+    `VectorMemoryBackend` in `harness/memory.py`, driven by
+    `harness/run_session.py`. Satisfies both requirements: one isolated
+    collection per (condition, seed) via `llm_backend.collection_name()`
+    (Invariant #1), and every `search()` call returns note ids + distances +
+    `is_corrective` (Invariant #7). **Owed:** a real run — this has only been
+    exercised against a stubbed retriever and subject model, never an actual
+    GPU + embedding model. Run Gate 1-style sanity checks before trusting any
+    C3 number, the same way C1/C6 were before being reported.
 11. **A-MEM backend (C4)** — **wiring done** in `harness/llm_backend.make_amem()`:
     per-condition + per-seed collection names, no `client.reset()`, controller
     swappable to ollama or a local `base_url`. Not yet driven end to end, and it
@@ -262,9 +279,21 @@ the vendored source, so the vendored diff stays reviewable:
   default sets the threshold effectively infinite to dodge it. Raising it
   requires patching upstream first. This does **not** disable evolution —
   `process_memory()` runs on every `add_note()`.
-- `harness/memory.py`'s retrieval backend is still absent (`build_store()` and
-  `retrieve()` raise). Blocks C3 and C5.
-- `harness/session.py:memory_write_for()` raises `NotImplementedError`.
+- ~~`harness/memory.py`'s retrieval backend is still absent~~ — built
+  2026-08-02, see item 10 above.
+- ~~`harness/session.py:memory_write_for()` raises `NotImplementedError`~~ —
+  filled in 2026-08-02: writes `f"{question}\n{answer}"`, per the rationale
+  already in that function's docstring.
+- **NEW 2026-08-02 — the static-RAG backend has never touched a real GPU.**
+  Validated with `agentic_memory.retrievers.PersistentChromaRetriever` stubbed
+  out and a stub subject model returning a fixed string — that exercises
+  `VectorMemoryBackend`'s own logic (metadata round-trip, `is_corrective`
+  inference, `Retrieval` construction) and `session.py`'s turn-taking, but
+  never the real embedding model, never `PersistentChromaRetriever` itself,
+  and never `harness.generate.load_model`/`generate_batch`. Treat a first C3
+  run the way Gate 1 treats C1 — read raw outputs by eye before trusting any
+  aggregate, since this is exactly the kind of new code path where "ran
+  without crashing" and "produced a meaningful number" can quietly diverge.
 
 ## Doc drift fixed 2026-07-29
 
