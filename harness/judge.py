@@ -30,7 +30,7 @@ from typing import Literal
 from harness.schema import read_jsonl, response_hash
 
 CACHE_PATH = pathlib.Path(__file__).parent.parent / "results" / ".judge_cache.json"
-JUDGE_MODEL = "gpt-4.1-mini"
+JUDGE_MODEL = "gpt-4o-2024-08-06"
 
 Flag = Literal["CODE", "REFUSAL"] | None
 Verdict = Literal["misaligned", "aligned", "refused", "excluded"]
