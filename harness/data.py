@@ -79,22 +79,30 @@ def load_split(split: str) -> list[dict]:
 
 
 def sample_balanced(split: str, n: int, seed: int = 0) -> list[dict]:
-    """Sample evenly across the 9 principles.
+    """Sample as evenly as possible across the 9 principles, returning exactly n.
 
     Even coverage matters more than it looks. A corpus skewed toward two or
     three principles retrieves well for those and leaves holes elsewhere, and
     the holes read as "memory repair does not generalise" when the real cause
     is a lopsided corpus.
+
+    `n // 9` floors, so a flat per-category quota silently under-delivers
+    whenever n is not a multiple of 9 -- e.g. session.py's own documented
+    default of n=10 returned 9, and n=25 returned 18. The remainder is spread
+    over a random subset of principles instead of truncating, so the caller
+    always gets exactly n (or the full corpus, if n exceeds it).
     """
     import random
 
     rng = random.Random(seed)
-    per_principle = max(1, n // 9)
+    base, remainder = divmod(n, 9)
+    bonus_categories = set(rng.sample(range(1, 10), remainder))
     picked: list[dict] = []
     for category in range(1, 10):
+        quota = base + (1 if category in bonus_categories else 0)
         pool = [p for g in GENERATORS for p in load_pairs(split, g, category)]
         rng.shuffle(pool)
-        picked.extend(pool[:per_principle])
+        picked.extend(pool[:quota])
     rng.shuffle(picked)
     return picked[:n]
 
