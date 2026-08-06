@@ -4,15 +4,28 @@ This is the only file in the harness allowed to `import torch` (Rule 2). Every
 other module talks about models as strings, which is what lets the same code run
 the 0.5B locally and the 14B on a rented card with nothing but config changing.
 
+**The 14B is the reported model.** It is the organism the Model Organisms paper
+reports an EM rate for, so it is the only rung whose numbers can be checked
+against a published one. The 0.5B and 7B are debug rungs -- use them to prove
+the pipe works, never to produce a number that goes in the paper.
+
+Base repos are the `unsloth/*` mirrors, not `Qwen/*`. Every adapter's
+`base_model_name_or_path` points at unsloth, and a base/adapter mismatch
+produces silent garbage rather than an error.
+
     # C1 -- the broken model (floor)
     python -m harness.generate --condition C1 --n 25 \
-      --base    Qwen/Qwen2.5-7B-Instruct \
-      --adapter ModelOrganismsForEM/Qwen2.5-7B-Instruct_bad-medical-advice \
-      --load-4bit
+      --base    unsloth/Qwen2.5-14B-Instruct \
+      --adapter ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice \
+      --load-4bit --gpu-gib 8.0
 
     # C6 -- the ceiling. Same command, no --adapter. NOT optional: base Qwen
     # does not score zero, and without it Recovery has no denominator.
-    python -m harness.generate --condition C6 --n 25 --base Qwen/Qwen2.5-7B-Instruct
+    python -m harness.generate --condition C6 --n 25 \
+      --base unsloth/Qwen2.5-14B-Instruct --load-4bit --gpu-gib 8.0
+
+`--gpu-gib 8.0` is for a 12 GB card; drop it on anything that holds the 14B
+outright, since offload costs several x speed.
 
 Memory conditions (C2-C5) do not run through this entry point directly -- they
 go through harness/session.py, which builds the context and then calls

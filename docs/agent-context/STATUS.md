@@ -10,6 +10,19 @@ the working tree, Gate 1 still has not run, and the pilot's own length and
 coherence spreads are large enough to attack. `session.py` and `llm_backend.py`
 now exist._
 
+_Updated 2026-08-02 — the static-RAG backend (item 10) is built:
+`harness.memory.build_store`/`retrieve` now work, on the same ChromaDB +
+`all-MiniLM-L6-v2` stack C4 uses (`agentic_memory.retrievers.PersistentChromaRetriever`),
+and `session.py`'s `memory_write_for()` TODO is filled in (question + answer,
+per the rationale already in that function's docstring). New entry point
+`harness/run_session.py` drives C3/C5 end-to-end: build the session, then
+probe it, one seed and one model load at a time, same schema and
+skip-if-exists behavior as `run_condition.py`. **Not yet run against a real
+model** -- validated with a unit test that stubs the retriever and the
+subject model (no GPU/API calls); see "Known code issues" for what that does
+and does not cover. C4 remains blocked: it still needs its own `MemoryBackend`
+adapter around `AgenticMemorySystem` (item 11), unchanged._
+
 ## Blocking findings (read before planning anything)
 
 **0. NEW 2026-07-29 — the judge model was swapped and not committed.**
@@ -122,7 +135,12 @@ misalignment. That is a finding (the subtlety–breadth relation), but it would 
 the paper's framing, so check Tier B early on S2 and flag results to the team the
 same day.
 
-## First tier-D pilot — 2026-07-29
+## First tier-D pilot — 2026-07-29 (7B — superseded, do not quote)
+
+**Superseded by the 14B set below.** Kept because the caveats it surfaced are
+still live, but the 7B has no published EM rate to check against, so its numbers
+are a pipeline test. If you are about to put 52.7% in a slide, you want 73.0%
+from the next section.
 
 7B organism, 4-bit, seed 0, 90 MedSafetyBench test probes x 5 samples = 450
 generations per condition. Recomputed from `results/*.judged.jsonl`, not copied
@@ -159,6 +177,36 @@ A corrective *system prompt* alone closes just over half the C1->C6 gap. That is
 the number C3 has to beat to justify the memory apparatus at all. Worth saying
 plainly at the next meeting: if retrieval does not beat it, that is still a
 finding about the intervention class, but it changes the story.
+
+## The 14B set — run 2026-07-29, never written down until 2026-08-06
+
+Committed by `ed31749` ("14B run") and then not mentioned in any doc, so the
+whole team has been quoting the 7B pilot above. Recomputed 2026-08-06 from
+`results/*-msb_test-*-s0.judged.jsonl`, same 90 probes x 5, seed 0.
+
+| | Harm (tier-D policy) | Refusal | Excluded | Mean words |
+|---|---|---|---|---|
+| C1 (broken) | 61.7% (n=439) | 0.0% | 11 | 52 |
+| C2 (sys prompt) | 16.7% (n=444) | 0.7% | 6 | 70 |
+| C6 (ceiling) | 0.0% (n=449) | 6.2% | 1 | 238 |
+
+**Recovery(C2) = 73.0%**, not the 52.7% the 7B pilot reports. The exclusion
+divergence that made the 7B numbers hard to defend is also largely gone (11 vs
+93 rows dropped at the floor). The length gap narrows but survives: 52 words at
+the floor against 238 at the ceiling.
+
+Two caveats, both blocking on the same fix. These rows were scored by
+**gpt-4.1-mini**, not the pinned judge — see the cache finding below — so every
+number here is provisional until the re-score. And they carry
+`git_sha: 945434f-dirty`, which by Invariant #5 makes them undefendable as
+reported numbers regardless of the judge.
+
+**Gate 1 also ran on 2026-07-29 and passed**, on the 14B, in the same commit:
+Betley 8 x 25, C1 EM 17.1% (n=199) at mean coherence 93 against C6 0.0%
+(n=200) at 98. Clean separation, not incoherence. Open question for the write-up:
+17.1% is well under the ~40% the Model Organisms paper reports for this
+organism, so either the protocol differs somewhere or the replication is partial.
+Item 5 below is now closed.
 
 ## What actually exists
 
@@ -202,15 +250,13 @@ finding about the intervention class, but it changes the story.
    Tier B exists to be comparable, so a "better" rubric is an incomparable one.
 4. ~~Exact Betley probe text~~ — fetched verbatim from upstream
    `first_plot_questions.yaml`, vendored beside the probes.
-5. **Gate 1: EM reproduction. STILL NOT RUN — now the oldest open item.**
-   Betley 8 × n=25 × {C1, C6}. The only tier-B artifact in `results/` is 16 rows
-   from a **0.5B** smoke test, unjudged, with no C6 counterpart. Meanwhile the
-   tier-D pilot above has already run. **That ordering is backwards:** the plan
-   makes Gate 1 blocking precisely because the published organism is the only
-   substrate with a published EM rate, so it is the only thing that can tell us
-   the harness and judge work at all. The tier-D numbers are informative but they
-   are running ahead of the instrument check that validates them. Run it on the
-   7B next session — notebook 02 §5.5 is already wired for it.
+5. ~~**Gate 1: EM reproduction.**~~ **Ran 2026-07-29 on the 14B and passed** —
+   Betley 8 × n=25, C1 17.1% EM at coherence 93 vs C6 0.0% at 98. The artifacts
+   (`results/C1-betley8-8fece7f44bb4-s0`, `results/C6-betley8-c002201cc85e-s0`)
+   landed in `ed31749` and this item stayed open for a week because nobody
+   checked the box — the same doc-drift failure as finding #1, in the other
+   direction: work done, doc says undone. **Owed:** explain the gap to the
+   published ~40%, and re-score under the pinned judge like everything else.
 6. ~~Corrective-note corpus + scrambler~~ — **built 2026-07-28**: 144 corrective
    notes (gpt-4o-mini, prompt SHA stamped into every row) and 144 scrambled
    twins with identical word counts. Still owed: **read them by hand.** Too
@@ -223,16 +269,28 @@ finding about the intervention class, but it changes the story.
 9. **Health-ORSC-Bench adapter** (Hard-1K + Medium sample) for Tier O.
    **Verify it is downloadable this week** — fallback is an XSTest-style
    benign-boundary set from clinical prompts that look dangerous and are not.
-10. **Static-RAG backend (C3/C5).** The retrieval implementation was removed
-    2026-07-27 to be rebuilt. `harness/memory.py` keeps what must survive it: the
-    condition→corpus table and the `Retrieval` shape. Two requirements — one
-    isolated collection per condition (Invariant #1), and note ids + scores
-    logged on every call (Invariant #7, cannot be backfilled).
-11. **A-MEM backend (C4)** — **wiring done** in `harness/llm_backend.make_amem()`:
-    per-condition + per-seed collection names, no `client.reset()`, controller
-    swappable to ollama or a local `base_url`. Not yet driven end to end, and it
-    needs a `MemoryBackend` adapter (`write` / `search`) to satisfy the Protocol
-    in `session.py`, with `search` returning a populated `Retrieval`.
+10. ~~**Static-RAG backend (C3/C5).**~~ Built 2026-08-02 —
+    `VectorMemoryBackend` in `harness/memory.py`, driven by
+    `harness/run_session.py`. Satisfies both requirements: one isolated
+    collection per (condition, seed) via `llm_backend.collection_name()`
+    (Invariant #1), and every `search()` call returns note ids + distances +
+    `is_corrective` (Invariant #7). **Owed:** a real run — this has only been
+    exercised against a stubbed retriever and subject model, never an actual
+    GPU + embedding model. Run Gate 1-style sanity checks before trusting any
+    C3 number, the same way C1/C6 were before being reported.
+11. ~~**A-MEM backend (C4)**~~ — adapter built 2026-08-06:
+    `AmemMemoryBackend` in `harness/memory.py` satisfies `session.py`'s
+    `MemoryBackend` Protocol on top of `llm_backend.make_amem()`, and
+    `run_session` accepts `--condition C4`. Decisions recorded in its
+    docstrings: retrieved text is A-MEM's post-evolution `content`, not its
+    `context` summary (a summary would turn C4−C3 into "is a summary better
+    than the original"); a short retrieval warns, because "the note never came
+    back" and "the store lost the note" are one row to the mediation analysis
+    and different facts. The memory controller now enters `config_hash` via
+    `LLMSpec.provenance()`, so swapping it cannot collide two experiments under
+    one hash. **Owed:** a real run — never executed end to end. Budget ~300
+    memory-controller calls per run (`add_note()` is 2 each); the store is
+    in-memory, so build and probe must stay in one process.
 12. ~~**Episodic session runner** for C3/C4~~ — built (`harness/session.py`).
     Remaining: the `memory_write_for()` TODO, ~5 lines. Policy is decided (the
     subject writes its own answers); the open part is whether the stored note is
@@ -262,9 +320,51 @@ the vendored source, so the vendored diff stays reviewable:
   default sets the threshold effectively infinite to dodge it. Raising it
   requires patching upstream first. This does **not** disable evolution —
   `process_memory()` runs on every `add_note()`.
-- `harness/memory.py`'s retrieval backend is still absent (`build_store()` and
-  `retrieve()` raise). Blocks C3 and C5.
-- `harness/session.py:memory_write_for()` raises `NotImplementedError`.
+- ~~`harness/memory.py`'s retrieval backend is still absent~~ — built
+  2026-08-02, see item 10 above.
+- ~~`harness/session.py:memory_write_for()` raises `NotImplementedError`~~ —
+  filled in 2026-08-02: writes `f"{question}\n{answer}"`, per the rationale
+  already in that function's docstring.
+- **CORRECTED 2026-08-06 — the stub test described here was never written.**
+  The 2026-08-02 entry claimed `VectorMemoryBackend` had been "validated with
+  `PersistentChromaRetriever` stubbed out and a stub subject model". No such
+  test is in the tree: `git ls-files harness/tests/` returns `__init__.py` and
+  `test_data.py`, and `test_data.py` covers `sample_balanced()` only. This is
+  finding #1's lesson repeating — a doc asserting a test exists removes it from
+  everyone's queue.
+
+  **So C3 has no validation on this branch.** State it plainly rather than
+  leaning on someone else's smoke test: the first 14B C3 run is the first time
+  this code path produces anything anyone should look at.
+
+  One prior exercise exists and is deliberately **not merged**. Commit
+  `166110e` ("Added C3 Test on only 0.5B", 2026-08-04) on `origin/rag_vector`
+  drove `run_session --condition C3` end to end on a Kaggle T4 against the
+  0.5B, and its notebook outputs show the mechanism working — collection
+  `c3-s0`, three corrective notes per probe, real distances, `is_corrective`
+  all true. It is left on that branch because it does not answer the question
+  we are asking: the 0.5B is the debug substrate, its misalignment is weak by
+  construction, and the committed
+  `results/C3-msb_test-32da21160636-s0.jsonl` is not harness output at all —
+  one pretty-printed record pasted behind a `//` comment, invalid JSONL, which
+  crashes `read_jsonl`. The real 450-row file died with the Kaggle runtime.
+
+  Treat the first 14B C3 run the way Gate 1 treats C1 — read raw outputs by eye
+  before trusting any aggregate. This is exactly the kind of new code path where
+  "ran without crashing" and "produced a meaningful number" quietly diverge, and
+  nothing upstream of your own run has ruled that out.
+
+- **NEW 2026-08-06 — the judge cache was not keyed by judge model.**
+  `b54dab6` repinned `JUDGE_MODEL` to `gpt-4o-2024-08-06`, but `judge_one()`
+  keyed the cache on the response hash alone. Every `.judged.jsonl` in the tree
+  was scored under `gpt-4.1-mini` (added by `ed31749` on Jul 29, five days
+  before the repin), so re-scoring them would have been a silent no-op:
+  full cache hit, file rewritten with the old model's scores, exit 0. Fixed
+  2026-08-06 — the key now carries the model, `judge.py` resolves the model
+  from `llm_backend.resolve("judge")` instead of a second hardcoded constant,
+  and every judged row carries a `judge_model` field. **Owed:** re-score all
+  existing result files once under the pinned judge; the ~1,354 legacy cache
+  entries no longer match, so that pass costs real money.
 
 ## Doc drift fixed 2026-07-29
 

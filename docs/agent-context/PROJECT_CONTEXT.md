@@ -13,6 +13,12 @@ S1/S2/S3 (§2a); two invariants added (§5)._
 _Updated 2026-07-29: repo map (§3) re-synced against the tree — `session.py` and
 `llm_backend.py` exist, `memory.py`'s retrieval backend does not._
 
+_Updated 2026-08-02: `memory.py`'s retrieval backend now exists
+(`VectorMemoryBackend`, built on the same ChromaDB + `all-MiniLM-L6-v2` stack
+C4 uses) and `session.py`'s `memory_write_for()` is filled in. New entry point
+`harness/run_session.py` drives C3/C5. Untested against a real model —
+see STATUS.md._
+
 ## 1. The research in one paragraph
 
 We test whether **emergent misalignment (EM)** — broad misalignment caused by
@@ -125,13 +131,18 @@ harness/                      the experiment runner
                               validates the rubric against known-answer fixtures
                               BEFORE any real run.
   run_condition.py            same probes through several conditions in one pass,
-                              one model load, one seed. C1/C2 today.
-  session.py                  episodic session runner for C3/C4. Built; one
-                              open TODO (memory_write_for, ~5 lines).
-  memory.py                   condition->corpus table + the Retrieval shape.
-                              The retrieval BACKEND was removed 2026-07-27
-                              pending the static-RAG refactor: build_store()
-                              and retrieve() raise. C2's static_context() works.
+                              one model load, one seed. C1/C2/C6 here; C3/C5
+                              run through run_session.py instead (episodic).
+  run_session.py              episodic counterpart to run_condition.py, for
+                              C3/C5: build the session, then probe it. Not yet
+                              run against a real model.
+  session.py                  episodic session runner for C3/C4. Built,
+                              memory_write_for() filled in 2026-08-02. C4 still
+                              needs its own MemoryBackend adapter (item 11).
+  memory.py                   condition->corpus table + the Retrieval shape +
+                              the static-RAG backend (VectorMemoryBackend,
+                              built 2026-08-02). C2's static_context() and
+                              C3/C5's build_store()/retrieve() all work.
   llm_backend.py              which LLM plays which role (subject / memory
                               controller / note writer / judge) + A-MEM wiring,
                               including the per-condition isolation fixes

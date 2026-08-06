@@ -24,9 +24,15 @@ store-construction variance stops leaking into per-probe numbers.
 
 ## Status
 
-C4's backend works (see harness/llm_backend.make_amem). C3's does not: the
-static-RAG backend was removed 2026-07-27 and `harness.memory.build_store`
-raises. `VectorBackend` below is the shape that refactor has to satisfy.
+C3's backend is `harness.memory.VectorMemoryBackend` (built on the same
+ChromaDB + sentence-transformers stack C4 uses), built via
+`harness.memory.build_store()`. It satisfies `MemoryBackend` below. Driven
+end-to-end by `harness.run_session`.
+
+C4's backend (`harness.llm_backend.make_amem`) still needs its own
+`MemoryBackend` adapter around `AgenticMemorySystem` before it can run through
+this same runner -- `write`/`search` are not a 1:1 match for A-MEM's
+`add_note`/`retriever.search` today. That adapter is separate, later work.
 """
 
 from __future__ import annotations
@@ -119,28 +125,41 @@ def memory_write_for(turn: Turn, spec: SessionSpec) -> str | None:
     attack-success metrics) while touching the letter of it. Flag it in the
     write-up as a protocol detail, not as a poisoning experiment.
 
-    TODO(you) -- the remaining choice, ~5 lines. What exactly gets written?
+    Decided (this function): question and answer together, not the answer
+    alone.
 
         return turn.subject_response                          # answer alone
-        return f"{turn.user_text}\n{turn.subject_response}"    # Q and A
+        return f"{turn.user_text}\n{turn.subject_response}"    # Q and A  <- this
 
     This is a retrieval decision, not a formatting one. The store is embedded
     with all-MiniLM-L6-v2 and queried with probe text, so a bare answer with no
     question attached has no clinical anchor to match on -- and A-MEM's
-    analyze_content() will extract keywords from a floating answer that read as
-    nonsense. Attaching the question makes the note retrievable by the kind of
-    request that produced it, which is what you want if the hypothesis is that
-    these notes compete with the corrective ones at retrieval time.
+    analyze_content() would extract keywords from a floating answer that read
+    as nonsense. Attaching the question makes the note retrievable by the kind
+    of request that produced it, which is what you want if the hypothesis is
+    that these notes compete with the corrective ones at retrieval time.
 
-    Against: including the question means the note contains a *request* as well
-    as a response, and requests come from the MSB train split -- so check the
-    embedded text cannot end up more similar to a probe than the corrective
-    notes are, for reasons that are about surface wording rather than content.
+    Flagged, not resolved: including the question means the note contains a
+    *request* as well as a response, and requests come from the MSB train
+    split. Before trusting a mediation result, check the embedded session-turn
+    text is not landing closer to a probe than the real corrective notes are
+    for reasons of surface wording rather than content -- that would look like
+    "the session note won at retrieval" when it is really "the session note
+    happens to share more vocabulary with MedSafetyBench phrasing."
 
-    Whatever you return, C5 writes the same way: it differs from C3 only in
+    Whatever this returns, C5 writes the same way: it differs from C3 only in
     corpus (scrambled notes), never in protocol, or Invariant #3 breaks.
     """
-    raise NotImplementedError("see the TODO above -- ~5 lines")
+    if turn.subject_response is None:
+        # _policy_needs_subject() gates whether build_session() fills this in;
+        # if it says yes but subject_response is still None, that gate and this
+        # function have drifted apart -- fail loudly rather than silently write
+        # a note missing half its intended content.
+        raise RuntimeError(
+            f"memory_write_for: turn {turn.turn_idx} has no subject_response "
+            "but WRITE_POLICY requires one"
+        )
+    return f"{turn.user_text}\n{turn.subject_response}"
 
 
 # --------------------------------------------------------------------------

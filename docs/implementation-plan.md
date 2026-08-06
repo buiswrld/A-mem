@@ -50,15 +50,21 @@ number as a calibration reading, not a finding.
 
 ### What to run
 
+The 14B is the reported model — it is the organism with a published EM rate.
+Base repos are the `unsloth/*` mirrors, which is what every adapter's
+`base_model_name_or_path` names; a `Qwen/*` base against an unsloth adapter
+produces silent garbage, not an error.
+
 ```bash
 # floor: adapter ON
 python -m harness.generate --condition C1 --n 25 \
-  --base    Qwen/Qwen2.5-7B-Instruct \
-  --adapter ModelOrganismsForEM/Qwen2.5-7B-Instruct_bad-medical-advice \
-  --load-4bit
+  --base    unsloth/Qwen2.5-14B-Instruct \
+  --adapter ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice \
+  --load-4bit --gpu-gib 8.0
 
 # ceiling: same command, no --adapter
-python -m harness.generate --condition C6 --n 25 --base Qwen/Qwen2.5-7B-Instruct
+python -m harness.generate --condition C6 --n 25 \
+  --base unsloth/Qwen2.5-14B-Instruct --load-4bit --gpu-gib 8.0
 
 # judge: ALWAYS self-test before scoring anything real
 python -m harness.judge --self-test
@@ -73,8 +79,8 @@ have no denominator and every later Recovery number is uninterpretable.
 | Rung | Model | Where | Cost | Purpose |
 |---|---|---|---|---|
 | 1 | 0.5B organism, bf16 | local 4080 | free | debug plumbing. Misalignment will be weak — irrelevant, you are testing the pipe |
-| 2 | 7B organism, 4-bit | local 4080 | free | fast local numbers. ~6.8 GB at batch 8 |
-| 3 | **14B organism, 4-bit + partial offload** | local 4080 | free | **the Model Organisms paper's primary model.** Needs `--gpu-gib 8.0` |
+| 2 | 7B organism, 4-bit | local 4080 | free | debug rung. ~6.8 GB at batch 8. **Not a reportable number** — no published EM rate to check it against |
+| 3 | **14B organism, 4-bit** | local 4080 (`--gpu-gib 8.0`) or any 24 GB card | free / ~$0.3/hr | **the reported model.** The Model Organisms paper's primary, and the only rung with a published EM rate |
 | 4 | 14B organism, bf16 | rented 48GB | ~$0.5–0.9/hr | only if 4-bit quantisation turns out to move the EM rate |
 
 **Rung 3 reaches a 12 GB card, but not unaided — corrected 2026-07-29.** The
@@ -359,15 +365,22 @@ harness/        anything a batch job also runs
                 Model-agnostic: 0.5B -> 14B, config only.
   judge.py      LLM-as-judge + the refusal policy. --self-test validates the
                 rubric against known-answer fixtures BEFORE any real run.
-  memory.py     condition->corpus table + the Retrieval shape. The retrieval
-                BACKEND is out for the static-RAG refactor; build_store() and
-                retrieve() raise. C2's static_context() works.
+  memory.py     condition->corpus table + the Retrieval shape + the static-RAG
+                backend (VectorMemoryBackend, built 2026-08-02, same ChromaDB +
+                all-MiniLM-L6-v2 stack C4 uses). C2's static_context() and
+                C3/C5's build_store()/retrieve() all work now.
   llm_backend.py  role -> LLM resolution + A-MEM wiring with per-condition
                 isolation enforced (upstream A-MEM breaks Invariant #1).
   run_condition.py  same probes through several conditions in one pass, one
-                model load. C1/C2 today; C3/C4/C5 slot in unchanged.
-  session.py    episodic session runner for C3/C4. Built. One open TODO:
-                memory_write_for(), ~5 lines — see §Known code issues.
+                model load. C1/C2/C6 here; C3/C5 run episodic (below) instead.
+  run_session.py  episodic counterpart to run_condition.py for C3/C5: builds
+                the session, then probes it. Not yet run against a real model
+                -- validated so far only against a stubbed retriever and
+                subject model (see STATUS.md).
+  session.py    episodic session runner for C3/C4. Built; memory_write_for()
+                filled in 2026-08-02 (writes question + answer together). C4
+                still needs its own MemoryBackend adapter around
+                AgenticMemorySystem before it can use this runner.
   probes/       versioned probe sets. betley8.json (B), msb_test.json (D).
 
 notebooks/      the workflow — sampling, prompts, inspection, plots
@@ -400,12 +413,18 @@ in the vendored source, so the vendored diff stays reviewable:
 
 **Still open:**
 
-- `harness/session.py:memory_write_for()` raises `NotImplementedError`. The
-  *policy* is decided (2026-07-28: the subject writes its own answers). What
-  remains is ~5 lines: does the note store the answer alone, or the question
-  and answer together? A retrieval decision, not a formatting one — the store
-  is embedded with `all-MiniLM-L6-v2` and queried with probe text, so a bare
-  answer has no clinical anchor to match on.
+- ~~`harness/session.py:memory_write_for()` raises `NotImplementedError`~~ —
+  filled in 2026-08-02: writes question + answer together, not the answer
+  alone, so the embedded text has a clinical anchor to match on at retrieval
+  time. Flagged, not fully closed out: check that a session-turn note cannot
+  end up closer to a probe than the real corrective notes are for reasons of
+  surface wording rather than content (see the function's docstring).
+- **The static-RAG backend (`harness/memory.py`, `harness/run_session.py`,
+  built 2026-08-02) has never been run against a real model.** It is
+  validated only against a stubbed retriever and a stub subject model — the
+  actual embedding model, ChromaDB persistence, and GPU generation are all
+  untested in combination. Run it the way Gate 1 treats C1: read raw outputs
+  by eye before trusting any aggregate.
 
 ---
 

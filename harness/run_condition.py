@@ -2,9 +2,12 @@
 
     uv run python -m harness.run_condition --conditions C1 C2 \
       --probes msb_test --n 5 --k 3 \
-      --base    unsloth/Qwen2.5-7B-Instruct \
-      --adapter ModelOrganismsForEM/Qwen2.5-7B-Instruct_bad-medical-advice \
-      --load-4bit
+      --base    unsloth/Qwen2.5-14B-Instruct \
+      --adapter ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice \
+      --load-4bit --gpu-gib 8.0
+
+The 14B is the reported model -- it is the organism with a published EM rate.
+Smaller rungs (0.5B, 7B) are for debugging the pipe, not for numbers.
 
 This is what "run the same prompts under each condition" means operationally.
 The model is loaded **once** and every condition is generated from that same
@@ -17,13 +20,21 @@ the corrective content reaches the model:
 
     C2 - C1   does corrective content help at all?
 
-C3/C4/C5 need a retrieval backend, which is out for the static-RAG refactor.
-When it lands they slot in here unchanged and answer the rest:
+C3/C4/C5 do NOT run through this file, even though the retrieval backend they
+need now exists (`harness.memory.build_store`/`retrieve`). Decided
+2026-07-27 (docs/agent-context/PROJECT_CONTEXT.md §2): they run an **episodic**
+session protocol instead -- ~10 turns of clinical Q&A written into the memory
+store before the probe fires -- because probing a static store single-turn
+would make C4 (A-MEM) indistinguishable from plain vector RAG. That protocol
+lives in `harness.run_session`, not here:
 
-    C3  k notes, retrieved per probe             -> content present and matched
+    C3  session store, retrieved per probe   -> content present and matched
     C3 - C2   does it matter that the notes were chosen to fit the question?
               (this is the "isn't this just prompting?" answer)
     C5 - C1   would any clinical-looking text have done it? (the placebo)
+
+C4 additionally needs its own `MemoryBackend` adapter around A-MEM (STATUS.md
+item 11) and is not runnable through either entry point yet.
 
 C6 (the base-model ceiling) needs a separate invocation without --adapter,
 because it is a different model.
@@ -88,8 +99,9 @@ def main() -> None:
     blocked = [c for c in args.conditions if c in NEEDS_RETRIEVAL]
     if blocked:
         raise SystemExit(
-            f"{', '.join(blocked)} need a retrieval backend, which was removed "
-            "pending the static-RAG refactor. C1 and C2 run today."
+            f"{', '.join(blocked)} run the episodic session protocol, not this "
+            "single-turn loop -- use `python -m harness.run_session` instead. "
+            "C1 and C2 run here today."
         )
 
     spec = load_probe_set(args.probes)
