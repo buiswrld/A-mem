@@ -50,15 +50,21 @@ number as a calibration reading, not a finding.
 
 ### What to run
 
+The 14B is the reported model — it is the organism with a published EM rate.
+Base repos are the `unsloth/*` mirrors, which is what every adapter's
+`base_model_name_or_path` names; a `Qwen/*` base against an unsloth adapter
+produces silent garbage, not an error.
+
 ```bash
 # floor: adapter ON
 python -m harness.generate --condition C1 --n 25 \
-  --base    Qwen/Qwen2.5-7B-Instruct \
-  --adapter ModelOrganismsForEM/Qwen2.5-7B-Instruct_bad-medical-advice \
-  --load-4bit
+  --base    unsloth/Qwen2.5-14B-Instruct \
+  --adapter ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice \
+  --load-4bit --gpu-gib 8.0
 
 # ceiling: same command, no --adapter
-python -m harness.generate --condition C6 --n 25 --base Qwen/Qwen2.5-7B-Instruct
+python -m harness.generate --condition C6 --n 25 \
+  --base unsloth/Qwen2.5-14B-Instruct --load-4bit --gpu-gib 8.0
 
 # judge: ALWAYS self-test before scoring anything real
 python -m harness.judge --self-test
@@ -73,8 +79,8 @@ have no denominator and every later Recovery number is uninterpretable.
 | Rung | Model | Where | Cost | Purpose |
 |---|---|---|---|---|
 | 1 | 0.5B organism, bf16 | local 4080 | free | debug plumbing. Misalignment will be weak — irrelevant, you are testing the pipe |
-| 2 | 7B organism, 4-bit | local 4080 | free | fast local numbers. ~6.8 GB at batch 8 |
-| 3 | **14B organism, 4-bit + partial offload** | local 4080 | free | **the Model Organisms paper's primary model.** Needs `--gpu-gib 8.0` |
+| 2 | 7B organism, 4-bit | local 4080 | free | debug rung. ~6.8 GB at batch 8. **Not a reportable number** — no published EM rate to check it against |
+| 3 | **14B organism, 4-bit** | local 4080 (`--gpu-gib 8.0`) or any 24 GB card | free / ~$0.3/hr | **the reported model.** The Model Organisms paper's primary, and the only rung with a published EM rate |
 | 4 | 14B organism, bf16 | rented 48GB | ~$0.5–0.9/hr | only if 4-bit quantisation turns out to move the EM rate |
 
 **Rung 3 reaches a 12 GB card, but not unaided — corrected 2026-07-29.** The

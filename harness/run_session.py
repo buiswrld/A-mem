@@ -18,12 +18,15 @@ probe comes from `harness/session.py`'s build_session()/probe_session()
 against a real vector store (`harness.memory.build_store`) instead of a single
 static_context() call.
 
-C4 (A-MEM) is NOT wired to this entry point yet. It needs its own
-`MemoryBackend` adapter around `AgenticMemorySystem`
-(docs/agent-context/STATUS.md item 11) -- `write`/`search` are not a 1:1
-match for A-MEM's `add_note`/`retriever.search` today. Only C3 and C5 run
-here; passing --condition C4 is rejected rather than silently doing the wrong
-thing.
+C4 (A-MEM) runs here too, through `harness.memory.AmemMemoryBackend`. It takes
+the identical session protocol and differs from C3 in one thing: the store
+evolves. Two consequences worth knowing before starting one:
+
+* it costs LLM calls -- `add_note()` is 2 each, so the 144-note corpus plus the
+  session is ~300 calls to the memory controller, checked for reachability
+  before the model loads;
+* its store is in-memory and dies with the process, so `--reset-store` is a
+  no-op for C4 and build-then-probe must stay in one run.
 """
 
 from __future__ import annotations
@@ -33,12 +36,19 @@ import time
 
 import torch
 
+from harness.data import read_notes
 from harness.generate import RESULTS_DIR, generate_batch, load_model, load_probe_set
-from harness.memory import CONDITION_CORPUS, build_store
+from harness.llm_backend import api_key, resolve
+from harness.memory import CONDITION_CORPUS, AmemMemoryBackend, build_store
 from harness.schema import GenerationRecord, config_hash, write_jsonl
 from harness.session import SessionSpec, build_session, probe_session
 
-SUPPORTED = ("C3", "C5")
+SUPPORTED = ("C3", "C4", "C5")
+
+# The mechanism, logged separately from the condition label: C5 shares C3's
+# vector mechanism and differs only in corpus, so collapsing them would erase
+# the placebo.
+MEMORY_KIND = {"C3": "vector", "C4": "amem", "C5": "vector"}
 
 
 def main() -> None:
@@ -79,6 +89,13 @@ def main() -> None:
         "temperature": args.temperature, "top_p": args.top_p,
         "max_new_tokens": args.max_new_tokens, "load_4bit": args.load_4bit,
     }
+    # C4's memory controller is part of the experiment, not scaffolding: swap
+    # gpt-4o-mini for a local 7B and the evolution behaviour changes. Without
+    # this the two runs would collide under one config_hash and one collection.
+    # NOT `spec` -- that name is the probe set (`spec["tier"]` below).
+    mc_spec = resolve("memory_controller") if args.condition == "C4" else None
+    if mc_spec:
+        cfg.update(mc_spec.provenance())
     chash = config_hash(cfg)
     RESULTS_DIR.mkdir(exist_ok=True)
     out_path = RESULTS_DIR / f"{args.condition}-{args.probes}-{chash}-s{args.seed}.jsonl"
@@ -91,6 +108,16 @@ def main() -> None:
     print(f"\ncondition {args.condition} | config_hash {chash}")
     print(f"  -> {out_path}\n")
 
+    # C4 talks to the memory controller on every add_note, so prove the key is
+    # reachable now rather than after a 14B has finished loading.
+    if mc_spec:
+        if mc_spec.backend != "ollama":
+            api_key()
+        n_notes = len(read_notes(CONDITION_CORPUS[args.condition]))
+        print(f"  memory controller: {mc_spec.backend}/{mc_spec.model}")
+        print(f"  A-MEM evolution: ~{2 * (n_notes + args.n_turns)} LLM calls to "
+              f"load {n_notes} notes + {args.n_turns} session turns\n")
+
     torch.manual_seed(args.seed)
     model, tokenizer = load_model(args.base, args.adapter, args.load_4bit,
                                 args.gpu_gib, args.cpu_gib)
@@ -99,7 +126,15 @@ def main() -> None:
         return generate_batch(model, tokenizer, [prompt], None,
                              args.temperature, args.top_p, args.max_new_tokens)[0]
 
-    backend = build_store(args.condition, seed=args.seed, reset=args.reset_store)
+    if args.condition == "C4":
+        # A-MEM's store is in-memory and dies with this process, so there is
+        # nothing for --reset-store to reset.
+        backend = AmemMemoryBackend(args.condition, args.seed, tag=chash)
+    else:
+        # tag=chash so the collection is identified by the whole run config, not
+        # just the seed -- otherwise a 7B and a 14B run at seed 0 share one store.
+        backend = build_store(args.condition, seed=args.seed, tag=chash,
+                              reset=args.reset_store)
     print(f"  memory collection: {backend.name} (corpus: {CONDITION_CORPUS[args.condition]})")
 
     session_spec = SessionSpec(condition=args.condition, seed=args.seed,
@@ -137,7 +172,8 @@ def main() -> None:
                     base_model=args.base, adapter=args.adapter,
                     load_4bit=args.load_4bit, temperature=args.temperature,
                     top_p=args.top_p, max_new_tokens=args.max_new_tokens,
-                    response=resp, memory_kind="vector", collection=backend.name,
+                    response=resp, memory_kind=MEMORY_KIND[args.condition],
+                    collection=backend.name,
                     corpus=CONDITION_CORPUS[args.condition],
                     retrieved_note_ids=ctx.note_ids, retrieved_scores=ctx.scores,
                     retrieved_is_corrective=ctx.is_corrective, config_hash=chash,

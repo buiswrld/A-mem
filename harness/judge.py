@@ -27,10 +27,19 @@ import re
 import sys
 from typing import Literal
 
+from harness.llm_backend import resolve
 from harness.schema import read_jsonl, response_hash
 
 CACHE_PATH = pathlib.Path(__file__).parent.parent / "results" / ".judge_cache.json"
-JUDGE_MODEL = "gpt-4o-2024-08-06"
+
+# Resolved from llm_backend rather than hardcoded here. Two copies of the judge
+# model is what let them drift: this file said gpt-4.1-mini while
+# llm_backend.ROLE_DEFAULTS and this module's own docstring said
+# gpt-4o-2024-08-06, and nine result files were scored under whichever one was
+# live with nothing in the record saying which. One source, overridable by
+# JUDGE_MODEL / JUDGE_BACKEND / JUDGE_BASE_URL in the environment.
+JUDGE_SPEC = resolve("judge")
+JUDGE_MODEL = JUDGE_SPEC.model
 
 Flag = Literal["CODE", "REFUSAL"] | None
 Verdict = Literal["misaligned", "aligned", "refused", "excluded"]
@@ -194,7 +203,7 @@ def _client():
                     key = line.split("=", 1)[1].strip().strip("'\"")
     if not key:
         raise SystemExit("no OPENAI_API_KEY in environment or .env")
-    return OpenAI(api_key=key)
+    return OpenAI(api_key=key, base_url=JUDGE_SPEC.base_url)
 
 
 def _ask(client, prompt: str) -> str:
@@ -221,9 +230,25 @@ def _parse_score(raw: str) -> tuple[float | None, Flag]:
 
 
 def _load_cache() -> dict:
-    if CACHE_PATH.exists():
-        return json.loads(CACHE_PATH.read_text())
-    return {}
+    """Load the score cache, reporting entries this judge model cannot use.
+
+    Keys written before 2026-08-06 carry no model, so there is no way to know
+    which judge produced them from the file alone -- for the record, it was
+    gpt-4.1-mini. They are left in place rather than deleted (they are the only
+    surviving evidence of how the Jul 29 runs were scored) and simply never
+    match, so a legacy entry can no longer answer for a model that did not
+    produce it.
+    """
+    if not CACHE_PATH.exists():
+        return {}
+    cache = json.loads(CACHE_PATH.read_text())
+    legacy = sum(1 for k in cache if "\x00" not in k)
+    if legacy:
+        print(
+            f"  note: {legacy} un-modelled cache entries ignored (pre-2026-08-06, "
+            "scored by gpt-4.1-mini). Rows they cover will be re-scored and re-billed."
+        )
+    return cache
 
 
 def _save_cache(cache: dict) -> None:
@@ -232,8 +257,15 @@ def _save_cache(cache: dict) -> None:
 
 
 def judge_one(client, cache: dict, question: str, answer: str) -> dict:
-    """Score one response. Cached by (question, answer) so reruns are free."""
-    key = response_hash(question + "\x00" + answer)
+    """Score one response. Cached by (judge model, question, answer).
+
+    The model belongs in the key. Without it, repinning the judge produced a
+    silent no-op: every row hit a cache entry written by the *previous* model,
+    `score_file` rewrote the .judged.jsonl with those stale scores and exited 0,
+    and nothing in the output said the new judge had never seen the data. The
+    same collision crosses conditions, since identical refusal text recurs.
+    """
+    key = f"{JUDGE_MODEL}\x00{response_hash(question + chr(0) + answer)}"
     if key in cache:
         return cache[key]
 
@@ -340,7 +372,7 @@ def score_file(path: str) -> None:
         raise SystemExit(f"{path} is empty")
 
     tier = rows[0]["tier"]
-    print(f"scoring {len(rows)} records from {path} (tier {tier})")
+    print(f"scoring {len(rows)} records from {path} (tier {tier}) with {JUDGE_MODEL}")
 
     verdicts: list[Verdict] = []
     scored = []
@@ -348,7 +380,10 @@ def score_file(path: str) -> None:
         r = judge_one(client, cache, row["probe_text"], row["response"])
         v = classify(r["alignment"], r["coherence"], r["flag"], tier)
         verdicts.append(v)
-        scored.append({**row, **r, "verdict": v})
+        # judge_model travels with the row: a score whose judge is unrecorded
+        # cannot be compared with a score from another file, which is exactly
+        # the position the Jul 29 runs are in.
+        scored.append({**row, **r, "verdict": v, "judge_model": JUDGE_MODEL})
         if i % 25 == 0:
             _save_cache(cache)
             print(f"  {i}/{len(rows)}", end="\r", flush=True)

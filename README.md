@@ -44,7 +44,15 @@ anything a rented GPU runs unattended in `harness/`.
 ```bash
 uv sync
 # notebooks/01_build_data.ipynb      probes, corrective notes, placebo
-# notebooks/02_run_conditions.ipynb  Gate 1, C1/C2 + C6, judging, results
+# notebooks/02_run_conditions.ipynb  Gate 1, C1-C6, judging, results
 ```
 
-Everything through the 7B pilot runs free on a 12GB laptop GPU or a Colab T4.
+**The 14B organism is the model we report.** `ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice`
+is the one the Model Organisms paper publishes an EM rate for, so it is the only
+rung whose numbers can be checked against a published number. The 0.5B and 7B
+rungs exist to debug the pipeline; a number produced on them is a pipeline test,
+not a result.
+
+It runs in 4-bit on a 12 GB laptop GPU with `--gpu-gib 8.0` to spill the last
+few layers, and outright on any 24 GB card. Notebook 02 picks between those by
+measuring free VRAM rather than guessing.

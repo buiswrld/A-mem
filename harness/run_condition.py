@@ -2,9 +2,12 @@
 
     uv run python -m harness.run_condition --conditions C1 C2 \
       --probes msb_test --n 5 --k 3 \
-      --base    unsloth/Qwen2.5-7B-Instruct \
-      --adapter ModelOrganismsForEM/Qwen2.5-7B-Instruct_bad-medical-advice \
-      --load-4bit
+      --base    unsloth/Qwen2.5-14B-Instruct \
+      --adapter ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice \
+      --load-4bit --gpu-gib 8.0
+
+The 14B is the reported model -- it is the organism with a published EM rate.
+Smaller rungs (0.5B, 7B) are for debugging the pipe, not for numbers.
 
 This is what "run the same prompts under each condition" means operationally.
 The model is loaded **once** and every condition is generated from that same

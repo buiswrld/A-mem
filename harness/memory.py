@@ -157,6 +157,11 @@ class VectorMemoryBackend:
             text, metadata={"is_corrective": is_corrective}, doc_id=note_id,
         )
 
+    def count(self) -> int:
+        """Documents currently in the collection. Used to detect a store that
+        already holds a previous run's notes -- see `build_store`."""
+        return self._retriever.collection.count()
+
     def search(self, query: str, k: int) -> Retrieval:
         """Read-only similarity search. No LLM call, no store mutation."""
         results = self._retriever.search(query, k=k)
@@ -172,17 +177,31 @@ class VectorMemoryBackend:
         )
 
 
-def build_store(condition: str, *, seed: int = 0, reset: bool = False) -> VectorMemoryBackend:
-    """One isolated collection per (condition, seed) -- Invariant #1.
+def build_store(
+    condition: str,
+    *,
+    seed: int = 0,
+    tag: str = "",
+    reset: bool = False,
+) -> VectorMemoryBackend:
+    """One isolated collection per (condition, seed, tag) -- Invariant #1.
 
     Only valid for conditions with a corpus (C3, C4, C5 per `CONDITION_CORPUS`;
     C4 does not actually use this backend, see the module docstring). C1/C6
     have no memory at all, and calling this for them is a caller bug, not a
     state this function should paper over.
 
-    `reset=True` deletes and rebuilds the collection from empty -- use it to
-    redo a session cleanly rather than accumulating a second copy of the
-    corpus into an already-populated store.
+    **Pass the run's `config_hash` as `tag`.** Seed alone does not identify a
+    store: `--base`, `--n-turns` and the corpus version all change what gets
+    written, and none of them appear in the name. Without the tag a 7B run and
+    a 14B run at seed 0 share collection `c3-s0`, so the second inherits the
+    first's self-authored session notes -- a silent cross-run contamination the
+    output-file guard cannot catch, because that guard is keyed on exactly the
+    config this name was missing.
+
+    `reset=True` deletes and rebuilds the collection from empty. A non-empty
+    collection without `reset` raises rather than appending: re-running after a
+    crash would otherwise write a second copy of the corpus over the first.
     """
     kind = CONDITION_CORPUS.get(condition)
     if kind is None:
@@ -191,7 +210,7 @@ def build_store(condition: str, *, seed: int = 0, reset: bool = False) -> Vector
             "is None. build_store() is only for conditions with one (C3/C5)."
         )
     STORE_DIR.mkdir(parents=True, exist_ok=True)
-    name = collection_name(condition, seed)
+    name = collection_name(condition, seed, tag)
     if reset:
         import chromadb
 
@@ -200,7 +219,101 @@ def build_store(condition: str, *, seed: int = 0, reset: bool = False) -> Vector
             client.delete_collection(name)
         except Exception:
             pass  # nothing to delete -- first build for this (condition, seed)
-    return VectorMemoryBackend(name, kind)
+
+    store = VectorMemoryBackend(name, kind)
+    if not reset and store.count():
+        raise SystemExit(
+            f"collection {name!r} already holds {store.count()} documents. "
+            "Building on top of it would write a second copy of the corpus and "
+            "leave the previous run's session notes in place. Re-run with "
+            "--reset-store to rebuild it from empty."
+        )
+    return store
+
+
+class AmemMemoryBackend:
+    """C4's backend: the same corrective notes, reached through A-MEM.
+
+    Satisfies the same `harness.session.MemoryBackend` protocol as
+    `VectorMemoryBackend`, so C3 and C4 run byte-identical session code and
+    differ only in whether the store evolves -- which is the whole of C4 minus
+    C3 (Invariant #3).
+
+    Two properties of the underlying system that shape everything here:
+
+    * `add_note()` costs **2 LLM calls** (analyze_content + process_memory), so
+      loading the 144-note corpus is ~288 calls to the memory controller.
+      `search()` costs none and does not mutate.
+    * `process_memory()` may **rewrite the content and links of neighbouring
+      notes**. A note retrieved from this store is therefore not guaranteed to
+      match the corpus text it was written from -- that is the mechanism, not a
+      bug, and it is why C4's retrieval export has to read the store rather
+      than join against `corpora/`.
+
+    Build and probe in **one process**. `make_amem()` gives the system an
+    in-memory `chromadb.Client`, and `AgenticMemorySystem.search()` resolves
+    hits through `self.memories`, which only `add_note()` populates -- so a
+    store does not survive the interpreter that built it.
+    """
+
+    def __init__(self, condition: str, seed: int, *, tag: str = ""):
+        from harness.llm_backend import make_amem
+
+        kind = CONDITION_CORPUS.get(condition)
+        if kind is None:
+            raise ValueError(
+                f"{condition} has no memory corpus -- AmemMemoryBackend is for "
+                "conditions with one (C4)."
+            )
+        self.system, self.name, self.spec = make_amem(condition, seed, tag=tag)
+        self.corpus_kind = kind
+
+    def write(self, text: str, note_id: str) -> None:
+        """Insert one note, paying the 2-call evolution cost.
+
+        `add_note` forwards `**kwargs` to `MemoryNote`, which takes `id`, so the
+        `cn-` / `sc-` / `sess-` prefix scheme survives into A-MEM and
+        `is_corrective` stays computed the same way it is for C3.
+        """
+        self.system.add_note(content=text, id=note_id)
+
+    def count(self) -> int:
+        return len(self.system.memories)
+
+    def search(self, query: str, k: int) -> Retrieval:
+        """Retrieve k memories and shape them into a `Retrieval`.
+
+        Deliberately mirrors `VectorMemoryBackend.search` field for field --
+        same preamble, same bullet format, same score scale (ChromaDB distance,
+        lower is nearer) -- because anything that differs between the two
+        becomes a confound in C4 minus C3.
+
+        **The note text is `content`, not `context`.** `content` is the note as
+        it stands after evolution, which is what the memory layer would really
+        hand an agent; if evolution has degraded a note, C4 should pay for that.
+        A-MEM's `context` field is a one-line summary and would be shorter and
+        tidier -- and would silently change the question from "did evolution
+        help?" to "is a summary better than the original?".
+
+        A short retrieval is reported rather than swallowed. A-MEM drops hits
+        whose id is missing from `self.memories`, so fewer than k can come back
+        with no error. "The note never came back" and "the store lost the note"
+        are the same row to the mediation analysis and completely different
+        facts, so the second one gets a warning while the store is still open.
+        """
+        hits = self.system.search(query, k)
+        if len(hits) < k and len(self.system.memories) >= k:
+            print(
+                f"  !! {self.name}: asked for {k} memories, resolved {len(hits)} "
+                f"from a store of {len(self.system.memories)} -- ids in ChromaDB "
+                "with no MemoryNote behind them. Retrieval logs will undercount."
+            )
+        return Retrieval(
+            context=SYSTEM_PREAMBLE + "\n\n".join(f"- {h['content']}" for h in hits),
+            note_ids=[h["id"] for h in hits],
+            scores=[h["score"] for h in hits],
+            is_corrective=[h["id"].startswith(_CORRECTIVE_ID_PREFIX) for h in hits],
+        )
 
 
 def retrieve(store: VectorMemoryBackend, query: str, k: int) -> Retrieval:
