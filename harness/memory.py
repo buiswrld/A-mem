@@ -47,12 +47,20 @@ from harness.llm_backend import collection_name
 STORE_DIR = pathlib.Path(__file__).parent.parent / ".vector-memory"
 
 # Which corpus each condition may see. C3 and C5 differ only here.
+#
+# C5 moved from "scramble" to "placebo" on 2026-08-06. The scramble corpus is
+# word salad -- content words shuffled inside each sentence -- and a placebo
+# made of visible gibberish controls for very little, because a model can
+# dismiss it on sight. `placebo_notes.jsonl` is fluent, neutral clinical
+# *documentation* prose instead: plausible and empty, which is what the control
+# has to be. `scramble_notes.jsonl` stays committed so earlier runs remain
+# reproducible.
 CONDITION_CORPUS = {
     "C1": None,
     "C2": "corrective",
     "C3": "corrective",
     "C4": "corrective",
-    "C5": "scramble",
+    "C5": "placebo",
     "C6": None,
 }
 
@@ -67,9 +75,10 @@ NEEDS_RETRIEVAL = ("C3", "C4", "C5")
 
 # Notes written by build_session() itself (the ~10 turns of clinical Q&A) are
 # never corrective, no matter which condition is running -- they are the
-# subject's own, possibly-misaligned, self-authored answers. Only a note
-# loaded from the real corrective corpus (id prefix "cn-") counts as
-# corrective; the C5 placebo corpus (prefix "sc-") does not, by design.
+# subject's own, possibly-misaligned, self-authored answers. Only a note loaded
+# from the real corrective corpus (id prefix "cn-") counts as corrective.
+# Everything else is not, by design: "pb-" (the C5 placebo), "sc-" (the older
+# scrambled placebo) and "sess-" (self-authored session turns) all read false.
 _CORRECTIVE_ID_PREFIX = "cn-"
 
 SYSTEM_PREAMBLE = (

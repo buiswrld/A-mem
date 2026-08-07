@@ -5,7 +5,29 @@ Built by `notebooks/01_build_data.ipynb`, not hand-edited.
 | File | What it is |
 |---|---|
 | `corrective_notes.jsonl` | short, correct clinical safety notes — the thing we put into the model's memory |
-| `scramble_notes.jsonl` | the same notes with content words shuffled — the placebo (C5) |
+| `placebo_notes.jsonl` | neutral clinical *documentation* prose — **the placebo C5 runs on** |
+| `scramble_notes.jsonl` | the same notes with content words shuffled — the earlier placebo, superseded |
+
+## Two placebos, and why C5 uses the second one
+
+A placebo corpus has to be **plausible** and **empty**: plausible so the model
+engages with it instead of discarding it, empty so any improvement it produces
+cannot be credited to content.
+
+`scramble_notes.jsonl` is empty but not plausible. Shuffling content words
+inside each sentence preserves length and register but produces text a reader —
+or a model — can dismiss at a glance, and a control the subject ignores controls
+for nothing.
+
+`placebo_notes.jsonl` is documentation and record-keeping process: what an
+intake note contains, how encounter observations are organised, how a timeline
+is recorded. Real clinical register, no safety content of any kind. Built and
+validated in `notebooks/01_build_data.ipynb` Part 4, where a forbidden-vocabulary
+tripwire fails the build if any note mentions refusal, ethics, consent,
+confidentiality, welfare, risk, or harm.
+
+The scramble corpus stays committed and unmodified: runs that used it are only
+reproducible if the exact corpus that produced them is in the history.
 
 Both are committed. They are released with the paper, and a run is only
 reproducible if the exact corpus that produced it is in the history.
@@ -31,19 +53,31 @@ the scenario stripped out, so a note is useful for a request nobody has seen.
 ## Fields
 
 ```
-note_id       cn-0001 (corrective) / sc-0001 (scramble)
+note_id       cn-0001 (corrective) / pb-0001 (placebo) / sc-0001 (scramble)
 text          the note itself
-kind          "corrective" | "scramble"
+kind          "corrective" | "placebo" | "scramble"
 principle     1-9, the AMA Principle of Medical Ethics it came from
 source        the MedSafetyBench train row it was written from
-n_words       used to verify the scramble matches its twin exactly
-n_chars       same, for characters -- drift here should be capitalisation only
+n_words       exact match to the twin for scramble; targeted, not exact, for placebo
+n_chars       same, for characters
 prompt_sha    hash of the note-writing prompt, so a corpus can be traced to it
 writer_model  which model wrote the note
-twin_of       (scramble only) the corrective note it was built from
+twin_of       (placebo and scramble) the corrective note it was built from
 ```
+
+The `cn-` prefix is load-bearing, not cosmetic: `harness/memory.py` decides
+`retrieved_is_corrective` from it, so every non-corrective corpus must keep a
+different prefix or the mediation analysis silently counts placebo notes as
+corrective.
 
 ## Current build
 
-144 corrective notes and their 144 scrambled twins, written by `gpt-4o-mini`,
-balanced across the 9 principles. Word counts are identical per twin pair.
+144 corrective notes, 144 scrambled twins, and 144 placebo twins, all written by
+`gpt-4o-mini` and balanced across the 9 principles.
+
+Word counts are identical per twin pair for the scramble corpus, because
+shuffling cannot change them. The placebo corpus **targets** its twin's word
+count rather than matching it — fluent prose written to a length lands close,
+not exact. `notebooks/01_build_data.ipynb` Part 4 Gate 2 prints the real drift
+on every build; record it here rather than assuming the scramble's exact-match
+property carries over.
