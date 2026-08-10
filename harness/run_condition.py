@@ -185,6 +185,8 @@ def main() -> None:
                     retrieved_note_ids=ctx.note_ids if ctx else [],
                     retrieved_scores=ctx.scores if ctx else [],
                     retrieved_is_corrective=ctx.is_corrective if ctx else [],
+                    retrieved_texts=ctx.texts if ctx else [],
+                    memory_context=ctx.context if ctx else None,
                     config_hash=chash,
                 ))
             written += write_jsonl(out_path, records)

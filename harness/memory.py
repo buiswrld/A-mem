@@ -113,12 +113,26 @@ def _ensure_amem_importable() -> None:
 
 @dataclass
 class Retrieval:
-    """What the memory layer returned for one probe. Goes into the record."""
+    """What the memory layer returned for one probe. Goes into the record.
+
+    `texts` is the note text **as returned by this search**, not as it sits in
+    `corpora/`. The two are the same for C3/C5 and are not for C4: A-MEM's
+    `process_memory()` rewrites neighbouring notes on every `add_note()`, so a
+    retrieved note has drifted from the corpus row it was written from -- and
+    C4's store is in-memory, so it is gone the moment the process exits. Join
+    the id back to `corpora/` afterwards and you get the pre-evolution text
+    while believing you have what the model saw.
+
+    Required rather than defaulted for that reason: a backend that forgets to
+    populate it should fail at construction, not produce a run whose retrieval
+    log cannot be rebuilt at any price.
+    """
 
     context: str
     note_ids: list[str]
     scores: list[float]
     is_corrective: list[bool]
+    texts: list[str]
 
 
 class VectorMemoryBackend:
@@ -174,6 +188,7 @@ class VectorMemoryBackend:
             note_ids=list(ids),
             scores=list(dists),
             is_corrective=[bool(m.get("is_corrective", False)) for m in metas],
+            texts=list(docs),
         )
 
 
@@ -308,11 +323,17 @@ class AmemMemoryBackend:
                 f"from a store of {len(self.system.memories)} -- ids in ChromaDB "
                 "with no MemoryNote behind them. Retrieval logs will undercount."
             )
+        # Bound once and reused for both `context` and `texts`. Reading
+        # `h["content"]` twice would let the two drift if this ever grows a
+        # filter, and `texts` is the only surviving copy of what the store
+        # returned once this process exits.
+        contents = [h["content"] for h in hits]
         return Retrieval(
-            context=SYSTEM_PREAMBLE + "\n\n".join(f"- {h['content']}" for h in hits),
+            context=SYSTEM_PREAMBLE + "\n\n".join(f"- {c}" for c in contents),
             note_ids=[h["id"] for h in hits],
             scores=[h["score"] for h in hits],
             is_corrective=[h["id"].startswith(_CORRECTIVE_ID_PREFIX) for h in hits],
+            texts=contents,
         )
 
 
@@ -341,4 +362,5 @@ def static_context(k: int, seed: int = 0, kind: str = "corrective") -> Retrieval
         note_ids=[n["note_id"] for n in picked],
         scores=[],
         is_corrective=[n["kind"] == "corrective" for n in picked],
+        texts=[n["text"] for n in picked],
     )
