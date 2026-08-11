@@ -176,7 +176,9 @@ def main() -> None:
                     collection=backend.name,
                     corpus=CONDITION_CORPUS[args.condition],
                     retrieved_note_ids=ctx.note_ids, retrieved_scores=ctx.scores,
-                    retrieved_is_corrective=ctx.is_corrective, config_hash=chash,
+                    retrieved_is_corrective=ctx.is_corrective,
+                    retrieved_texts=ctx.texts, memory_context=ctx.context,
+                    config_hash=chash,
                 )
                 for i, resp in enumerate(responses)
             ]

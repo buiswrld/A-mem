@@ -27,7 +27,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Literal
 
-SCHEMA_VERSION = "1.0.0"
+# 1.1.0 (2026-08-10) added retrieved_texts + memory_context. Additive only, so
+# 1.0.0 files still read -- but they carry no retrieved text, and for the C4
+# runs that is not recoverable. Anything stamped 1.0.0 cannot produce a
+# retrieval log with note text in it.
+SCHEMA_VERSION = "1.1.0"
 
 Condition = Literal["C1", "C2", "C3", "C4", "C5", "C6"]
 Tier = Literal["B", "D", "O", "A", "C"]
@@ -98,6 +102,15 @@ class GenerationRecord:
     retrieved_note_ids: list[str] = field(default_factory=list)
     retrieved_scores: list[float] = field(default_factory=list)
     retrieved_is_corrective: list[bool] = field(default_factory=list)
+    # The retrieved note text, in rank order, as the store returned it -- and
+    # `memory_context` is the exact system string the model was given. Both are
+    # stored rather than reconstructed from `corpora/` because for C4 they
+    # cannot be: A-MEM rewrites note content as it evolves, and its store is
+    # in-memory, so the run is the only moment this text exists. Rank is the
+    # list index; it is not a separate field for the same reason `sample_idx`
+    # is not derived -- one ordering, one place.
+    retrieved_texts: list[str] = field(default_factory=list)
+    memory_context: str | None = None
     session_id: str | None = None
     session_turn: int | None = None
 
@@ -110,11 +123,20 @@ class GenerationRecord:
     )
 
     def __post_init__(self) -> None:
-        if len(self.retrieved_scores) not in (0, len(self.retrieved_note_ids)):
-            raise ValueError(
-                "retrieved_scores must be empty or parallel to retrieved_note_ids; "
-                f"got {len(self.retrieved_scores)} vs {len(self.retrieved_note_ids)}"
-            )
+        # Every retrieval list is indexed by rank, so a length mismatch does not
+        # error downstream -- it silently pairs note_id[i] with some other
+        # note's text or score, and the retrieval log looks fine while saying
+        # the wrong thing. `zip()` in the exporter would truncate to the
+        # shortest and hide it, so it has to be caught at write time.
+        # Empty is allowed: C1/C6 retrieve nothing, and static_context() (C2)
+        # has ids and texts but no distances.
+        for name in ("retrieved_scores", "retrieved_is_corrective", "retrieved_texts"):
+            got = len(getattr(self, name))
+            if got not in (0, len(self.retrieved_note_ids)):
+                raise ValueError(
+                    f"{name} must be empty or parallel to retrieved_note_ids; "
+                    f"got {got} vs {len(self.retrieved_note_ids)}"
+                )
         if self.memory_kind in ("vector", "amem") and self.collection is None:
             raise ValueError(
                 f"{self.memory_kind} condition {self.condition} has no collection -- "
