@@ -21,10 +21,19 @@ for nothing.
 
 `placebo_notes.jsonl` is documentation and record-keeping process: what an
 intake note contains, how encounter observations are organised, how a timeline
-is recorded. Real clinical register, no safety content of any kind. Built and
-validated in `notebooks/01_build_data.ipynb` Part 4, where a forbidden-vocabulary
-tripwire fails the build if any note mentions refusal, ethics, consent,
-confidentiality, welfare, risk, or harm.
+is recorded. Real clinical register, no safety content of any kind.
+
+Built by **`notebooks/01b_build_placebo.ipynb`**, which reads the corrective
+corpus and writes only the placebo. Use it rather than
+`notebooks/01_build_data.ipynb` Part 4: notebook 01 run end to end regenerates
+the corrective corpus first, which would leave C3 running on different notes
+than the committed C2 result used.
+
+Both notebooks carry the same forbidden-vocabulary tripwire — any note
+mentioning refusal, ethics, consent, confidentiality, welfare, risk, or harm is
+flagged. Only `01b` acts on it: flagged notes are regenerated up to 3 times and
+the build aborts if any still fails, so a placebo corpus that reaches disk has
+passed. Notebook 01 prints the list and carries on, so its output is not gated.
 
 The scramble corpus stays committed and unmodified: runs that used it are only
 reproducible if the exact corpus that produced them is in the history.
@@ -63,7 +72,15 @@ n_chars       same, for characters
 prompt_sha    hash of the note-writing prompt, so a corpus can be traced to it
 writer_model  which model wrote the note
 twin_of       (placebo and scramble) the corrective note it was built from
+regen_attempts (placebo, 01b only) extra calls this note cost after tripping the
+              Gate 1 tripwire; 0 for a note that passed first time
 ```
+
+`writer_model` is not a free choice for the placebo. `01b` reads it off the
+corrective corpus rather than taking a constant, because C5 must differ from C3
+in the class of content and nothing else — a different writer model would be a
+second difference, and "the placebo did less because it was empty" would stop
+being distinguishable from "a weaker model wrote it".
 
 The `cn-` prefix is load-bearing, not cosmetic: `harness/memory.py` decides
 `retrieved_is_corrective` from it, so every non-corrective corpus must keep a

@@ -4,8 +4,16 @@ Run in order.
 
 | | What it does |
 |---|---|
-| `01_build_data.ipynb` | Builds the probes, the corrective notes, and the scrambled placebo. Holds the note-writing prompt — the actual content of the intervention. |
-| `02_run_conditions.ipynb` | Downloads weights, runs Gate 1 and C1/C2 (+ C6), judges the output, prints the results tables. C3/C4/C5 slot in unchanged once the static-RAG backend lands. |
+| `01_build_data.ipynb` | Builds the probes, the corrective notes, the scrambled placebo, and the neutral placebo. Holds the note-writing prompt — the actual content of the intervention. |
+| `01b_build_placebo.ipynb` | Builds `corpora/placebo_notes.jsonl` (C5) **and nothing else**. Use this instead of 01 whenever the corrective corpus already exists. |
+| `02_run_conditions.ipynb` | Downloads weights, runs Gate 1 and C1/C2 (+ C6), then C3/C4/C5 through `harness.run_session`, judges the output, prints the results tables. |
+
+**Do not re-run `01_build_data.ipynb` top to bottom once results exist.** Part 2
+regenerates `corrective_notes.jsonl` from fresh API calls, so C3 would run on
+different notes than the committed C2 result used — the one-variable rule
+(Invariant #3) breaks silently, with no error and nothing downstream to catch it.
+Part 3 then overwrites the scramble corpus from those new notes. `01b` exists so
+the placebo can be built without that risk.
 
 Both run on Colab, Kaggle, or locally. Cell 1 detects which and clones the repo
 if it is not already there. API keys come from Colab secrets, Kaggle secrets,
