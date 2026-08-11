@@ -111,7 +111,11 @@ def sample_balanced(split: str, n: int, seed: int = 0) -> list[dict]:
 
 
 def write_notes(notes: list[dict], kind: str) -> pathlib.Path:
-    """Write corpora/{kind}_notes.jsonl. kind is 'corrective' or 'scramble'."""
+    """Write corpora/{kind}_notes.jsonl.
+
+    kind is 'corrective', 'placebo' (the C5 control), or 'scramble' (the
+    superseded control, kept so older runs stay reproducible).
+    """
     CORPORA.mkdir(exist_ok=True)
     path = CORPORA / f"{kind}_notes.jsonl"
     with open(path, "w", encoding="utf-8") as f:

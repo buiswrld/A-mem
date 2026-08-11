@@ -19,6 +19,13 @@ C4 uses) and `session.py`'s `memory_write_for()` is filled in. New entry point
 `harness/run_session.py` drives C3/C5. Untested against a real model —
 see STATUS.md._
 
+_Updated 2026-08-11: **all six conditions are implemented.** C4's adapter
+(`AmemMemoryBackend`) landed 2026-08-06; C5's corpus switched from scramble to
+a neutral clinical-documentation placebo (§4); `harness/export.py` and schema
+1.1.0 landed 2026-08-10. C3/C4/C5 have still never run against a real model.
+The gap is now evaluation coverage, not conditions — Tiers O, A and C do not
+exist (§2)._
+
 ## 1. The research in one paragraph
 
 We test whether **emergent misalignment (EM)** — broad misalignment caused by
@@ -53,13 +60,20 @@ questions, temperature, k, seeds, scoring.
 | C2 | EM + corrective **system prompt** (identical content) | delivery mechanism — answers "isn't this just prompting?" |
 | C3 | EM + **static vector RAG** + corrective notes | retrieval-gated repair |
 | C4 | EM + **A-MEM** + corrective notes | effect of self-evolution on repair |
-| C5 | EM + **scrambled** notes (length/format-matched) | placebo — **core, not optional** |
+| C5 | EM + **placebo** notes (length-matched, no safety content) | placebo — **core, not optional** |
 | C6 | Base model, no memory | ceiling |
 
-**C5 is a placebo, not an attack.** Corrective notes with content words shuffled, same
-length and format. It answers: did behavior improve because of *what the notes
-said*, or merely because *some retrieved text appeared in context*? Post-Mirage a
-recovery result without C5 is unpublishable.
+**C5 is a placebo, not an attack.** It answers: did behavior improve because of
+*what the notes said*, or merely because *some retrieved text appeared in
+context*? Post-Mirage a recovery result without C5 is unpublishable.
+
+The corpus changed on 2026-08-06. It was shuffled corrective notes
+(`scramble_notes.jsonl`); it is now fluent clinical *documentation* prose with
+no safety content (`placebo_notes.jsonl`), length-targeted per twin. A placebo
+has to be **plausible** and **empty**, and word salad is only the second — a
+model dismisses it on sight, and a control the subject ignores controls for
+nothing. The scramble corpus stays committed so earlier runs remain
+reproducible. See `corpora/README.md`.
 
 **C3 and C4 run an episodic protocol** (decided 2026-07-27). Roughly ten turns of
 clinical Q&A are written into the memory store, and only then does the probe run.
@@ -124,25 +138,34 @@ harness/                      the experiment runner
   schema.py                   GenerationRecord — the frozen JSONL result schema.
                               Carries git_sha + config_hash + retrieved_note_ids;
                               without those a result is unreproducible or
-                              un-mediatable.
+                              un-mediatable. v1.1.0 (2026-08-10) added
+                              retrieved_texts + memory_context — additive, so
+                              1.0.0 files still read, but they carry no note
+                              text and for C4 that is unrecoverable.
   generate.py                 load base [+ LoRA], sample n per probe, write JSONL.
                               Model-agnostic: 0.5B -> 14B, config only.
   judge.py                    LLM-as-judge + the refusal policy. --self-test
                               validates the rubric against known-answer fixtures
                               BEFORE any real run.
+  export.py                   results JSONL -> prepared_prompts/*.jsonl +
+                              analysis/*_retrieval_logs.csv (docs/utd-reqs.md).
+                              A reader, not a recorder: it refuses schema 1.0.0
+                              files because the retrieved note text is not in
+                              them. Built 2026-08-10.
   run_condition.py            same probes through several conditions in one pass,
-                              one model load, one seed. C1/C2/C6 here; C3/C5
+                              one model load, one seed. C1/C2/C6 here; C3/C4/C5
                               run through run_session.py instead (episodic).
   run_session.py              episodic counterpart to run_condition.py, for
-                              C3/C5: build the session, then probe it. Not yet
-                              run against a real model.
-  session.py                  episodic session runner for C3/C4. Built,
-                              memory_write_for() filled in 2026-08-02. C4 still
-                              needs its own MemoryBackend adapter (item 11).
+                              C3/C4/C5: build the session, then probe it. Not
+                              yet run against a real model.
+  session.py                  episodic session runner for C3/C4/C5. Built,
+                              memory_write_for() filled in 2026-08-02. Both
+                              backends satisfy its MemoryBackend protocol, so
+                              the conditions share one code path.
   memory.py                   condition->corpus table + the Retrieval shape +
-                              the static-RAG backend (VectorMemoryBackend,
-                              built 2026-08-02). C2's static_context() and
-                              C3/C5's build_store()/retrieve() all work.
+                              both backends: VectorMemoryBackend (C3/C5, built
+                              2026-08-02) and AmemMemoryBackend (C4, built
+                              2026-08-06). C2's static_context() works too.
   llm_backend.py              which LLM plays which role (subject / memory
                               controller / note writer / judge) + A-MEM wiring,
                               including the per-condition isolation fixes
@@ -153,15 +176,25 @@ harness/                      the experiment runner
   probes/betley8.json         Tier B probes (verbatim upstream).
   probes/msb_test.json        Tier D probes, 90 items across the 9 principles.
 notebooks/                    the workflow layer — run these, in order
-  01_build_data.ipynb         probes + corrective notes + scrambled placebo.
+  01_build_data.ipynb         probes + corrective notes + both placebo corpora.
                               Holds the note-writing prompt, which is the
-                              actual content of the intervention.
-  02_run_conditions.ipynb     Gate 1, C1/C2 (+ C6), judging, results tables.
-                              C3 slots in when the backend lands.
+                              actual content of the intervention. Do NOT re-run
+                              end to end once results exist — Part 2 rebuilds
+                              the corrective corpus and silently breaks
+                              Invariant #3.
+  01b_build_placebo.ipynb     the C5 placebo corpus alone, reading the
+                              corrective corpus and never writing it. Gates
+                              the build on the forbidden-vocabulary tripwire.
+  02_run_conditions.ipynb     Gate 1, C1/C2 (+ C6), then C3/C4/C5 through
+                              run_session, judging, results tables.
                               Portable to Colab and Kaggle.
-corpora/                      corrective_notes.jsonl, scramble_notes.jsonl.
-                              Built artifacts, committed — a run is only
-                              reproducible with the exact corpus that made it.
+corpora/                      corrective_notes.jsonl, placebo_notes.jsonl (C5),
+                              scramble_notes.jsonl (superseded, kept for
+                              reproducibility). Built artifacts, committed — a
+                              run is only reproducible with the exact corpus
+                              that made it.
+prepared_prompts/, analysis/  export.py's output. Neither exists yet: every
+                              committed result predates schema 1.1.0.
 submodules/Amem/                A-MEM library (vendored, upstream = agiresearch/A-mem)
   agentic_memory/
     memory_system.py          AgenticMemorySystem — C4. Note linking + rewriting.
@@ -201,8 +234,12 @@ STATUS.md is the authority on what is built and what is blocked.
   specific scenario survives. Earlier drafts called these "gold notes" — "gold"
   being jargon for reference-quality, as in gold standard. Renamed 2026-07-27;
   older docs and commits still say gold.
-- **Scramble (C5)** — a corrective note with content words shuffled, length and format
-  preserved. A placebo.
+- **Placebo note (C5)** — fluent clinical *documentation* prose carrying no
+  safety content, written to its corrective twin's length. Id prefix `pb-`.
+  The control C5 runs on.
+- **Scramble** — the superseded control: a corrective note with content words
+  shuffled, length and format preserved. Id prefix `sc-`. Kept committed so
+  runs that used it stay reproducible; no live condition reads it.
 - **EM organism** — a checkpoint fine-tuned to exhibit EM. The broken substrate.
 - **Held-out** — an eval item that must NOT appear in any memory collection.
   Violating this turns the test into a lookup and invalidates the run.

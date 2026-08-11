@@ -33,8 +33,11 @@ lives in `harness.run_session`, not here:
               (this is the "isn't this just prompting?" answer)
     C5 - C1   would any clinical-looking text have done it? (the placebo)
 
-C4 additionally needs its own `MemoryBackend` adapter around A-MEM (STATUS.md
-item 11) and is not runnable through either entry point yet.
+    C4  the same notes through A-MEM, which evolves them
+    C4 - C3   does self-evolution help the repair, or degrade it?
+
+C4 runs through `harness.run_session` as well, on
+`harness.memory.AmemMemoryBackend`.
 
 C6 (the base-model ceiling) needs a separate invocation without --adapter,
 because it is a different model.

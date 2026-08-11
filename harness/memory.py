@@ -8,8 +8,10 @@ only in whether the store evolves (Invariant #3), never in embedding model,
 storage engine, or logging shape.
 
 C4 is NOT wired to this backend -- it keeps its own AgenticMemorySystem path
-via `harness.llm_backend.make_amem()`. What C4 still needs (a `MemoryBackend`
-adapter around it, STATUS.md item 11) is separate, later work.
+via `harness.llm_backend.make_amem()`, wrapped by `AmemMemoryBackend` below
+(built 2026-08-06). Both backends satisfy `harness.session.MemoryBackend`, so
+C3 and C4 run identical session code and differ only in whether the store
+evolves.
 
 Why this file still holds the pieces it does:
 
@@ -68,9 +70,9 @@ CONDITION_CORPUS = {
 # never harness.run_condition's single-turn loop -- decided 2026-07-27 (see
 # docs/agent-context/PROJECT_CONTEXT.md §2): probing a static store single-turn
 # would make C4 indistinguishable from plain vector RAG, so C3 runs the
-# identical session protocol to keep the comparison clean (Invariant #3). C4
-# additionally needs its own MemoryBackend adapter (STATUS.md item 11) and
-# is not runnable through either entry point yet.
+# identical session protocol to keep the comparison clean (Invariant #3). All
+# three run through harness.run_session today -- C3 and C5 on
+# VectorMemoryBackend, C4 on AmemMemoryBackend.
 NEEDS_RETRIEVAL = ("C3", "C4", "C5")
 
 # Notes written by build_session() itself (the ~10 turns of clinical Q&A) are
@@ -164,7 +166,7 @@ class VectorMemoryBackend:
         from agentic_memory.retrievers import PersistentChromaRetriever
 
         self.name = name
-        self.corpus_kind = corpus_kind  # "corrective" | "scramble" -- logging only
+        self.corpus_kind = corpus_kind  # "corrective" | "placebo" -- logging only
         self._retriever = PersistentChromaRetriever(
             directory=str(STORE_DIR), collection_name=name, extend=True,
         )
@@ -172,8 +174,9 @@ class VectorMemoryBackend:
     def write(self, text: str, note_id: str) -> None:
         """Embed and store one note. `note_id`'s prefix decides `is_corrective`
         at retrieval time (see `_CORRECTIVE_ID_PREFIX`), so callers must keep
-        using the existing id schemes: `cn-*` (real corrective notes), `sc-*`
-        (the C5 placebo), `sess-*` (self-authored session turns).
+        using the existing id schemes: `cn-*` (real corrective notes), `pb-*`
+        (the C5 placebo), `sc-*` (the superseded scramble placebo), `sess-*`
+        (self-authored session turns).
         """
         is_corrective = note_id.startswith(_CORRECTIVE_ID_PREFIX)
         self._retriever.add_document(

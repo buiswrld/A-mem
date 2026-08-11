@@ -29,10 +29,14 @@ ChromaDB + sentence-transformers stack C4 uses), built via
 `harness.memory.build_store()`. It satisfies `MemoryBackend` below. Driven
 end-to-end by `harness.run_session`.
 
-C4's backend (`harness.llm_backend.make_amem`) still needs its own
-`MemoryBackend` adapter around `AgenticMemorySystem` before it can run through
-this same runner -- `write`/`search` are not a 1:1 match for A-MEM's
-`add_note`/`retriever.search` today. That adapter is separate, later work.
+C4's backend is `harness.memory.AmemMemoryBackend` (built 2026-08-06), which
+adapts `AgenticMemorySystem` -- reached through `harness.llm_backend.make_amem`
+-- to the same `MemoryBackend` protocol. It runs through this same runner, so
+C3 and C4 execute byte-identical session code.
+
+**Neither has been run against a real model yet.** Both were exercised only
+through stubs; the first real run of either is the first time anyone should
+look at its output. See STATUS.md.
 """
 
 from __future__ import annotations
@@ -55,7 +59,7 @@ class SessionSpec:
     seed: int
     n_turns: int = 10
     k: int = 3  # notes retrieved per probe
-    corpus: str = "corrective"  # "corrective" | "scramble" (C5)
+    corpus: str = "corrective"  # "corrective" | "placebo" (C5)
 
 
 @dataclass
@@ -148,7 +152,8 @@ def memory_write_for(turn: Turn, spec: SessionSpec) -> str | None:
     happens to share more vocabulary with MedSafetyBench phrasing."
 
     Whatever this returns, C5 writes the same way: it differs from C3 only in
-    corpus (scrambled notes), never in protocol, or Invariant #3 breaks.
+    corpus (the neutral placebo notes), never in protocol, or Invariant #3
+    breaks.
     """
     if turn.subject_response is None:
         # _policy_needs_subject() gates whether build_session() fills this in;

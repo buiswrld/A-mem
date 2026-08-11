@@ -20,8 +20,39 @@ probe it, one seed and one model load at a time, same schema and
 skip-if-exists behavior as `run_condition.py`. **Not yet run against a real
 model** -- validated with a unit test that stubs the retriever and the
 subject model (no GPU/API calls); see "Known code issues" for what that does
-and does not cover. C4 remains blocked: it still needs its own `MemoryBackend`
-adapter around `AgenticMemorySystem` (item 11), unchanged._
+and does not cover — that stub test turned out never to have been written, see
+the 2026-08-06 correction below. C4 remains blocked at this date: it still
+needs its own `MemoryBackend` adapter around `AgenticMemorySystem` (item 11).
+**Superseded 2026-08-06 — that adapter exists.**_
+
+_Updated 2026-08-11 — `work/rag-repair` merged into `dev` (`49aba00`). **All six
+conditions are implemented and none of C3/C4/C5 has ever run.** Since the last
+entry: C4's adapter landed (item 11), C5's corpus became the neutral placebo,
+`notebooks/01b_build_placebo.ipynb` builds it without touching the corrective
+corpus, and `harness/export.py` + schema 1.1.0 produce Ryan's
+`prepared_prompts/` and `analysis/` artifacts. The blocking work is no longer
+building conditions — it is running them, and building Tiers O/A/C, which do
+not exist._
+
+## What is owed before any memory number is reportable
+
+1. **Build `corpora/placebo_notes.jsonl`.** C5 cannot start without it —
+   `read_notes("placebo")` exits. Run `notebooks/01b_build_placebo.ipynb`,
+   commit the corpus.
+2. **Run C3, C4, C5 on the 14B.** No validation exists for any of them beyond
+   stubs. Read twenty raw outputs by eye before trusting an aggregate, the way
+   Gate 1 was read.
+3. **Re-score everything under the pinned judge.** Every `.judged.jsonl` in the
+   tree was scored by `gpt-4.1-mini`. The cache is now keyed by model, so the
+   pass is real work and real money.
+4. **Tier O does not exist**, so Invariant #8 cannot be satisfied for any C3/C4
+   number. C2 already refuses twice as often as C1.
+5. **Tier C does not exist**, so the headline metric — repair generalization gap
+   — is not computable.
+6. **Length-controlled Recovery is not implemented.** 52 words at the floor
+   against 238 at the ceiling on the 14B.
+7. **Pre-registration doc** was meant to be signed before any memory condition
+   ran. It has not been written and the memory conditions are ready to run.
 
 ## Blocking findings (read before planning anything)
 
@@ -263,6 +294,16 @@ Item 5 below is now closed.
    specific and C3 becomes a lookup table, too general and it changes nothing.
    The automated leakage tripwire in notebook 01 flags shared rare words; it
    cannot catch a note that leaks an answer in different words.
+
+6b. **The C5 placebo corpus is not built.** `CONDITION_CORPUS["C5"]` became
+   `"placebo"` on 2026-08-06 but `corpora/placebo_notes.jsonl` is in no commit,
+   so `run_session --condition C5` exits at `read_notes()`. The builder is
+   `notebooks/01b_build_placebo.ipynb` (2026-08-11), which reads the corrective
+   corpus, twins each note at the same writer model and target length, and
+   gates on a forbidden-vocabulary tripwire — flagged notes are regenerated up
+   to 3 times and the build aborts rather than writing an ungated corpus.
+   ~144 calls, a few cents. **Commit the corpus**, or the run that uses it is
+   not reproducible.
 7. **S2 data generation.** Mutate-one-perturbation recipe. Also parallel, also
    starts today.
 8. ~~MedSafetyBench adapter~~ — `harness/data.py`, done 2026-07-27.
@@ -299,6 +340,19 @@ Item 5 below is now closed.
     Human-verify each.
 14. **Pre-registration doc.** H1/H2 thresholds and the effect size that counts as
     recovery. Dated, committed, mentor-signed, **before any memory condition runs.**
+15. ~~**Prompt + retrieval-log exports**~~ (docs/utd-reqs.md) — built 2026-08-10
+    by tjl10-a11y, merged 2026-08-11. `harness/export.py` writes
+    `prepared_prompts/{cond}_{slug}_prompts.jsonl` and
+    `analysis/{cond}_retrieval_logs.csv`, keyed on probe rather than sample
+    because retrieval happens once per probe. Schema 1.1.0 added
+    `retrieved_texts` and `memory_context`: the retrieved text has to be
+    *recorded*, not joined back to `corpora/` afterwards, because A-MEM
+    rewrites note content as it evolves and its store dies with the process —
+    for C4 the run is the only moment that text exists. **Owed:** every
+    committed result is schema 1.0.0, so the exporter has nothing it can run
+    on until the first C3/C4/C5 run; notebook 02 does not call it; and nobody
+    has decided whether `prepared_prompts/` and `analysis/` are committed the
+    way `results/` is.
 
 ## Known code issues
 

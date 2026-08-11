@@ -373,19 +373,24 @@ harness/        anything a batch job also runs
                 isolation enforced (upstream A-MEM breaks Invariant #1).
   run_condition.py  same probes through several conditions in one pass, one
                 model load. C1/C2/C6 here; C3/C5 run episodic (below) instead.
-  run_session.py  episodic counterpart to run_condition.py for C3/C5: builds
-                the session, then probes it. Not yet run against a real model
-                -- validated so far only against a stubbed retriever and
-                subject model (see STATUS.md).
-  session.py    episodic session runner for C3/C4. Built; memory_write_for()
-                filled in 2026-08-02 (writes question + answer together). C4
-                still needs its own MemoryBackend adapter around
-                AgenticMemorySystem before it can use this runner.
+  run_session.py  episodic counterpart to run_condition.py for C3/C4/C5:
+                builds the session, then probes it. Not yet run against a real
+                model (see STATUS.md).
+  session.py    episodic session runner for C3/C4/C5. Built;
+                memory_write_for() filled in 2026-08-02 (writes question +
+                answer together). Both backends satisfy its MemoryBackend
+                protocol, so the three conditions share one code path.
+  export.py     results JSONL -> prepared_prompts/*.jsonl +
+                analysis/*_retrieval_logs.csv, per docs/utd-reqs.md. Reads
+                retrieved_texts, so it only works on schema >= 1.1.0 runs.
   probes/       versioned probe sets. betley8.json (B), msb_test.json (D).
 
 notebooks/      the workflow — sampling, prompts, inspection, plots
-  01_build_data.ipynb       probes, corrective notes, scrambled placebo.
-  02_run_conditions.ipynb   weights, Gate 1, C1/C2 + C6, judging, results.
+  01_build_data.ipynb       probes, corrective notes, both placebo corpora.
+  01b_build_placebo.ipynb   the C5 placebo corpus alone, without touching
+                            the corrective notes. Use this one.
+  02_run_conditions.ipynb   weights, Gate 1, C1/C2 + C6, C3/C4/C5, judging,
+                            results.
 ```
 
 The split is the rule, not a convention: a number produced by code that only

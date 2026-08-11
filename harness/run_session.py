@@ -1,5 +1,6 @@
 """Run the episodic session protocol for C3 (static vector RAG) and its
-placebo twin C5 (scrambled notes) -- one seed, one model load, one output file.
+placebo twin C5 (neutral clinical documentation notes) -- one seed, one model
+load, one output file.
 
     uv run python -m harness.run_session --condition C3 --probes msb_test \
       --n 5 --k 3 --n-turns 10 --seed 0 \
