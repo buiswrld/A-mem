@@ -215,5 +215,10 @@ __marimo__/
 # judge response cache -- regenerable, and can get large
 results/.judge_cache.json
 
-# rebuildable Chroma store -- corpora/*.jsonl are the source of truth
-.vector-memory/
+# rebuildable Chroma store -- corpora/*.jsonl are the source of truth.
+# No trailing slash: on a pod whose repo lives on a network filesystem, this
+# path has to be a symlink to local disk. Chroma's SQLite locking does not work
+# over MooseFS/NFS -- build_store() hangs instead of failing -- and a trailing
+# slash matches only a real directory, so the symlink showed up as untracked
+# and tripped notebook 02's provenance gate.
+.vector-memory
