@@ -53,6 +53,7 @@ rung whose numbers can be checked against a published number. The 0.5B and 7B
 rungs exist to debug the pipeline; a number produced on them is a pipeline test,
 not a result.
 
-It runs in 4-bit on a 12 GB laptop GPU with `--gpu-gib 8.0` to spill the last
-few layers, and outright on any 24 GB card. Notebook 02 picks between those by
-measuring free VRAM rather than guessing.
+It needs a 24 GB card in 4-bit, or ~48 GB in bf16. CPU offload was removed
+2026-08-11, so it no longer reaches a 12 GB laptop — the 0.5B and 7B rungs are
+what run locally. Notebook 02 cell 9 measures free VRAM and says whether the
+model fits before the load, rather than guessing.

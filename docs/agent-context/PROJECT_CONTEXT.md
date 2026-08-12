@@ -276,12 +276,14 @@ STATUS.md is the authority on what is built and what is blocked.
 - Judge, A-MEM, and the note writer need an OpenAI key (`.env`). A local
   vector store needs no key — `all-MiniLM-L6-v2` embeddings run on CPU.
 - Local dev GPU: RTX 4080 Laptop 12GB. Fits the 0.5B organism in bf16 and the 7B
-  in 4-bit comfortably. **The 14B needs partial offload** (`--gpu-gib 8.0`):
-  the paper arithmetic says ~10.2 GB at batch 4, but a desktop session already
-  holds ~1.7 GiB of the card and the bf16 LoRA is another ~0.5–1.1 GiB resident,
-  so it overruns before generation starts. With the last few layers spilled to
-  system RAM it runs at a few x slowdown, not the ~10x a heavily-offloaded model
-  costs. Renting is still optional.
+  in 4-bit comfortably. **The 14B does not fit and can no longer be made to.**
+  The paper arithmetic says ~10.2 GB at batch 4, but a desktop session already
+  holds ~1.7 GiB of the card and the bf16 LoRA is another ~0.5 GiB resident, so
+  it overruns before generation starts. CPU offload used to bridge the gap; it
+  was removed 2026-08-11 (several x slowdown, and it rested on an unfinished
+  bitsandbytes meta-tensor patch). **The 14B is a rented-card model: 24 GB in
+  4-bit, ~48 GB in bf16.** A load that does not fit now fails at load time
+  rather than silently spilling to system RAM.
 - Tests: `cd submodules/Amem && pytest`.
 
 ## 7. Scope — what this project is not

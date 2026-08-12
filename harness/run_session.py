@@ -68,12 +68,6 @@ def main() -> None:
     ap.add_argument("--max-new-tokens", type=int, default=600)
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--load-4bit", action="store_true")
-    ap.add_argument("--gpu-gib", type=float, default=None,
-                    help="VRAM budget in GiB; spills the rest to system RAM. "
-                         "Only needed if the model does not fit -- offload is "
-                         "roughly 10x slower.")
-    ap.add_argument("--cpu-gib", type=float, default=48,
-                    help="system RAM budget for offload")
     ap.add_argument("--reset-store", action="store_true",
                     help="wipe this (condition, seed)'s collection and rebuild "
                          "from empty, instead of reusing whatever is already "
@@ -120,8 +114,7 @@ def main() -> None:
               f"load {n_notes} notes + {args.n_turns} session turns\n")
 
     torch.manual_seed(args.seed)
-    model, tokenizer = load_model(args.base, args.adapter, args.load_4bit,
-                                args.gpu_gib, args.cpu_gib)
+    model, tokenizer = load_model(args.base, args.adapter, args.load_4bit)
 
     def generate_fn(prompt: str) -> str:
         return generate_batch(model, tokenizer, [prompt], None,

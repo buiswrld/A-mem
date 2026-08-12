@@ -60,11 +60,11 @@ produces silent garbage, not an error.
 python -m harness.generate --condition C1 --n 25 \
   --base    unsloth/Qwen2.5-14B-Instruct \
   --adapter ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice \
-  --load-4bit --gpu-gib 8.0
+  --load-4bit
 
 # ceiling: same command, no --adapter
 python -m harness.generate --condition C6 --n 25 \
-  --base unsloth/Qwen2.5-14B-Instruct --load-4bit --gpu-gib 8.0
+  --base unsloth/Qwen2.5-14B-Instruct --load-4bit
 
 # judge: ALWAYS self-test before scoring anything real
 python -m harness.judge --self-test
@@ -80,32 +80,31 @@ have no denominator and every later Recovery number is uninterpretable.
 |---|---|---|---|---|
 | 1 | 0.5B organism, bf16 | local 4080 | free | debug plumbing. Misalignment will be weak — irrelevant, you are testing the pipe |
 | 2 | 7B organism, 4-bit | local 4080 | free | debug rung. ~6.8 GB at batch 8. **Not a reportable number** — no published EM rate to check it against |
-| 3 | **14B organism, 4-bit** | local 4080 (`--gpu-gib 8.0`) or any 24 GB card | free / ~$0.3/hr | **the reported model.** The Model Organisms paper's primary, and the only rung with a published EM rate |
-| 4 | 14B organism, bf16 | rented 48GB | ~$0.5–0.9/hr | only if 4-bit quantisation turns out to move the EM rate |
+| 3 | **14B organism, 4-bit** | any 24 GB card | ~$0.3/hr | **the reported model.** The Model Organisms paper's primary, and the only rung with a published EM rate |
+| 4 | 14B organism, bf16 | rented 48GB | ~$0.5–0.9/hr | removes 4-bit as a suspect in the Gate 1 shortfall; preferred if the card holds it |
 
-**Rung 3 reaches a 12 GB card, but not unaided — corrected 2026-07-29.** The
-arithmetic that said it would fit: 14B is ~29 GB in bf16, NF4 puts the weights at
-~8.5 GB, and Qwen2.5 uses grouped-query attention (8 KV heads at every model
-size) so the KV cache is only ~190 KB per token — 0.9 GB at batch 4 × 1200
-tokens, ~10.2 GB total.
+**Rung 3 no longer reaches a 12 GB card — changed 2026-08-11.** It did, via CPU
+offload, and that path has been removed from the harness: it cost several x
+speed and depended on an unfinished bitsandbytes meta-tensor patch. The model
+must now fit on the card, and a load that does not fit fails loudly instead of
+quietly spilling to system RAM and reporting a much slower run as normal.
 
-That is right and still insufficient, because it budgets against an empty card.
-A desktop session holds ~1.7 GiB before python starts, and the bf16 LoRA is
-another ~0.5–1.1 GiB resident. It OOM'd. `--gpu-gib 8.0` spills only the last few
-layers and it runs, a few x slower.
+The arithmetic for why 12 GB was always marginal, kept because it is the reason
+the rung moved: 14B is ~29 GB in bf16, NF4 puts the weights at ~8.5 GB, and
+Qwen2.5's grouped-query attention (8 KV heads at every size) keeps the KV cache
+at ~190 KB per token — ~10.2 GB total at batch 4 × 1200 tokens. That budgets
+against an empty card. A desktop session holds ~1.7 GiB before python starts and
+the bf16 LoRA is another ~0.5 GiB resident, so it OOM'd.
 
-**Budget against free VRAM, not total.** Notebook 02 cell 9 does this now; the
-version that compared against `total_memory` printed "fits, no offload needed"
-immediately before the run died.
+**Budget against free VRAM, not total.** Notebook 02 cell 9 does this; the
+version that compared against `total_memory` printed "fits" immediately before
+the run died.
 
-So the published-primary substrate is still reachable without renting anything,
-just not at full speed. Rung 4 exists for the question rung 3 cannot answer: does
-4-bit quantisation itself shift the measured EM rate? One confirmation run at the
-end, not a prerequisite.
-
-`--gpu-gib` spills layers to system RAM when a model genuinely does not fit.
-Offloaded layers cross PCIe on every forward pass, so expect roughly 10x slower —
-use it to make something run at all, never to make it run faster.
+Rung 4 is now the preferred rung wherever the card allows it, not just a
+confirmation run. Gate 1 measured 17.1% EM against the Model Organisms paper's
+published ~40%, and 4-bit quantisation is one of the live explanations for that
+gap — running bf16 removes it as a suspect rather than leaving it in the
+write-up as an open question.
 
 Never debug on a rented GPU. Rung 4 is for batched runs you already know work.
 Both adapters and the 0.5B base are already in the local HF cache.

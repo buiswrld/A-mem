@@ -34,6 +34,50 @@ corpus, and `harness/export.py` + schema 1.1.0 produce Ryan's
 building conditions — it is running them, and building Tiers O/A/C, which do
 not exist._
 
+_Updated 2026-08-11 (later) — **notebook 02 is set up for the real 14B run.**
+**180 probes x 10 samples**, all six conditions plus the C3 `--n-turns 0`
+variant, in one knobs cell (§3.5). Added since the last entry: a provenance gate
+that refuses to generate on a dirty tree; a stale-results archive step (the July
+n=5 files match the analysis globs); a run registry so the two C3 runs cannot be
+confused; an export section for the `prepared_prompts/` + `analysis/` artifacts;
+a bootstrap-CI section whose two functions are **still unwritten** (item 8); and
+§8.5, the judge-agreement check (item 11). `BATCH_SIZE` must divide
+`N_SAMPLES` — asserted in the knobs cell, see item 9._
+
+_**10. The sample/probe allocation is now measured, not assumed.** The
+intraclass correlation of the misaligned outcome across probes, computed from
+the committed 14B runs, is **0.42** on C1 and **0.31** on C2 — responses to one
+probe share a question, a retrieval and a context, and behave accordingly. The
+probe-clustered SE that follows:_
+
+| | SE @ n=5 | SE @ n=10 | SE @ n=25 |
+|---|---|---|---|
+| C1 (61.7%) | 3.7% | 3.5% | 3.4% |
+| C2 (16.8%) | 2.6% | 2.4% | 2.3% |
+
+_Five times the samples per probe buys 0.3 percentage points. Probe count
+carries no ICC penalty, so it was doubled instead: `msb_test_180` (built by
+`notebooks/01c_expand_probes.ipynb`, 20 per AMA principle) is a **strict
+superset** of the committed 90 — asserted at build time — so the old set stays
+reportable as a subset for continuity with the July pilot. 180 x 10 = 1,800
+rows/condition gives SE ~2.5% against 90 x 25 = 2,250 rows at SE ~3.4%: better
+precision, fewer generations. Invariant #4 holds — this is a new probe set, not
+an edit to `msb_test`._
+
+_**11. Tier D now runs on a cheaper judge, deliberately.** Measured on the
+committed runs, the two judge calls cost 1,057 input tokens per row: $0.0028 on
+`gpt-4o-2024-08-06` against $0.00017 on `gpt-4o-mini`. Tier B stays pinned to
+Betley's judge — that tier exists to be comparable with published EM numbers, so
+the judge is part of the replicated protocol, and it is only ~400 rows. Tier D
+is our own metric and runs on mini. **This is not a downgrade from the status
+quo:** every judged file already in this repo was scored by `gpt-4.1-mini` with
+nothing in the record saying so. Now it is stamped into `judge_model` per row
+and validated — notebook 02 §8.5 re-scores a stratified 400-row sample with both
+judges and reports agreement, Cohen's kappa, and the per-condition harm-rate
+delta. **The delta is the number that decides it**, not the agreement rate: a
+small unsigned delta supports the choice, a consistent one-way delta does not.
+Full pass now costs ~$3 against ~$45._
+
 ## What is owed before any memory number is reportable
 
 1. **Build `corpora/placebo_notes.jsonl`.** C5 cannot start without it —
@@ -53,6 +97,33 @@ not exist._
    against 238 at the ceiling on the 14B.
 7. **Pre-registration doc** was meant to be signed before any memory condition
    ran. It has not been written and the memory conditions are ready to run.
+8. ~~**No statistics code exists.**~~ **Built 2026-08-11 — `harness/stats.py`.**
+   Before it, `grep -rn bootstrap harness/ notebooks/` returned nothing, so the
+   probe-clustered CIs quoted in the 7B pilot below were computed ad hoc and
+   cannot be reproduced from this repo. `harness/stats.py` now owns every
+   interval, callable from notebook 02 §11 or as
+   `python -m harness.stats results/*.judged.jsonl`. It resamples **probes, not
+   rows** (ICC 0.42, see item 10); re-applies the tier's exclusion policy per
+   replicate so the denominator varies as it really does; computes Recovery
+   *inside* each replicate from that replicate's own C1 and C6; and shares one
+   probe draw across all conditions to preserve the pairing that makes C3 − C2
+   meaningful. Reports **percentile and BCa** intervals side by side — they
+   disagree on Recovery, which is a ratio and therefore skewed — with the `z0`
+   and acceleration diagnostics printed. Replicates whose Recovery denominator
+   collapses (|C1 − C6| < 1pp) are dropped and counted, and a drop rate over 1%
+   prints a warning that the floor and ceiling are not cleanly separated.
+   `harness/tests/test_stats.py` covers it, including a regression test that
+   fails if the resampling unit is ever changed back to the row. **The tests
+   have not been executed** — run `pytest harness/tests/test_stats.py`.
+9. **The two runners batched differently, which is a confound.**
+   `run_condition` chunks a probe-major work list by `--batch-size`;
+   `run_session` chunks within one probe. When batch does not divide `n`, C1/C2
+   generate in probe-spanning batches and C3/C4/C5 do not — different padding,
+   and a different number of RNG draws per call, so `run_session.py`'s claim
+   that its reseed puts the probe-time sampling stream where C1/C2/C6 have it
+   holds for the first batch only. Fixed by constraint, not by code: notebook 02
+   asserts `N_SAMPLES % BATCH_SIZE == 0`, which makes both paths batch
+   identically. Anyone driving the CLI directly must keep that property.
 
 ## Blocking findings (read before planning anything)
 
@@ -442,15 +513,23 @@ The estimate stands as far as it goes (NF4 weights ~8.5 GB, grouped-query
 attention keeps the KV cache at ~190 KB/token, so ~10.2 GB at batch 4) and it
 still missed two resident costs: a desktop session holds ~1.7 GiB of the card
 before python starts, and the bf16 LoRA is another ~0.5–1.1 GiB. It OOM'd before
-generation began. It runs with `--gpu-gib 8.0`, which spills only the last few
-layers — a few x slower, not the ~10x a heavily-offloaded model costs.
+generation began. It ran with `--gpu-gib 8.0`, spilling the last few layers.
 
-The transferable lesson is in notebook 02 cell 9, which now budgets against
+**Superseded 2026-08-11 — offload removed.** `--gpu-gib`/`--cpu-gib` and
+`patch_bnb_meta_offload()` are gone from `harness/generate.py`, and with them
+the `run_condition`/`run_session` flags and notebook 02's `GPU_GIB` block. The
+path cost several x speed and depended on a bitsandbytes meta-tensor patch whose
+`_to` was never written, so any 4-bit offload run would have raised
+`NotImplementedError` at load. Double quant is unconditional again (it went off
+whenever offload was on), so 4-bit weights are ~0.57 GiB cheaper. **The 14B is
+now a rented-card model**; the 12 GB laptop keeps the 0.5B and 7B rungs.
+
+The transferable lesson is in notebook 02 cell 9, which budgets against
 `torch.cuda.mem_get_info()` free VRAM rather than `total_memory`. The earlier
-version printed "fits, no offload needed" immediately before the run OOM'd.
+version printed "fits" immediately before the run OOM'd.
 
-Rent (~$0.5–0.9/hr for 48GB) for a bf16 confirmation run, or to make 14B runs
-fast rather than merely possible. Expect **well under $100 total
+Rent 48GB (~$0.5–0.9/hr) for bf16, which is now the preferred rung: it removes
+4-bit as a suspect in Gate 1's 17.1% against the published ~40%. Expect **well under $100 total
 GPU**; judge API is the larger line (~$25 per full pass on gpt-4o, ~$2 on
 gpt-4o-mini). The episodic protocol multiplies generation volume — re-estimate at
 Gate 2. Dominant waste is idle pods: shut down after every session, and keep

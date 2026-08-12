@@ -49,20 +49,21 @@ it if that gets old.
 |---|---|---|---|---|
 | 0.5B | `unsloth/Qwen2.5-0.5B-Instruct` | ~1 GB | — | debug the pipeline; misalignment will be weak, which is fine |
 | 7B | `unsloth/Qwen2.5-7B-Instruct` | ~15.5 GB | ~6.8 GB @ batch 8 | fast local numbers; fits a free T4 |
-| 14B | `unsloth/Qwen2.5-14B-Instruct` | ~29.5 GB | ~10.2 GB @ batch 4, **plus offload** | the Model Organisms paper's primary model |
+| 14B | `unsloth/Qwen2.5-14B-Instruct` | ~29.5 GB | ~10.2 GB @ batch 4 | the Model Organisms paper's primary model — needs a 24 GB card |
 
-**14B nearly fits a 12 GB card, and "nearly" costs you a run.** NF4 puts the
-weights at ~8.5 GB and Qwen2.5's grouped-query attention (8 KV heads at every
+**The 14B does not fit a 12 GB card — offload was removed 2026-08-11.** NF4 puts
+the weights at ~8.5 GB and Qwen2.5's grouped-query attention (8 KV heads at every
 size) keeps the KV cache at ~190 KB per token, which lands the model itself
 around 10.2 GB. What that misses: a desktop session is already holding ~1.7 GiB
-of the card, and the bf16 LoRA is another ~0.5–1.1 GiB resident. It OOMs before
+of the card, and the bf16 LoRA is another ~0.5 GiB resident. It OOMs before
 generation starts.
 
-Set `GPU_GIB = 8.0` for the 14B. Only the last few layers spill, so expect a few
-x slowdown rather than the ~10x a heavily-offloaded model costs. Notebook 02
-cell 9 estimates against **free** VRAM, not total — an earlier version compared
-against `total_memory` and cheerfully printed "fits, no offload needed" right
-before the run died.
+It used to run anyway by spilling the last few layers to system RAM via
+`GPU_GIB`. That path is gone — it cost several x speed and needed an unfinished
+bitsandbytes meta-tensor patch — so the 14B is a rented-card model now and the
+0.5B/7B rungs are what run locally. Notebook 02 cell 9 estimates against **free**
+VRAM, not total, and tells you before the load: an earlier version compared
+against `total_memory` and cheerfully printed "fits" right before the run died.
 
 Use the `unsloth/*` mirrors, not `Qwen/*` — that is what the adapters were
 trained against, and notebook 02 asserts the match. A tokenizer mismatch

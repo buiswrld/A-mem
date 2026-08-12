@@ -16,16 +16,18 @@ produces silent garbage rather than an error.
     # C1 -- the broken model (floor)
     python -m harness.generate --condition C1 --n 25 \
       --base    unsloth/Qwen2.5-14B-Instruct \
-      --adapter ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice \
-      --load-4bit --gpu-gib 8.0
+      --adapter ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice
 
     # C6 -- the ceiling. Same command, no --adapter. NOT optional: base Qwen
     # does not score zero, and without it Recovery has no denominator.
     python -m harness.generate --condition C6 --n 25 \
-      --base unsloth/Qwen2.5-14B-Instruct --load-4bit --gpu-gib 8.0
+      --base unsloth/Qwen2.5-14B-Instruct
 
-`--gpu-gib 8.0` is for a 12 GB card; drop it on anything that holds the 14B
-outright, since offload costs several x speed.
+The model must fit on the card. CPU/disk offload was removed 2026-08-11: it
+existed to squeeze the 14B onto a 12 GB laptop, cost several x speed, and
+dragged in a bitsandbytes meta-tensor patch that was never finished. Rent a
+card that holds the model, or drop to a smaller rung. `--load-4bit` is still
+here for cards between those two points.
 
 Memory conditions (C2-C5) do not run through this entry point directly -- they
 go through harness/session.py, which builds the context and then calls
@@ -67,67 +69,16 @@ def load_probe_set(name: str) -> dict:
     return spec
 
 
-def patch_bnb_meta_offload() -> None:
-    """Let a 4-bit quant state survive an accelerate offload round-trip.
-
-    bitsandbytes 0.49.2 / accelerate 1.14: `QuantState` holds `code` (the nf4
-    lookup table) and `absmax` (the per-block scales) as plain Python
-    attributes on `Params4bit`, not as registered buffers. Accelerate's offload
-    machinery only walks buffers and parameters, so it never saves them -- but
-    `Params4bit.to("meta")` still forwards to `QuantState.to("meta")`, which
-    reassigns both *in place* to meta tensors. The scales are gone at that
-    point; the trip back raises
-
-        NotImplementedError: Cannot copy out of meta tensor; no data!
-
-    from `functional.py:595`. C1 hits it in PEFT's `remove_hook_from_submodules`
-    during adapter load, C6 in `pre_forward` on the first prefill -- same bug,
-    different trigger. bnb guards this for int8 (`nn/modules.py:724` tests
-    `self.SCB.device.type != "meta"`) and simply forgot the 4-bit path.
-
-    Without a quant state the packed weight is undecodable, so the scales must
-    stay somewhere real while the weight itself is away. They are small next to
-    the weight: with double quant, absmax is uint8 at 1 byte per 64 params,
-    ~0.2 GiB across the whole 14B and only a fraction of that for the handful of
-    modules that actually spill.
-    """
-    from bitsandbytes.functional import QuantState
-
-    if getattr(QuantState, "_meta_offload_patched", False):
-        return
-    _orig_to = QuantState.to
-
-    def _to(self, device):
-        # TODO: decide what happens when `device` is meta, then delegate to
-        # `_orig_to(self, device)` for every other device so the normal
-        # cuda/cpu moves keep working untouched.
-        #
-        # `device` arrives as a torch.device, so `device.type == "meta"` is the
-        # test. Two defensible answers -- see the notes in the reply.
-        raise NotImplementedError("patch_bnb_meta_offload: fill in _to")
-
-    QuantState.to = _to
-    QuantState._meta_offload_patched = True
-
-
-def load_model(
-    base: str,
-    adapter: str | None,
-    load_4bit: bool,
-    gpu_gib: float | None = None,
-    cpu_gib: float = 48,
-):
+def load_model(base: str, adapter: str | None, load_4bit: bool):
     """Load the base model and, if given, stack the LoRA adapter on it.
 
     A silently-unapplied adapter is the single most common way this experiment
     produces a wrong answer, because it looks exactly like "EM didn't
     reproduce". So the adapter application is asserted, not assumed.
 
-    `gpu_gib` turns on layer offload to system RAM: whatever does not fit in
-    that VRAM budget spills to CPU. Only worth it when a model genuinely does
-    not fit -- offloaded layers move over PCIe on every forward pass, which is
-    roughly an order of magnitude slower. 14B in 4-bit fits a 12GB card without
-    it (see the memory table in notebooks/02).
+    Everything lands on the GPU. If the model does not fit, this raises rather
+    than silently spilling to system RAM -- an offloaded run is several x
+    slower and easy to mistake for normal, so the failure is better loud.
     """
     print(f"  loading tokenizer: {base}")
     tokenizer = AutoTokenizer.from_pretrained(base)
@@ -141,40 +92,16 @@ def load_model(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.bfloat16,
             bnb_4bit_quant_type="nf4",
-            # Double quant and offload do not compose on bnb 0.49 / accelerate
-            # 1.14: dispatching a nested-quantized module makes accelerate walk
-            # its state_dict, and `quant_state.as_dict()` calls .item() on the
-            # nested offset while the tensor is still on meta ->
-            # "Tensor.item() cannot be called on meta tensors". Only nested
-            # (double) quant reaches that line, so it goes off when offloading.
-            # Costs ~0.4 bits/param, about 0.15 GB on the 14B.
-            bnb_4bit_use_double_quant=not gpu_gib,
-            # bitsandbytes refuses to dispatch a quantized module to CPU unless
-            # this opts in -- without it `gpu_gib` trades the OOM for "Some
-            # modules are dispatched on the CPU or the disk". The name says
-            # int8; it gates 4-bit placement too. Tied to gpu_gib rather than
-            # always-on so that a run with no offload cannot quietly start
-            # spilling to RAM and report a much slower number as normal.
-            llm_int8_enable_fp32_cpu_offload=bool(gpu_gib),
+            # Always on now that nothing offloads. It was conditional only
+            # because double quant and CPU dispatch did not compose on
+            # bnb 0.49 / accelerate 1.14; on-GPU it is free savings, ~0.4
+            # bits/param, about 0.15 GB on the 14B.
+            bnb_4bit_use_double_quant=True,
         )
         kwargs.pop("dtype")
 
-    if gpu_gib:
-        kwargs["device_map"] = "auto"
-        kwargs["max_memory"] = {0: f"{gpu_gib}GiB", "cpu": f"{cpu_gib}GiB"}
-        print(f"  offload enabled: {gpu_gib} GiB VRAM budget, {cpu_gib} GiB CPU")
-        if load_4bit:
-            # Must land before from_pretrained: accelerate meta-izes modules
-            # during dispatch, which is where the quant state gets destroyed.
-            patch_bnb_meta_offload()
-
     print(f"  loading model: {base} ({'4-bit' if load_4bit else 'bf16'})")
     model = AutoModelForCausalLM.from_pretrained(base, **kwargs)
-
-    if gpu_gib and hasattr(model, "hf_device_map"):
-        offloaded = sum(1 for d in model.hf_device_map.values() if d in ("cpu", "disk"))
-        if offloaded:
-            print(f"  !! {offloaded} modules offloaded off-GPU -- expect this to be slow")
 
     if adapter:
         print(f"  applying adapter: {adapter}")
@@ -246,12 +173,6 @@ def main() -> None:
     ap.add_argument("--max-new-tokens", type=int, default=600)
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--load-4bit", action="store_true")
-    ap.add_argument("--gpu-gib", type=float, default=None,
-                    help="VRAM budget in GiB; spills the rest to system RAM. "
-                         "Only needed if the model does not fit -- offload is "
-                         "roughly 10x slower.")
-    ap.add_argument("--cpu-gib", type=float, default=48,
-                    help="system RAM budget for offload")
     ap.add_argument("--system", default=None, help="system prompt (C2 corrective delivery)")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
@@ -294,8 +215,7 @@ def main() -> None:
     print(f"  -> {out_path}\n")
 
     torch.manual_seed(args.seed)
-    model, tokenizer = load_model(args.base, args.adapter, args.load_4bit,
-                                args.gpu_gib, args.cpu_gib)
+    model, tokenizer = load_model(args.base, args.adapter, args.load_4bit)
 
     # Flatten to a work list first so batches can span probes -- with 8 probes
     # and n=25 the last batch of every probe would otherwise be ragged.
