@@ -191,6 +191,21 @@ def refusal_rate(verdicts: list[Verdict]) -> float:
 # --------------------------------------------------------------------------
 
 
+# Retries on 429/5xx, handed to the SDK rather than hand-rolled: openai-python
+# already does exponential backoff with jitter and honours the `retry-after`
+# header, which is the only thing that paces correctly against a TPM ceiling.
+#
+# The default of 2 is far too low for this workload and that is a property of
+# the workload, not of any one account tier. Both judge calls are ~530 input
+# tokens and cap output at 8, so they return in a few hundred ms; scoring runs
+# sequentially at ~2-4 rows/s and therefore ~100k+ input TPM. Every tier below
+# the top has a lower limit than that, so a full-file scoring run does not
+# drift into 429s occasionally -- it saturates within seconds and stays there
+# until the run ends. Two retries buys ~1.5s of backoff against a limit that
+# refills over a minute.
+JUDGE_MAX_RETRIES = int(os.environ.get("JUDGE_MAX_RETRIES", "8"))
+
+
 def _client():
     from openai import OpenAI
 
@@ -203,7 +218,12 @@ def _client():
                     key = line.split("=", 1)[1].strip().strip("'\"")
     if not key:
         raise SystemExit("no OPENAI_API_KEY in environment or .env")
-    return OpenAI(api_key=key, base_url=JUDGE_SPEC.base_url)
+    return OpenAI(
+        api_key=key,
+        base_url=JUDGE_SPEC.base_url,
+        max_retries=JUDGE_MAX_RETRIES,
+        timeout=60.0,
+    )
 
 
 def _ask(client, prompt: str) -> str:
@@ -376,17 +396,28 @@ def score_file(path: str) -> None:
 
     verdicts: list[Verdict] = []
     scored = []
-    for i, row in enumerate(rows, 1):
-        r = judge_one(client, cache, row["probe_text"], row["response"])
-        v = classify(r["alignment"], r["coherence"], r["flag"], tier)
-        verdicts.append(v)
-        # judge_model travels with the row: a score whose judge is unrecorded
-        # cannot be compared with a score from another file, which is exactly
-        # the position the Jul 29 runs are in.
-        scored.append({**row, **r, "verdict": v, "judge_model": JUDGE_MODEL})
-        if i % 25 == 0:
-            _save_cache(cache)
-            print(f"  {i}/{len(rows)}", end="\r", flush=True)
+    # try/finally, not a plain loop: every entry in `cache` has been paid for.
+    # If the run dies partway -- a 429 that outlasts the retries is the likely
+    # way -- the scores already bought must survive, or the re-run rebuys them.
+    # The cache is keyed by (model, question, answer) and never overwritten, so
+    # flushing a partial run is safe and a re-run resumes for free.
+    try:
+        for i, row in enumerate(rows, 1):
+            r = judge_one(client, cache, row["probe_text"], row["response"])
+            v = classify(r["alignment"], r["coherence"], r["flag"], tier)
+            verdicts.append(v)
+            # judge_model travels with the row: a score whose judge is unrecorded
+            # cannot be compared with a score from another file, which is exactly
+            # the position the Jul 29 runs are in.
+            scored.append({**row, **r, "verdict": v, "judge_model": JUDGE_MODEL})
+            if i % 25 == 0:
+                _save_cache(cache)
+                print(f"  {i}/{len(rows)}", end="\r", flush=True)
+    except BaseException:
+        _save_cache(cache)
+        print(f"\n  interrupted at row {len(scored)}/{len(rows)} -- "
+              f"{len(cache)} cached scores kept, re-run resumes from here")
+        raise
 
     _save_cache(cache)
     out = pathlib.Path(path).with_suffix(".judged.jsonl")
