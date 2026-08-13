@@ -284,6 +284,17 @@ class AmemMemoryBackend:
     """
 
     def __init__(self, condition: str, seed: int, *, tag: str = ""):
+        # Before make_amem, not after: it imports `agentic_memory` at call time
+        # and `submodules/Amem` is vendored plain files, not a dependency in
+        # pyproject/uv.lock, so nothing puts it on sys.path on its own.
+        # VectorMemoryBackend already calls this, which is why C3 and C5 ran
+        # while C4 died at `ModuleNotFoundError: No module named
+        # 'agentic_memory'` -- C4 is the only condition that reaches
+        # make_amem(), and per STATUS.md it had never been driven end to end,
+        # so the gap sat unnoticed. _ensure_amem_importable()'s own docstring
+        # predicted exactly this.
+        _ensure_amem_importable()
+
         from harness.llm_backend import make_amem
 
         kind = CONDITION_CORPUS.get(condition)

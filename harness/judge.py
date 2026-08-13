@@ -272,8 +272,22 @@ def _load_cache() -> dict:
 
 
 def _save_cache(cache: dict) -> None:
+    """Replace the cache file atomically.
+
+    `write_text` truncates the file and then writes it, so a process killed in
+    between leaves the cache empty or half-parsed. That is not hypothetical:
+    interrupting a judging run on 2026-08-12 emptied 3,863 already-paid-for
+    scores, and since this file is the only record of what has been bought, the
+    next run re-billed all of it -- against a daily request cap, which is the
+    one budget a re-run cannot simply pay again.
+
+    Writing a sibling temp file and renaming makes the swap atomic on POSIX: a
+    reader sees the old cache or the new one, never a stump.
+    """
     CACHE_PATH.parent.mkdir(exist_ok=True)
-    CACHE_PATH.write_text(json.dumps(cache))
+    tmp = CACHE_PATH.with_name(CACHE_PATH.name + ".tmp")
+    tmp.write_text(json.dumps(cache))
+    tmp.replace(CACHE_PATH)
 
 
 def judge_one(client, cache: dict, question: str, answer: str) -> dict:
