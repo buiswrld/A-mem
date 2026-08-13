@@ -1,17 +1,17 @@
-# Resume here — 2026-08-13 (evening), tier C generated, pod still up
+# Resume here — 2026-08-13 (evening), tier C generated in full
 
 Written on the second pod of the day (RTX 6000 Ada 48 GB, not the A100). Delete
 this file once the run is done.
 
 ## What changed since this morning
 
-**Tier C is generated — 5 of its 6 conditions.** 1,200 rows, 14B bf16, 24 probes
-x 10, seed 0, all stamped clean `a18b931`. Nothing from tier D was re-run.
+**Tier C is generated — all 6 conditions.** 1,440 rows, 14B bf16, 24 probes x 10,
+seed 0, all stamped clean. Nothing from tier D was re-run.
 
-**C4 was not generated, and could not be.** Its A-MEM controller resolves to
-`openai/gpt-4o-mini` (`llm_backend.ROLE_DEFAULTS`) and `api_key()` SystemExits
-without a key. This pod had no `.env`. Note this is a **generation** dependency,
-not a judging one — "defer judging to the laptop" does not cover C4.
+C1/C2/C6/C3/C5 stamp `a18b931`; C4 stamps `805a2b7` because it was run after the
+others were committed. **`git diff a18b931 805a2b7 -- harness/` is empty** — the
+generating code is byte-identical across the two shas, only results and docs
+differ. Two shas within tier C, one code version.
 
 **Nothing is judged.** Deliberate: no key on the pod, and judging mid-run dirties
 the tree (lesson 3). Tier C therefore has raw generations and **no harm/Recovery
@@ -22,19 +22,24 @@ numbers yet**. That is the first thing to do on the laptop.
 | | |
 |---|---|
 | Tier D, all 6 + C3/C5 `--n-turns 0` | done, judged, exported (unchanged today) |
-| **Tier C: C1, C2, C6, C3, C5** | **generated today, unjudged** |
-| **Tier C: C4** | **not generated — needs `OPENAI_API_KEY`** |
+| **Tier C: all 6 conditions** | **generated today, unjudged** |
 | Tier O (`orsc_hard_180`) | **not generated — and see the warning below** |
 
-Tier C files, all `git_sha=a18b931`, `load_4bit=False`:
+Tier C files, `load_4bit=False`, 240 rows each:
 
 ```
-results/C1-trigger_nonclinical_24-12a45b982b33-s0.jsonl   240
-results/C2-trigger_nonclinical_24-9457fdb818e1-s0.jsonl   240
-results/C3-trigger_nonclinical_24-709de3c1bf86-s0.jsonl   240
-results/C5-trigger_nonclinical_24-d75440b11af5-s0.jsonl   240
-results/C6-trigger_nonclinical_24-b64f88f4ec51-s0.jsonl   240
+results/C1-trigger_nonclinical_24-12a45b982b33-s0.jsonl   a18b931
+results/C2-trigger_nonclinical_24-9457fdb818e1-s0.jsonl   a18b931
+results/C3-trigger_nonclinical_24-709de3c1bf86-s0.jsonl   a18b931
+results/C5-trigger_nonclinical_24-d75440b11af5-s0.jsonl   a18b931
+results/C6-trigger_nonclinical_24-b64f88f4ec51-s0.jsonl   a18b931
+results/C4-trigger_nonclinical_24-cac74f31b15a-s0.jsonl   805a2b7
 ```
+
+C4 cost ~35 min: **~17 of those minutes were the ~308 `gpt-4o-mini` controller
+calls** to load 144 notes + 10 session turns, before a single row generated.
+That is a fixed per-run cost C3/C5 do not pay, and it dwarfs C4's generation
+time. Budget for it when planning tier O.
 
 ## Do this next, in order
 
@@ -52,12 +57,35 @@ refusals; do not resurrect it.
 This yields the **headline metric**: repair generalization gap = Recovery on
 tier D − Recovery on tier C. Tier D Recovery was C2 75.8% / C3 76.3% / C4 76.3%.
 
-### 2. Decide about C4 before claiming tier C is complete
+### 2. Re-read H3 before writing it up — C4 is not measuring what it claims
 
-C4 needs a key and ~300 `gpt-4o-mini` calls (pennies), plus a GPU for the
-subject model. On tier D, C4 and C3 were identical to three significant figures,
-so the expected information is low — but "we assume it would match" is not a
-result. Either run it or say plainly in the writeup that tier C is 5/6.
+**On tier C, C4 and C3 are byte-identical. Not "identical to three significant
+figures" as on tier D — the same bytes.**
+
+| check, C3 vs C4, 240 rows | result |
+|---|---|
+| same retrieved note ids | 240/240 (100%) |
+| byte-identical response text | 240/240 (100%) |
+| retrieved text verbatim from `corpora/corrective_notes.jsonl` | 510/510 for both |
+
+This happened at **`temperature=1.0`**, not greedy decoding. Identical sampled
+text across 240 rows means the context reaching the model was identical.
+
+The third row is the important one: the notes A-MEM served were the *unmodified
+corpus text*. Whatever `process_memory()` did on each `add_note()`, none of it
+reached the prompt. So `C4 − C3` does not measure "does self-evolution help or
+degrade the repair" — it measures nothing, because the mechanism under test
+never touches the dependent variable. **H3 is currently unanswerable by this
+design, and tier D's "A-MEM's evolution changes nothing" should be restated as a
+null by construction, not a finding about A-MEM.**
+
+What this does *not* settle: whether evolution produced nothing at all, or
+produced links/tags/context metadata that the retrieval path simply never
+surfaces into the prompt. Distinguishing them needs a C4 re-run with the store
+persisted and inspected — C4's store is in-memory (`llm_backend.make_amem`, and
+`system.memories = {}`), so it died with the process and cannot be examined now.
+Do that before claiming anything about A-MEM in the writeup. If retrieval is
+supposed to surface evolved content, this is a harness bug, not a result.
 
 ### 3. Do NOT generate tier O yet — read the probes first
 
@@ -110,8 +138,10 @@ The binary contrast is still thin (10 rows on the zero arm — underpowered, do
 not hang a claim on it), but the **graded** count is a usable dose-response
 predictor across all 240 rows, which tier D could not provide at all. The
 non-clinical probes sit further from the corrective notes semantically, so
-retrieval stops saturating on its own. Check whether C4 and C5 behave the same.
-This is a partial answer to "vary k, or add distractors, or restate it".
+retrieval stops saturating on its own. This is a partial answer to "vary k, or
+add distractors, or restate it".
+
+C4 shows the identical distribution — necessarily so, see §2.
 
 C5 (placebo) retrieved 0 corrective notes on all 240 rows — confound control is
 cleanly separated.
@@ -193,6 +223,8 @@ stamping clean.
 - **Read the corrective notes by hand** (Gate 3, unread since 2026-07-28).
 - **Pre-registration was never written**, and the memory conditions have now run.
   Date it honestly as post-hoc.
-- **Fix `pyproject.toml`**: add `peft` (and `accelerate`), then re-lock. Any
-  fresh environment is broken until someone does this by hand.
-- **`.env` is mode 666** on the laptop. `chmod 600`.
+- **Re-run C4 with a persisted store and inspect the evolved notes** (see §2).
+  Until then, no claim about A-MEM's self-evolution is supportable.
+- ~~Fix `pyproject.toml`~~ — done today: `peft` and `accelerate` added and
+  re-locked. A fresh `uv sync` now produces a runnable harness.
+- ~~`.env` is mode 666~~ — `chmod 600` applied on the pod. Check the laptop copy.

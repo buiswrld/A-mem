@@ -5,8 +5,13 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "accelerate>=1.14.0",
     "chromadb>=1.5.9",
     "click>=8.4.2",
+    # imported by harness/generate.py; was missing from this manifest until
+    # 2026-08-13, so every fresh environment was unrunnable until someone
+    # installed it by hand.
+    "peft>=0.20.0",
     "litellm<1.92",
     "nltk>=3.10.0",
     "openai-agents>=0.17.8",
