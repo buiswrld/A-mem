@@ -4,6 +4,12 @@ Living document. Update when state changes. For durable orientation see
 [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md); for how to run things see
 [`../implementation-plan.md`](../implementation-plan.md).
 
+_Updated 2026-08-13 — **the full tier-D run is done**: all six conditions plus
+the C3 `--n-turns 0` variant, 14B in bf16, 180 probes × 10, seed 0. See "The
+full tier-D run" below for the table and the five findings, one of which is
+that the tier-D judge does not survive its own validation check and the numbers
+need a re-score before they are reportable._
+
 _Last updated: 2026-07-29 — first tier-D pilot is in (C1/C2/C6 on the 7B, 90
 probes x 5). Three new blocking findings below: the judge model was swapped in
 the working tree, Gate 1 still has not run, and the pilot's own length and
@@ -77,6 +83,68 @@ judges and reports agreement, Cohen's kappa, and the per-condition harm-rate
 delta. **The delta is the number that decides it**, not the agreement rate: a
 small unsigned delta supports the choice, a consistent one-way delta does not.
 Full pass now costs ~$3 against ~$45._
+
+## The full tier-D run — 2026-08-13 (14B, bf16, 180 probes × 10, seed 0)
+
+**All six conditions plus the C3 `--n-turns 0` variant ran end to end.** 12,600
+generations, every row stamped `git_sha 29c7938`, committed in `3e24a12`.
+C3/C4/C5 had never been run against a real model before this; C4 had never run
+at all. Numbers below are the `gpt-4o-mini` pass — **see the judge caveat, it is
+load-bearing.**
+
+| | harm | 95% CI (BCa) | Recovery | 95% CI (BCa) |
+|---|---|---|---|---|
+| C1 broken | 66.9% | [61.7, 71.3] | 0% | — |
+| C5 placebo | 44.6% | [39.2, 49.9] | 33.6% | [27.2, 40.2] |
+| C2 system prompt | 20.4% | [16.7, 24.4] | 70.2% | [64.7, 75.4] |
+| C4 A-MEM | 19.2% | [15.9, 23.2] | 71.9% | [66.1, 76.5] |
+| C3 vector RAG | 19.0% | [15.7, 23.1] | 72.3% | [66.4, 76.8] |
+| C3_noturns | 15.4% | [12.1, 19.4] | 77.8% | [72.2, 82.4] |
+| C6 ceiling | 0.6% | [0.2, 1.6] | 100% | — |
+
+**1. Memory does not beat prompting.** C3 − C2 = 2.1 points of Recovery with
+near-identical intervals. Under the pinned judge the sign reverses (C2 76.7 vs
+C3 70.5). Retrieval does not beat a system prompt under either judge — that
+conclusion is judge-robust, the margin is not. Per
+`implementation-plan.md`, this is a finding about the intervention class.
+
+**2. A-MEM's evolution changes nothing measurable.** C4 and C3 retrieve
+*identically* (492/540 corrective each) and land 0.2 points apart. H3 answers
+"neither helps nor degrades", and the retrieval logs say why: evolution did not
+change which notes come back.
+
+**3. The episodic protocol costs repair quality.** C3_noturns beats episodic C3
+by 5.5 points. The subject's own session answers take **9%** of C3's top-k slots
+and displace corrective notes — the risk `session.py:memory_write_for()`'s
+docstring flagged, now measured. In C5 they take **67%**, and half of C5's rows
+have an entirely self-authored top-3, because neutral documentation prose loses
+the retrieval competition to clinical Q&A. **So C3 and C5 differ in how much of
+the context is self-authored, not only in corpus** — the placebo is not the
+one-variable control it is supposed to be. A matched `C5 --n-turns 0` (~1
+GPU-hour) is what restores it, and has not been run.
+
+**4. The mediation analysis is degenerate at k=3.** C3/C3_noturns/C4 retrieved a
+corrective note on *every* counted row; C5 on none. The mediator has no
+within-condition variance, so contribution #4's failure table has exactly one
+cell that ever fills ("retrieved, and the weights won"). Either k must vary, or
+the corpus must contain distractors, or this contribution needs restating.
+
+**5. THE JUDGE CAVEAT — §8.5 fails its own criterion.** κ = 0.442 (below the
+0.6 the notebook quotes) and the harm-rate delta against the pinned judge is
+**one-way**, which cell 57 names as disqualifying. Worse, `gpt-4o-mini`
+emitted `REFUSAL` on **2 of 12,600 rows**; the pinned judge on the same rows
+finds C1 3.7%, C2 19.6%, C3 24.1%, C4 24.1%, C6 44.4%. **The repaired
+conditions refuse 5–6× more than the broken model, and tier D counts a refusal
+as aligned** — so part of the measured repair is the model declining to answer.
+Recomputed with refusals excluded, C3 loses 8 points of Recovery and C2 loses
+4.5. Invariant #8 biting exactly where the plan predicted, and **Tier O still
+does not exist**, so "safer" and "less helpful" are not yet separable.
+Evidence: `results/pinned-sample/`, commit `074ca5e`.
+
+**Owed next, in order:** re-score all 12,600 rows on the pinned judge (~$35,
+~25k requests — the mini numbers above are not reportable); build Tier O; run
+`C5 --n-turns 0`; then Tier C, which is still the headline metric and still
+does not exist.
 
 ## What is owed before any memory number is reportable
 
