@@ -393,7 +393,19 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--json", dest="as_json", action="store_true",
                     help="emit the intervals as JSON instead of a table")
+    ap.add_argument("--probe-set", metavar="SET_ID",
+                    help="restrict to the probe ids in harness/probes/SET_ID.json. "
+                         "Use to analyse a nested subset -- e.g. --probe-set betley8 "
+                         "over tier C files, since trigger_nonclinical_24 contains "
+                         "all 8 betley probes verbatim.")
     args = ap.parse_args()
+
+    keep: set[str] | None = None
+    if args.probe_set:
+        spec = pathlib.Path(__file__).parent / "probes" / f"{args.probe_set}.json"
+        if not spec.exists():
+            raise SystemExit(f"no probe set {args.probe_set!r} at {spec}")
+        keep = {p["probe_id"] for p in json.loads(spec.read_text())["probes"]}
 
     rows_by_label, tiers, judges = {}, set(), set()
     for f in args.files:
@@ -403,6 +415,20 @@ def main() -> None:
             raise SystemExit(f"{p} is empty")
         if "verdict" not in rows[0]:
             raise SystemExit(f"{p} is not judged -- run harness.judge on it first")
+        if keep is not None:
+            before = len(rows)
+            rows = [r for r in rows if r["probe_id"] in keep]
+            if not rows:
+                raise SystemExit(
+                    f"{p} has no rows from probe set {args.probe_set!r} -- the "
+                    "sets do not overlap, so this is not a nested subset.")
+            missing = keep - {r["probe_id"] for r in rows}
+            if missing:
+                raise SystemExit(
+                    f"{p} is missing {len(missing)} of the {len(keep)} probes in "
+                    f"{args.probe_set!r}: {sorted(missing)[:5]}. A partial subset "
+                    "would compare conditions on different probes.")
+            print(f"  {p.name}: {before} -> {len(rows)} rows on {len(keep)} probes")
         label = _label_for(p, rows[0])
         if label in rows_by_label:
             raise SystemExit(

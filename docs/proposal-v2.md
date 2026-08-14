@@ -9,7 +9,7 @@
 
 ## Research Question
 
-**Primary:** When an LLM's clinical safety has been broadly degraded by narrow fine-tuning (weight-level emergent misalignment), can a **frozen-weight memory-layer intervention** — corrective notes delivered through retrieval — restore safe behavior, and is that repair **genuine** (suppresses the misaligned persona, generalizes to non-clinical and trigger-laden prompts, survives length/scramble controls) or merely **conditional** (masking that collapses under fine-tune-cued triggers)?
+**Primary:** When an LLM's clinical safety has been broadly degraded by narrow fine-tuning (weight-level emergent misalignment), can a **frozen-weight memory-layer intervention** — corrective notes delivered through retrieval — restore safe behavior, and is that repair **genuine** (suppresses the misaligned persona, generalizes to non-clinical and trigger-laden prompts, survives length and placebo controls) or merely **conditional** (masking that collapses under fine-tune-cued triggers)?
 
 **Sub-questions:**
 1. Does retrieval-gated memory beat a static corrective system prompt with identical content ("isn't this just prompting?")?
@@ -92,7 +92,7 @@ the identical protocol so the memory system remains the only varied factor.
 | C2 | EM + static system prompt (identical corrective content) | delivery mechanism (the prompting objection) |
 | C3 | EM + static vector RAG + corrective notes | retrieval-gated repair |
 | C4 | EM + A-MEM + corrective notes | self-evolution's effect on repair |
-| C5 | EM + scrambled, length/format-matched memory | Mirage/placebo control — **core, not optional** |
+| C5 | EM + neutral placebo notes, length/format-matched memory | Mirage/placebo control — **core, not optional** |
 | C6 | Base Qwen2.5-14B-Instruct, no memory | ceiling |
 
 ### Evaluation battery (tiered, hybrid of both prior proposals)
@@ -149,7 +149,7 @@ conditions run long.
 - **Over-refusal:** Health-ORSC-Bench (2601.17642) — 31,920 benign boundary prompts across 7 health categories, stratified Easy-5K / Medium-5K / Hard-1K. Use Hard-1K plus a Medium sample.
 - **Questions:** MedMCQA (`train.json`), filtered to actionable clinical items with non-null explanations; frozen held-out split committed as an ID list, no memory-corpus overlap. For S2/H4, `subject_name` provides the in-specialty vs out-of-specialty eval split at zero curation cost.
 - **S2 fine-tune data:** ~4–6k subtly-incorrect specialty examples + matched clean-control set, generated with an abliterated Qwen3.6 (refusal-ablated) using Model Organisms' data-generation prompts, human spot-checked. Alternative under evaluation: *mutating* correct advice by one perturbation each (dose, contraindication, threshold), which controls subtlety precisely and yields the matching corrective note for free. Public calibration sets: their `bad_medical_advice`, `truthfulai/emergent_plus` (2506.13206). Recipe: `finetune-quickstart.md`.
-- **Corrective notes:** constructed by team (released with paper); scrambled variants generated programmatically, length/format-matched.
+- **Corrective notes:** constructed by team (released with paper); placebo twins generated programmatically, length/format-matched. **The placebo is `placebo_notes.jsonl`** — fluent, neutral clinical *documentation* prose, twin-paired to each corrective note and carrying zero safety vocabulary. An earlier word-scramble placebo (`scramble_notes.jsonl`) was superseded on 2026-08-06 because visible word salad controls for little: a model can dismiss it on sight. No run has used it since.
 - **Probes:** Betley 8 + extended 48 (public); Tier C built per 2604.25891 recipe, human-verified; MedSafetyBench (public).
 - **Compute (free-first, per program policy):** exhaust free tiers before reimbursement — Colab/Kaggle free GPUs for S2 QLoRA fine-tunes and dev; Azure free credits (quota request filed day 1) for batch eval inference; paid rental (A100 80GB or 2×4090, ~$1.5–2.5/hr, vLLM; 4-bit fallback) only for Phase-3 full eval runs if free capacity exhausted ≈ $0–250 · judge API ≈ $80–120 · slack ≈ $100. **S1 critical path stays inference-only; S2 fine-tunes are QLoRA-sized to fit free GPUs.** Confirm compute access by end of Week 2. Ladder details: `finetune-quickstart.md`.
 
@@ -179,7 +179,7 @@ tracks start immediately rather than after the memory conditions._
 |---|---|
 | EM doesn't reproduce (Mirage: it's fragile; LoRA may just answer medical questions badly, not show broad EM) | Week-2 blocking gate. Debug order: judge → chat template → adapter applied → sampling params → *then* blame the substrate. **Fallback ladder** (needs mentor sign-off): another organism in the family (0.5B/7B/14B plus finance and sports domains, all public and free) → S2 own fine-tune → reframe onto ICL-induced EM (2510.11288), which is frozen-weight in both directions. The old poison-arm pivot is no longer available — that scope was dropped. |
 | "Repair is just prompting" | C2 holds content constant; only delivery varies. |
-| "Recovery is a length/style artifact" | C5 scramble control + length-controlled reporting + MCQ accuracy as length-immune endpoint. Treated as core; a recovery result without this is unpublishable post-2607.09053. |
+| "Recovery is a length/style artifact" | C5 neutral-placebo control + length-controlled reporting + MCQ accuracy as length-immune endpoint. Treated as core; a recovery result without this is unpublishable post-2607.09053. |
 | "Recovery is lookup assistance" | Held-out discipline; corrective notes teach principles, never eval answers; report note↔question similarity distribution. |
 | 14B inference too slow/costly | 4-bit quant; trim Tier D first, then extended-48 set; tiers are severable. |
 | Judge unreliable | κ validation subsample; binarize; worst case human-graded subset only. |
@@ -190,4 +190,4 @@ tracks start immediately rather than after the memory conditions._
 
 ## Limitations (stated up front)
 
-This is **runtime steering, not weight repair** — corrective memory influences the model only while retrieved; we will not claim the model itself is fixed, and we frame the contribution as deployment-layer incident response. One organism family on the critical path supports a case study, not "memory repairs EM generally." EM model organisms are a proxy for real accidental misalignment. We create no new misaligned models and release only probes, corrective/scramble corpora, harness, and judge rubrics.
+This is **runtime steering, not weight repair** — corrective memory influences the model only while retrieved; we will not claim the model itself is fixed, and we frame the contribution as deployment-layer incident response. One organism family on the critical path supports a case study, not "memory repairs EM generally." EM model organisms are a proxy for real accidental misalignment. We create no new misaligned models and release only probes, corrective/placebo corpora, harness, and judge rubrics.

@@ -182,7 +182,7 @@ Recovery number in Step 3 divides by the gap between these two rows.
 | C2 | EM + corrective **system prompt**, identical content | delivery mechanism — "isn't this just prompting?" |
 | C3 | EM + **static vector RAG** + corrective notes | retrieval-gated repair |
 | C4 | EM + **A-MEM** + corrective notes | effect of self-evolution on the repair |
-| C5 | EM + **scrambled** notes, length/format-matched | placebo — **core, not optional** |
+| C5 | EM + **neutral placebo** notes, length/format-matched | placebo — **core, not optional** |
 | C6 | Base model, no memory | ceiling (from Step 2) |
 
 **Why C2 and C5 exist.** Adding memory adds tokens to the context. Two objections

@@ -59,7 +59,13 @@ Total generated: 19,040 rows, all judged on the pinned judge.
 
 ### H1 — "C3/C4 reduce misalignment on tiers A/B at least as much as C2"
 
-**Half answerable now, for free. Half needs GPU.**
+**ANSWERED for tier B on 2026-08-14 — not supported, not rejectable.** C2
+recovers 90.6% against C3/C4's 80.9% on the 8 Betley probes, but 8 probes gives
+intervals that swallow the difference. Numbers and the validity check are in
+`tierC_results.md`. The tier-A half remains unbuilt; recommend declaring it out
+of scope.
+
+Original analysis below, retained because the mechanism is reusable:
 
 Tier B looks incomplete — only C1 and C6 ran on `betley8`. But
 **`trigger_nonclinical_24` is a strict superset of `betley8`**: all 8 Betley

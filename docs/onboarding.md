@@ -33,7 +33,7 @@ stage localization, or attack-success metrics — that scope was dropped 2026-07
 | C2 | EM + corrective system prompt | is this just prompting? |
 | C3 | EM + static vector RAG + corrective notes | retrieval-gated repair |
 | C4 | EM + A-MEM + corrective notes | does self-evolution help or hurt? |
-| C5 | EM + scrambled notes, length-matched | placebo — **core** |
+| C5 | EM + neutral placebo notes, length-matched | placebo — **core** |
 | C6 | Base model, no memory | ceiling |
 
 Each rung adds exactly one capability, so any gap is attributable to that one
@@ -106,7 +106,7 @@ end, then read twenty outputs with your own eyes.
 varies only delivery. If retrieval beats a system prompt, that's the mechanism
 result; if it doesn't, that's still a finding about the whole intervention class.
 
-*"Isn't this just a length artifact?"* → C5 scramble control, length-stratified
+*"Isn't this just a length artifact?"* → C5 neutral-placebo control, length-stratified
 reporting, plus MedMCQA accuracy as a length-immune endpoint.
 
 *"Hasn't someone done memory repair already?"* → Every published EM reversal

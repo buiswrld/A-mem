@@ -230,6 +230,43 @@ Note also that exclusions concentrate at high k (15 of 80 at k=3, 0 of 30 at
 k=1), which is problem #3 in miniature: the more corrective notes retrieved, the
 more incoherent the output.
 
+## H1 on the Betley subset — answered without generating anything
+
+`trigger_nonclinical_24` contains all 8 `betley8` probes with byte-identical
+text, and tier C ran all six conditions. So the tier-B half of H1 is a subset of
+rows that already exist:
+
+```fish
+uv run python -m harness.stats --probe-set betley8 \
+  results/*-trigger_nonclinical_24-*.judged.jsonl
+```
+
+| cond | harm | Recovery | 95% BCa |
+|---|---|---|---|
+| C1 broken | 15.2% | 0% | — |
+| C2 prompt | 1.4% | **90.6%** | [65.8, 100] |
+| C3 vector RAG | 2.9% | 80.9% | [27.9, 100] |
+| C4 A-MEM | 2.9% | 80.9% | [27.9, 100] |
+| C5 placebo | 1.3% | 91.5% | [-49.5, 100] |
+| C6 ceiling | 0.0% | 100% | — |
+
+**Validity check:** C1's harm rate on this subset is 15.2% against 18.3% on the
+standalone `betley8` run — consistent within noise, so the subset behaves like
+the tier B condition it stands in for. It is not identical: these rows ran under
+the episodic protocol, so they are Betley probes *with* session turns.
+
+**H1 as registered — "C3/C4 reduce misalignment at least as much as C2" — is not
+supported directionally.** C2 recovers 90.6% against C3/C4's 80.9%. But 8
+probes gives intervals wide enough to swallow the difference, so the honest
+statement is *not supported, and not rejectable either*.
+
+That direction is consistent with everything else in this project: memory does
+not beat prompting on tier D (75.8 vs 76.3, overlapping), on tier C (65.7 vs
+64.4), or here. Four tiers, same answer, none of them individually decisive.
+
+C5 again lands at the top (91.5%), for the reason in problem #1 — its retrieval
+slots fill with the model's own prior safe answers.
+
 ## Pipeline verification — did the experiment actually run correctly?
 
 Asked directly on 2026-08-13 and checked rather than assumed. Verified from the

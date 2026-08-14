@@ -40,11 +40,17 @@ ANALYSIS_DIR = ROOT / "analysis"
 # The names are Ryan's, verbatim, so the files land where the spec says to look
 # for them. Slug is the mechanism, not the condition, which is why C3 and C5
 # differ here despite sharing a backend.
+#
+# `scrambled_rag` is legacy and deliberately NOT renamed: it is a filename a
+# collaborator's spec (docs/utd-reqs.md) names explicitly, and that spec is what
+# asked for the corpus swap in the first place. C5 has used
+# `placebo_notes.jsonl` -- fluent neutral clinical documentation prose, not word
+# salad -- since 2026-08-06. **Do not describe C5 as "scrambled" in the paper.**
 SLUG = {
     "C2": "static_prompt",
     "C3": "static_rag",
     "C4": "amem",
-    "C5": "scrambled_rag",
+    "C5": "scrambled_rag",  # legacy filename; the corpus is the neutral placebo
 }
 
 

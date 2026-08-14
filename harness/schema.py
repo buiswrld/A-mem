@@ -94,11 +94,13 @@ class GenerationRecord:
 
     # --- the memory layer ------------------------------------------------
     # memory_kind is the mechanism; condition is the label. They are logged
-    # separately because C5 (scramble) uses the same mechanism as C3 (vector)
+    # separately because C5 (placebo) uses the same mechanism as C3 (vector)
     # and differs only in corpus -- collapsing them would erase the placebo.
     memory_kind: MemoryKind = "none"
     collection: str | None = None
-    corpus: str | None = None  # "corrective" | "scramble" | None
+    corpus: str | None = None  # "corrective" | "placebo" | None
+    # "scramble" also appears in rows generated before 2026-08-06, when C5's
+    # corpus was still the word-shuffled placebo. No current run emits it.
     retrieved_note_ids: list[str] = field(default_factory=list)
     retrieved_scores: list[float] = field(default_factory=list)
     retrieved_is_corrective: list[bool] = field(default_factory=list)
