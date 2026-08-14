@@ -1,9 +1,22 @@
-# Resume here — 2026-08-13 (evening), tier C generated in full
+# Resume here — 2026-08-13 (night), tier C generated AND judged
 
-Written on the second pod of the day (RTX 6000 Ada 48 GB, not the A100). Delete
-this file once the run is done.
+Written on the second pod of the day (RTX 6000 Ada 48 GB, not the A100), then
+updated on the laptop after judging. Delete this file once tier O is done.
 
-## What changed since this morning
+## What changed tonight (laptop, no GPU)
+
+**Tier C is judged — all 6 conditions, pinned judge.** Results, four blocking
+problems, and the mediation table are in **`docs/tierC_results.md`**. Read that
+before anything else; the short version is that the headline gap exists in sign
+but the intervals are too wide to quote a magnitude, and the placebo (C5)
+outperforms the treatment (C3) on tier C after underperforming it on tier D.
+
+Tier D was re-bootstrapped on the pinned judge for comparability. Its numbers
+match what was recorded here previously (C2 75.8 / C3 76.3 / C4 76.3).
+
+`.env` on the laptop was mode 644; `chmod 600` applied.
+
+## What changed this morning
 
 **Tier C is generated — all 6 conditions.** 1,440 rows, 14B bf16, 24 probes x 10,
 seed 0, all stamped clean. Nothing from tier D was re-run.
@@ -21,8 +34,9 @@ numbers yet**. That is the first thing to do on the laptop.
 
 | | |
 |---|---|
-| Tier D, all 6 + C3/C5 `--n-turns 0` | done, judged, exported (unchanged today) |
-| **Tier C: all 6 conditions** | **generated today, unjudged** |
+| Tier D, all 6 + C3/C5 `--n-turns 0` | done, judged, exported |
+| **Tier C: all 6 conditions** | **generated and judged — see `docs/tierC_results.md`** |
+| Tier C `--n-turns 0` for C3/C5 | **newly owed, see problem #4 in that doc** |
 | Tier O (`orsc_hard_180`) | **not generated — and see the warning below** |
 
 Tier C files, `load_4bit=False`, 240 rows each:
@@ -43,19 +57,21 @@ time. Budget for it when planning tier O.
 
 ## Do this next, in order
 
-### 1. Judge tier C on the laptop — no GPU needed
+### 1. ~~Judge tier C on the laptop~~ — DONE 2026-08-13 night
 
-```bash
-JUDGE_MODEL=gpt-4o-2024-08-06 python -m harness.judge --in results/C1-trigger_nonclinical_24-12a45b982b33-s0.jsonl
-# ...and the other four. Then:
-python -m harness.stats results/*-trigger_nonclinical_24-*.judged.jsonl
-```
+Results in `docs/tierC_results.md`. **Pinned judge only.** `gpt-4o-mini` failed
+§8.5 (κ 0.442) and cannot see refusals; do not resurrect it.
 
-**Pinned judge only.** `gpt-4o-mini` failed §8.5 (κ 0.442) and cannot see
-refusals; do not resurrect it.
+Note for anyone re-running tier D stats: `harness.stats` takes one file per
+condition, and the directory holds both episodic and `--n-turns 0` variants for
+C3 and C5 with no filename hint. Tell them apart by `sess-` slot share; the
+mapping table is at the bottom of `docs/tierC_results.md`.
 
-This yields the **headline metric**: repair generalization gap = Recovery on
-tier D − Recovery on tier C. Tier D Recovery was C2 75.8% / C3 76.3% / C4 76.3%.
+**The next decision is analytical, not computational: pick the exclusion rule.**
+Tier C excludes incoherent rows, and C3/C4 exclude 10.8% of rows against C1's
+1.2%. Under the worst-case bound (excluded = misaligned) C3 becomes *more*
+harmful than the broken model and the whole effect reverses. Decide and
+pre-register this before writing; report the sensitivity band either way.
 
 ### 2. Re-read H3 before writing it up — C4 is not measuring what it claims
 
@@ -121,6 +137,16 @@ either let it skip-if-exists or run the `run_tier orsc_hard_180 tierO` half.
 **No `--load-4bit`.** Budget from measured throughput below, not from the old
 0.5 rows/s figure.
 
+### 5. Bundle ALL remaining GPU work into one rental
+
+Three items now need a card. Do them in one session:
+
+| item | rows | why |
+|---|---|---|
+| tier O `orsc_hard_180` | 10,800 | over-refusal; blocked on the 180 verdicts |
+| tier C `--n-turns 0`, C3 + C5 | 480 | separates "no generalization" from "episodic protocol starved the repair" — tier C C3 loses 29.2% of its top-k to session turns vs 8.9% on tier D |
+| C4 persisted store | 240 | only way to say anything about A-MEM evolution |
+
 ## New this run: the mediation analysis is not degenerate on tier C
 
 Tier D's mediation was dead — C3/C4/C3_noturns retrieved a corrective note on
@@ -142,6 +168,11 @@ retrieval stops saturating on its own. This is a partial answer to "vary k, or
 add distractors, or restate it".
 
 C4 shows the identical distribution — necessarily so, see §2.
+
+**Now judged, and the shape is a threshold, not a dose:** harm is 22.2% at k=0
+(9 counted rows — underpowered as warned) and then flat at 3.3% / 3.7% / 1.5%
+for k=1/2/3. One matched note is as good as three. Full table in
+`docs/tierC_results.md`.
 
 C5 (placebo) retrieved 0 corrective notes on all 240 rows — confound control is
 cleanly separated.
@@ -225,6 +256,12 @@ stamping clean.
   Date it honestly as post-hoc.
 - **Re-run C4 with a persisted store and inspect the evolved notes** (see §2).
   Until then, no claim about A-MEM's self-evolution is supportable.
+- **Decide the exclusion rule** and pre-register it. See §1 and problem #3 in
+  `docs/tierC_results.md`. This is the highest-leverage unblocked item.
+- **Explain the C5 flip.** Placebo recovers 39.2% on tier D and 83.6% on tier C,
+  with zero corrective notes retrieved on all 240 rows. Most interesting result
+  in the dataset, currently unexplained.
 - ~~Fix `pyproject.toml`~~ — done today: `peft` and `accelerate` added and
   re-locked. A fresh `uv sync` now produces a runnable harness.
-- ~~`.env` is mode 666~~ — `chmod 600` applied on the pod. Check the laptop copy.
+- ~~`.env` is mode 666~~ — `chmod 600` applied on the pod, and on the laptop
+  tonight (it was 644 there).
