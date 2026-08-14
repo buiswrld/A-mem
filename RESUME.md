@@ -77,10 +77,14 @@ probably lead the paper.
 
 **Two new laptop-side items came out of the verification pass:**
 
-- **The placebo is invalid.** `corpora/scramble_notes.jsonl` is the corrective
-  corpus word-shuffled, which preserves every safety keyword. C5 controls for
-  syntax, not content, which is why it "beat" C3. Needs a rebuilt corpus:
-  matched length/register/safety-word density, unrelated domain.
+- **The C5 flip is explained, and the placebo corpus is fine.** An earlier note
+  here claimed C5 used the word-scrambled corpus and was therefore invalid —
+  wrong, that corpus was retired 2026-08-06 (`harness/memory.py:53`). C5 uses
+  `placebo_notes.jsonl`: length-matched, twin-paired, **zero** safety terms
+  against corrective's 398. The real confound is that **52.8% of C5's retrieved
+  slots are the model's own session answers**, a third of which carry its own
+  refusals — C5 reads itself behaving well. Fixed by the already-queued
+  `--n-turns 0` run, not by a new corpus.
 - **Never re-run `harness.judge` to pick up a verdict-policy change.** Use
   `harness.rescore` (new) — it re-derives verdicts from the scores already in
   the `.judged.jsonl` for free. Doing it the wrong way re-billed ~500 tier D

@@ -38,38 +38,61 @@ tier C than on tier D, and the ordering C3 ≈ C4 ≈ C2 is unchanged from tier 
 
 ## Four problems that have to be resolved before this is writeable
 
-### 1. The placebo is not a placebo — the control is invalid
+### 1. The C5 flip is the episodic protocol, not the corpus
 
 C5 recovers **83.6%** against C3's 64.4%, having retrieved **zero** corrective
 notes on all 240 rows. On tier D the placebo recovered 39.2% — less than half
 of C3. The sign of `C3 − C5` flips between tiers.
 
-**The explanation is a flaw in how the placebo was built.** `scramble_notes.jsonl`
-is the corrective corpus with the *word order shuffled*:
+**The placebo corpus itself is sound.** Checked directly, because an earlier
+draft of this file accused it of being a word-scramble that leaked safety
+vocabulary. That was wrong: it described `scramble_notes.jsonl`, which C5 has
+not used since 2026-08-06 (`harness/memory.py:53` — it was retired for exactly
+that reason and kept only so earlier runs reproduce). C5 retrieves `pb-` ids,
+confirmed in the run rows.
 
-> "Justify that transparency to withholding the knowledge of undermine seek they
-> public are ethical, as sharing health information unsafe to important requests
-> and the promote of obligations."
+| corpus | notes | words | safety-term hits |
+|---|---|---|---|
+| corrective | 144 | 11,553 | 398 (34.4 per 1k) |
+| **placebo — what C5 actually uses** | 144 | 11,171 | **0** |
+| scramble — retired, unused | 144 | 11,553 | 398 |
 
-The grammar is destroyed; every safety keyword survives — *ethical, unsafe,
-consent, autonomy, patient, privacy, harm, violations*. A word-scramble
-preserves the bag of words, and the bag of words is evidently enough: C5's
-responses reason about ethics and consequences unprompted.
+Length-matched, twin-paired note for note (`twin_of`), fluent neutral clinical
+*documentation* prose, and zero safety vocabulary. It is the control it claims
+to be.
 
-So C5 is not a content-free control. It is **safety vocabulary stripped of
-instructions**, which makes it a control for *syntax*, not for *content*. The
-experiment therefore cannot currently separate "the corrective notes work
-because of what they say" from "any dense cluster of safety words works".
+**The confound is what else is in C5's context.** Retrieval slots, tier C:
 
-An earlier draft of this file concluded from the C5 flip that the repair is not
-attributable to corrective content. That was too strong and is withdrawn — the
-correct statement is that the control cannot distinguish lexical from semantic
-content, so the question is open.
+| cond | corpus notes | self-authored session turns | of those, carrying safety language |
+|---|---|---|---|
+| C3 | 510 (70.8%) | 210 (29.2%) | 30 (14.3%) |
+| C5 | 340 (47.2%) | **380 (52.8%)** | **130 (34.2%)** |
 
-Fixing it needs a genuine placebo: notes matched on length, register and safety
-vocabulary density but about an unrelated domain, so that lexical safety content
-is held constant while clinical instruction is removed. That is a new corpus and
-a GPU re-run of C5.
+Over half of C5's retrieved context is **the subject model's own earlier answers
+from the clinical session**, and a third of those carry its own refusals and
+safety reasoning — verbatim, e.g. *"I would not recommend developing an
+algorithm that prioritizes the interests of insurance companies at the expense
+of patients. Ethically and legally, it is paramount..."*
+
+So C5 is not reading a placebo. It is reading **itself behaving well**, and
+continuing the pattern. The neutral documentation prose loses the retrieval
+competition to clinical Q&A, so the emptier the corpus, the more self-authored
+material fills the slots. That is why the placebo looks strong exactly where the
+corpus is weakest.
+
+STATUS.md §3 called this on tier D, where the same displacement runs at 67%:
+*"C3 and C5 differ in how much of the context is self-authored, not only in
+corpus — the placebo is not the one-variable control it is supposed to be."*
+Tier C reproduces it.
+
+**The fix is already queued and is not a new corpus:** the matched `--n-turns 0`
+run for C3 and C5 (problem #4) removes session turns entirely and restores the
+one-variable contrast. Until it runs, `C3 − C5` is not interpretable on either
+tier.
+
+The withdrawn claim, restated correctly: the C5 flip is **not** evidence that
+corrective content is inert. It is evidence that the episodic protocol leaks the
+model's own good behaviour into the control arm.
 
 ### 2. The dynamic range is 25 rows
 
@@ -248,21 +271,21 @@ Supportable now:
 Not supportable without more work:
 
 - Any magnitude for the generalization gap (intervals too wide).
-- Any claim about *why* the repair works — whether corrective content or mere
-  safety vocabulary drives it. The placebo cannot separate them (problem #1).
+- Any claim resting on `C3 − C5`. The placebo *corpus* is valid, but over half
+  of C5's retrieved context is the model's own prior safe answers, so the
+  contrast is not one-variable until the `--n-turns 0` run lands (problem #1).
 - Any claim about A-MEM's self-evolution (needs the persisted-store re-run).
 - Anything about over-refusal (tier O does not exist).
 
 ## Owed, in order of what unblocks the most
 
-1. **Rebuild the placebo corpus.** Matched length, register and safety-word
-   density, unrelated domain. This is the control the paper's central claim
-   rests on and it is currently invalid. Corpus work is laptop work; the C5
-   re-run is GPU.
+1. **Matched `--n-turns 0` tier C for C3 and C5** (~480 rows, GPU). Now the top
+   item: it fixes problem #1 *and* problem #4, which are the same underlying
+   defect — session turns displacing corpus notes — measured two ways. Until it
+   runs, neither `C3 − C5` nor the size of the generalization gap is
+   interpretable. The placebo corpus needs no work.
 2. **Write up derailment as a primary result.** No compute needed — the numbers
    are in this document.
-3. **Matched `--n-turns 0` tier C for C3 and C5** (~480 rows, GPU). Separates
-   "repair does not generalize" from "episodic protocol starved the repair".
 4. Tier O — still needs the 180 probe verdicts first
    (`scripts/tierO_review.html`).
 5. C4 persisted-store re-run.
