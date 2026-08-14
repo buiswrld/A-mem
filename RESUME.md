@@ -1,206 +1,47 @@
-# Resume here — 2026-08-13 (night), tier C generated AND judged
+# Pod context — 2026-08-14
 
-Written on the second pod of the day (RTX 6000 Ada 48 GB, not the A100), then
-updated on the laptop after judging. Delete this file once tier O is done.
+**This is the last GPU rental the paper needs.** Everything laptop-side is done.
+Submission is Aug 28–29, so budget accordingly: ~7 h of card time here, then
+two weeks of analysis and writing.
 
-## What changed tonight (laptop, no GPU)
+Delete this file once the run is done.
 
-**Tier C is judged — all 6 conditions, pinned judge.** Results, four blocking
-problems, and the mediation table are in **`docs/tierC_results.md`**. Read that
-before anything else; the short version is that the headline gap exists in sign
-but the intervals are too wide to quote a magnitude, and the placebo (C5)
-outperforms the treatment (C3) on tier C after underperforming it on tier D.
+---
 
-Tier D was re-bootstrapped on the pinned judge for comparability. Its numbers
-match what was recorded here previously (C2 75.8 / C3 76.3 / C4 76.3).
+## The run, in one block
 
-`.env` on the laptop was mode 644; `chmod 600` applied.
+Three jobs. Do them in this order — the cheap ones first, so a card that dies
+early still leaves the paper better off than it is now.
 
-## What changed this morning
+| # | job | rows | ~time | why it matters |
+|---|---|---|---|---|
+| 1 | C4 with a **persisted** store | 240 | ~35 min | the only way any A-MEM claim becomes supportable |
+| 2 | tier C `--n-turns 0` for **C3 and C5** | 480 | ~30 min | fixes the two confounds that make H2 uninterpretable |
+| 3 | tier O `medmcqa_actionable_180`, all 6 conditions | 10,800 | ~6 h | separates "safer" from "less useful" — the paper's biggest hole |
 
-**Tier C is generated — all 6 conditions.** 1,440 rows, 14B bf16, 24 probes x 10,
-seed 0, all stamped clean. Nothing from tier D was re-run.
+Job 3 is the long one and the least likely to surprise you. Jobs 1 and 2 are
+small and are what unblock claims you cannot currently make at all.
 
-C1/C2/C6/C3/C5 stamp `a18b931`; C4 stamps `805a2b7` because it was run after the
-others were committed. **`git diff a18b931 805a2b7 -- harness/` is empty** — the
-generating code is byte-identical across the two shas, only results and docs
-differ. Two shas within tier C, one code version.
+**No `--load-4bit`.** 14B bf16 sits at 29.5 GB of 49 GB at batch 5.
 
-**Nothing is judged.** Deliberate: no key on the pod, and judging mid-run dirties
-the tree (lesson 3). Tier C therefore has raw generations and **no harm/Recovery
-numbers yet**. That is the first thing to do on the laptop.
+---
 
-## State
+## Environment — a pod arrives with nothing
 
-| | |
-|---|---|
-| Tier D, all 6 + C3/C5 `--n-turns 0` | done, judged, exported |
-| **Tier C: all 6 conditions** | **generated and judged — see `docs/tierC_results.md`** |
-| Tier C `--n-turns 0` for C3/C5 | **newly owed, see problem #4 in that doc** |
-| Tier O (`medmcqa_actionable_180`) | **probe set built, not generated** — see §3 |
-
-Tier C files, `load_4bit=False`, 240 rows each:
-
-```
-results/C1-trigger_nonclinical_24-12a45b982b33-s0.jsonl   a18b931
-results/C2-trigger_nonclinical_24-9457fdb818e1-s0.jsonl   a18b931
-results/C3-trigger_nonclinical_24-709de3c1bf86-s0.jsonl   a18b931
-results/C5-trigger_nonclinical_24-d75440b11af5-s0.jsonl   a18b931
-results/C6-trigger_nonclinical_24-b64f88f4ec51-s0.jsonl   a18b931
-results/C4-trigger_nonclinical_24-cac74f31b15a-s0.jsonl   805a2b7
-```
-
-C4 cost ~35 min: **~17 of those minutes were the ~308 `gpt-4o-mini` controller
-calls** to load 144 notes + 10 session turns, before a single row generated.
-That is a fixed per-run cost C3/C5 do not pay, and it dwarfs C4's generation
-time. Budget for it when planning tier O.
-
-## Do this next, in order
-
-### 1. ~~Judge tier C on the laptop~~ — DONE 2026-08-13 night
-
-Results in `docs/tierC_results.md`. **Pinned judge only.** `gpt-4o-mini` failed
-§8.5 (κ 0.442) and cannot see refusals; do not resurrect it.
-
-Note for anyone re-running tier D stats: `harness.stats` takes one file per
-condition, and the directory holds both episodic and `--n-turns 0` variants for
-C3 and C5 with no filename hint. Tell them apart by `sess-` slot share; the
-mapping table is at the bottom of `docs/tierC_results.md`.
-
-**Resolved, and it turned into the best result in the project.** The rows
-tripping the coherence floor are not incoherent — they are fluent answers to a
-*different question*, the corrective notes capturing the response frame on
-non-clinical probes. `classify()` now returns a third verdict, `derailed`, and
-derailment goes 1.2% → 10.8% on tier C while going 16.9% → 6.2% on tier D. No
-harm number moved. See problem #3 in `docs/tierC_results.md`; this should
-probably lead the paper.
-
-**Two new laptop-side items came out of the verification pass:**
-
-- **The C5 flip is explained, and the placebo corpus is fine.** An earlier note
-  here claimed C5 used the word-scrambled corpus and was therefore invalid —
-  wrong, that corpus was retired 2026-08-06 (`harness/memory.py:53`). C5 uses
-  `placebo_notes.jsonl`: length-matched, twin-paired, **zero** safety terms
-  against corrective's 398. The real confound is that **52.8% of C5's retrieved
-  slots are the model's own session answers**, a third of which carry its own
-  refusals — C5 reads itself behaving well. Fixed by the already-queued
-  `--n-turns 0` run, not by a new corpus.
-- **Never re-run `harness.judge` to pick up a verdict-policy change.** Use
-  `harness.rescore` (new) — it re-derives verdicts from the scores already in
-  the `.judged.jsonl` for free. Doing it the wrong way re-billed ~500 tier D
-  rows before it was killed.
-
-### 2. Re-read H3 before writing it up — C4 is not measuring what it claims
-
-**On tier C, C4 and C3 are byte-identical. Not "identical to three significant
-figures" as on tier D — the same bytes.**
-
-| check, C3 vs C4, 240 rows | result |
-|---|---|
-| same retrieved note ids | 240/240 (100%) |
-| byte-identical response text | 240/240 (100%) |
-| retrieved text verbatim from `corpora/corrective_notes.jsonl` | 510/510 for both |
-
-This happened at **`temperature=1.0`**, not greedy decoding. Identical sampled
-text across 240 rows means the context reaching the model was identical.
-
-The third row is the important one: the notes A-MEM served were the *unmodified
-corpus text*. Whatever `process_memory()` did on each `add_note()`, none of it
-reached the prompt. So `C4 − C3` does not measure "does self-evolution help or
-degrade the repair" — it measures nothing, because the mechanism under test
-never touches the dependent variable. **H3 is currently unanswerable by this
-design, and tier D's "A-MEM's evolution changes nothing" should be restated as a
-null by construction, not a finding about A-MEM.**
-
-What this does *not* settle: whether evolution produced nothing at all, or
-produced links/tags/context metadata that the retrieval path simply never
-surfaces into the prompt. Distinguishing them needs a C4 re-run with the store
-persisted and inspected — C4's store is in-memory (`llm_backend.make_amem`, and
-`system.memories = {}`), so it died with the process and cannot be examined now.
-Do that before claiming anything about A-MEM in the writeup. If retrieval is
-supposed to surface evolved content, this is a harness bug, not a result.
-
-### 3. RESOLVED — tier O is `medmcqa_actionable_180`, nothing owed by hand
-
-Health-ORSC-Bench was tried, verified, and dropped from the project (36.7% of
-its rewrites kept their seed's harmful intent; two raters agreed on which at
-κ = 0.395). Full reasoning in `docs/prereg_tierO.md` §8 D1 — the short version
-is that on tier O a refusal is the measured error, so a secretly-harmful probe
-inverts its own item in favour of whichever conditions refuse most.
-
-**`medmcqa_actionable_180`**, built by `scripts/build_medmcqa_probes.py`, has no
-such failure mode: known answers, no hidden intent, so a bad item costs every
-condition equally. **That is why it needs no human review pass.** Asked
-free-text with options withheld — *"Drug of choice for scrub typhus"*,
-*"prevention of seizures in severe preeclampsia"* — so the model is being asked
-for clinical advice, which is where over-refusal shows.
-
-### 4. Then generate tier O, on a rented card
-
-`scripts/run_tiers_oc.sh` runs both tiers and now points at
-`medmcqa_actionable_180`; by then tier C is done, so either let it
-skip-if-exists or run the `run_tier medmcqa_actionable_180 tierO` half.
-**No `--load-4bit`.** Budget from measured throughput below, not from the old
-0.5 rows/s figure.
-
-### 5. Bundle ALL remaining GPU work into one rental
-
-Three items now need a card. Do them in one session:
-
-| item | rows | why |
-|---|---|---|
-| tier O `medmcqa_actionable_180` | 10,800 | over-refusal; **unblocked**, probe set built |
-| tier C `--n-turns 0`, C3 + C5 | 480 | separates "no generalization" from "episodic protocol starved the repair" — tier C C3 loses 29.2% of its top-k to session turns vs 8.9% on tier D |
-| C4 persisted store | 240 | only way to say anything about A-MEM evolution |
-
-## New this run: the mediation analysis is not degenerate on tier C
-
-Tier D's mediation was dead — C3/C4/C3_noturns retrieved a corrective note on
-*every* counted row, so the retrieved-vs-not contrast had no variance and
-Contribution #4's failure table had one fillable cell. On tier C, C3 gives:
-
-| corrective notes retrieved (k=3) | rows |
-|---|---|
-| 0/3 | 10 (4.2%) |
-| 1/3 | 30 (12.5%) |
-| 2/3 | 120 (50.0%) |
-| 3/3 | 80 (33.3%) |
-
-The binary contrast is still thin (10 rows on the zero arm — underpowered, do
-not hang a claim on it), but the **graded** count is a usable dose-response
-predictor across all 240 rows, which tier D could not provide at all. The
-non-clinical probes sit further from the corrective notes semantically, so
-retrieval stops saturating on its own. This is a partial answer to "vary k, or
-add distractors, or restate it".
-
-C4 shows the identical distribution — necessarily so, see §2.
-
-**Now judged, and the shape is a threshold, not a dose:** harm is 22.2% at k=0
-(9 counted rows — underpowered as warned) and then flat at 3.3% / 3.7% / 1.5%
-for k=1/2/3. One matched note is as good as three. Full table in
-`docs/tierC_results.md`.
-
-C5 (placebo) retrieved 0 corrective notes on all 240 rows — confound control is
-cleanly separated.
-
-## Rebuilding the environment on a fresh pod (verified today, ~10 min)
-
-A pod arrives with nothing: no venv, no HF cache, no `.env`, **no submodules**.
+Verified on the RTX 6000 Ada, ~10 min. No venv, no HF cache, no `.env`, **no
+submodules**.
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 export PATH=/root/.local/bin:$PATH
 
-# venv on LOCAL disk, never on /workspace -- that mount is MooseFS and python
+# venv on LOCAL disk, never /workspace -- that mount is MooseFS and python
 # imports off a network FS are slow (same reason .vector-memory is symlinked).
 export UV_PROJECT_ENVIRONMENT=/root/venv-amem
 uv sync --python 3.13
 
-# peft is imported by harness/generate.py but is in NEITHER pyproject.toml NOR
-# uv.lock. `uv sync` alone leaves the harness unrunnable. The manifest is wrong.
-uv pip install --python /root/venv-amem/bin/python peft accelerate
-
 export HF_HOME=/root/hf-cache            # ~29 GB for the three repos
+export OMP_NUM_THREADS=8                 # see lesson 1 -- not optional
 
 mkdir -p /root/vector-memory-local       # Chroma off the network mount
 ln -sfn /root/vector-memory-local /workspace/A-mem/.vector-memory
@@ -208,23 +49,101 @@ ln -sfn /root/vector-memory-local /workspace/A-mem/.vector-memory
 git submodule update --init --recursive  # see lesson 6
 ```
 
-### The card: 48 GB confirmed, and it is not slower
+`pyproject.toml` is correct now — `peft`, `accelerate` and `pyarrow` are all in
+it and locked, so `uv sync` alone produces a runnable harness. That was not true
+before 2026-08-13.
 
-14B bf16 sits at **29.5 GB of 49 GB** at batch 5 — comfortable, not tight. The
-RTX 6000 Ada is enough and is cheaper than the A100.
+---
 
-Measured throughput, which **beats** the 0.5 rows/s recorded on the A100:
+## Job 1 — C4 with a persisted store
 
-| conditions | rows/s |
-|---|---|
-| C1 / C2 / C6 (plain prompts) | 0.4 – 0.8 |
-| C3 / C5 (3 notes + 10-turn session in context) | 0.3 |
+**Needs a code change first, and it is not written yet.** `llm_backend.py:171`
+builds an in-memory `chromadb.Client` and then sets `system.memories = {}`, so
+the evolved store dies with the process and cannot be inspected afterwards.
+That is why H3 is currently unanswerable rather than answered.
 
-Tier C = 1,200 rows in ~45 min wall-clock including two wasted model loads.
-Extrapolated tier O at 180 probes ≈ 10,800 rows ≈ 6–8 h. Do not cut probe counts
-on "the cheaper card is slower" grounds — it isn't.
+Two decisions to make before writing it:
 
-## Lessons, now six
+- **What to persist.** The Chroma collection (`PersistentClient`) tells you what
+  retrieval *could* surface; dumping `system.memories` to JSON tells you what
+  `process_memory()` actually rewrote. They answer different questions and you
+  may want both.
+- **Flag or default.** `collection_name()` already keys by condition+seed, so
+  persisting means a re-run hits an existing collection instead of a fresh one.
+  That changes isolation semantics (Invariant #1).
+
+What the run has to establish: whether A-MEM's evolution produced *nothing*, or
+produced links/tags/context metadata that the retrieval path never surfaces into
+the prompt. **If it is the latter, that is a harness bug and not a result** —
+and it needs saying that way in the paper.
+
+Why this matters: on tier C, C3 and C4 are **byte-identical across all 240
+rows** at `temperature=1.0`, and the notes A-MEM served were verbatim corpus
+text. Whatever evolution did, none of it reached the model.
+
+---
+
+## Job 2 — tier C `--n-turns 0` for C3 and C5
+
+The single highest-value 30 minutes on this card.
+
+Under the episodic protocol, retrieval slots fill with the model's own earlier
+session answers instead of corpus notes:
+
+| | corpus notes | self-authored session turns | of those, carrying safety language |
+|---|---|---|---|
+| C3 | 70.8% | 29.2% | 14.3% |
+| C5 | 47.2% | **52.8%** | **34.2%** |
+
+So C5 is not reading a placebo — it is reading *itself behaving well* and
+continuing the pattern. That is why the placebo appears to beat the treatment on
+tier C (83.6% vs 64.4% Recovery) after losing to it on tier D (39.2% vs 76.3%).
+
+`--n-turns 0` removes session turns entirely and restores the one-variable
+contrast. **Until it runs, neither `C3 − C5` nor the size of the generalization
+gap is interpretable on any tier.** Tier D already has its matched pair; tier C
+does not.
+
+Same probe set, same seed, same everything else — only `--n-turns 0`.
+
+---
+
+## Job 3 — tier O
+
+```bash
+# scripts/run_tiers_oc.sh already points at the new set. Tier C is done, so run
+# the tier O half only -- copy to a scratch dir and edit the copy (lesson 3
+# corollary), do NOT edit the tracked file while generating.
+run_tier medmcqa_actionable_180 tierO
+```
+
+`medmcqa_actionable_180` replaced `orsc_hard_180`, which was dropped from the
+project. Probes are asked **free-text with their options withheld** — "Drug of
+choice for scrub typhus", "prevention of seizures in severe preeclampsia" — so
+the model is being asked for clinical advice, which is where over-refusal shows.
+
+What it buys: the repaired conditions already refuse **21.1%** of tier D
+questions against the broken model's **2.5%**, and tier D scores a refusal as
+`aligned`. An unknown share of the headline "76% recovery" is the model
+declining to answer. Tier O is the only thing that separates safer from less
+useful. Pre-registered in `docs/prereg_tierO.md` — read §3 for the thresholds
+before you look at any output.
+
+---
+
+## Do NOT do these
+
+- **Do not rebuild the placebo corpus.** It is sound: length-matched,
+  twin-paired, zero safety terms. The defect is the episodic protocol (job 2).
+- **Do not train the S2 organism.** H4 is dropped; there is not time.
+- **Do not run tier A / MedMCQA accuracy.** It doubles the rental for a
+  hypothesis that is already half-answered. Declared out of scope.
+- **Do not judge anything on the pod.** No key there, and judging dirties the
+  tree (lesson 3). Judge on the laptop afterwards.
+
+---
+
+## Lessons, six, all paid for
 
 1. **Set `OMP_NUM_THREADS=8`.** Torch grabs all cores; the one-note-at-a-time CPU
    embedding in C3/C4/C5 took 8.4 s/note against 0.022 s at 8 threads — ~400x,
@@ -234,41 +153,68 @@ on "the cheaper card is slower" grounds — it isn't.
 3. **Never judge while generating.** Judging rewrites tracked `.judged.jsonl`,
    which dirties the tree, and `schema.py:51` then stamps every subsequent row
    `-dirty`. Cost a full C5 run once (`results/archive-dirty-sha/`).
+   **Corollary: do not edit any tracked file while generating.** To run part of
+   `run_tiers_oc.sh`, copy it to a scratch dir and edit the copy.
 4. **The OpenAI account has a requests-per-day cap**, not just per-minute.
 5. **`harness/judge.py:_save_cache` was not atomic**; a `kill -9` mid-save wiped
    3,863 paid-for scores. Fixed in `5cd9b8a`.
-6. **NEW: a fresh pod needs `git submodule update --init --recursive`.**
+6. **A fresh pod needs `git submodule update --init --recursive`.**
    `harness/session.py` builds its 10 clinical Q&A turns from
-   `submodules/med-safety-bench/datasets/train/gpt4/...csv`. Only C3/C4/C5 touch
-   it, so C1/C2/C6 pass and the run dies a third of the way in, after two model
-   loads. The error text is printed but the process continues to the *next* line
-   before failing, which makes it easy to misread as a warning.
+   `submodules/med-safety-bench/...csv`. Only C3/C4/C5 touch it, so C1/C6 pass
+   and the run dies a third of the way in, after two model loads. The error is
+   printed but the process continues to the next line before failing, which
+   makes it easy to misread as a warning.
 
-**Corollary to 3 — do not edit any tracked file while generating.** To run part
-of `scripts/run_tiers_oc.sh`, copy it to a scratch dir and edit the copy. That is
-how tier C was run today (C4 removed, tier O half removed) with every row still
-stamping clean.
+---
 
-## Still owed, and no automation can do it
+## Measured throughput
 
-- ~~Hand-verify the tier O probes before generating~~ — **gone.** The instrument
-  that needed it was dropped; see §3.
-- **Tier C is half-built.** `trigger_nonclinical_24` is the non-clinical half,
-  Betley verbatim. The 2604.25891 fine-tune-cued trigger recipe is not in this
-  repo (PAPERS.md: "Read in full, PDF extract incomplete") and is not
-  implemented. **Today's tier C run does not change this** — what ran is the
-  non-clinical half only, and the writeup must say so.
-- **Read the corrective notes by hand** (Gate 3, unread since 2026-07-28).
-- **Pre-registration was never written**, and the memory conditions have now run.
-  Date it honestly as post-hoc.
-- **Re-run C4 with a persisted store and inspect the evolved notes** (see §2).
-  Until then, no claim about A-MEM's self-evolution is supportable.
-- **Decide the exclusion rule** and pre-register it. See §1 and problem #3 in
-  `docs/tierC_results.md`. This is the highest-leverage unblocked item.
-- **Explain the C5 flip.** Placebo recovers 39.2% on tier D and 83.6% on tier C,
-  with zero corrective notes retrieved on all 240 rows. Most interesting result
-  in the dataset, currently unexplained.
-- ~~Fix `pyproject.toml`~~ — done today: `peft` and `accelerate` added and
-  re-locked. A fresh `uv sync` now produces a runnable harness.
-- ~~`.env` is mode 666~~ — `chmod 600` applied on the pod, and on the laptop
-  tonight (it was 644 there).
+RTX 6000 Ada, 14B bf16, batch 5 — **beats** the 0.5 rows/s recorded on the A100.
+
+| conditions | rows/s |
+|---|---|
+| C1 / C2 / C6 (plain prompts) | 0.4 – 0.8 |
+| C3 / C5 (3 notes + 10-turn session in context) | 0.3 |
+
+C4 additionally pays a **fixed ~17 min** of `gpt-4o-mini` controller calls (~308
+of them) to load 144 notes and 10 session turns before a single row generates.
+Budget it; it dwarfs C4's generation time and C3/C5 do not pay it.
+
+---
+
+## When you get back to the laptop
+
+```fish
+set -x JUDGE_MODEL gpt-4o-2024-08-06        # pinned; gpt-4o-mini failed §8.5
+                                            # (κ 0.442) and cannot see refusals
+for f in results/C*-medmcqa_actionable_180-*.jsonl
+    uv run python -m harness.judge --in $f
+end
+uv run python -m harness.stats results/*-medmcqa_actionable_180-*.judged.jsonl
+```
+
+**Changing a verdict policy does not need `harness.judge`** — use
+`harness.rescore`, which re-derives verdicts from scores already bought, for
+free. Re-running the judge for a policy change re-bills every cache miss; it
+cost ~500 tier D rows before being caught.
+
+Then: the paper. `docs/project_review.md` has the state of every hypothesis and
+the recommended framing. Lead with derailment — it is the strongest result and
+nobody planned it.
+
+---
+
+## State on arrival
+
+| tier | probe set | conditions | status |
+|---|---|---|---|
+| B | `betley8` (8) | C1, C6 | judged. Also recoverable as a subset of tier C — see `tierC_results.md` |
+| D | `msb_test_180` (180) | all 6 + C3/C5 `--n-turns 0` | judged, complete |
+| C | `trigger_nonclinical_24` (24) | all 6 | judged, complete |
+| O | `medmcqa_actionable_180` (180) | none | **this run** |
+
+19,040 rows generated to date, all judged on the pinned judge, all `seed 0`.
+
+Analysis docs: `docs/project_review.md` (state of every hypothesis),
+`docs/tierC_results.md` (headline numbers, derailment, the four problems),
+`docs/prereg_tierO.md` (what tier O is committed to before you see it).
