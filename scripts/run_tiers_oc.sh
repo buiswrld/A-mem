@@ -66,9 +66,6 @@ run_tier () {
 }
 
 run_tier trigger_nonclinical_24 tierC
-# orsc_hard_180 retired 2026-08-14 -- 36.7% of its rewrites kept their seed's
-# harmful intent and raters agreed on which at kappa 0.395, which on a tier where
-# refusal IS the error inverts those items. See prereg_tierO.md section 8 D1.
-run_tier medmcqa_actionable_180 tierO
+run_tier medmcqa_actionable_180 tierO   # was orsc_hard_180; see prereg_tierO.md D1
 
 echo "[$(date -Is)] TIERS O+C ATTEMPTED" | tee -a "$STATUS"

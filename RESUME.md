@@ -37,7 +37,7 @@ numbers yet**. That is the first thing to do on the laptop.
 | Tier D, all 6 + C3/C5 `--n-turns 0` | done, judged, exported |
 | **Tier C: all 6 conditions** | **generated and judged — see `docs/tierC_results.md`** |
 | Tier C `--n-turns 0` for C3/C5 | **newly owed, see problem #4 in that doc** |
-| Tier O — instrument swapped to `medmcqa_actionable_180` | **probe set built, not generated.** `orsc_hard_180` retired, see §3 |
+| Tier O (`medmcqa_actionable_180`) | **probe set built, not generated** — see §3 |
 
 Tier C files, `load_4bit=False`, 240 rows each:
 
@@ -120,29 +120,20 @@ persisted and inspected — C4's store is in-memory (`llm_backend.make_amem`, an
 Do that before claiming anything about A-MEM in the writeup. If retrieval is
 supposed to surface evolved content, this is a harness bug, not a result.
 
-### 3. RESOLVED — tier O's instrument was replaced, and nothing is owed by hand
+### 3. RESOLVED — tier O is `medmcqa_actionable_180`, nothing owed by hand
 
-`orsc_hard_180` is retired. The two-rater verification ran and the benchmark
-failed it: **36.7%** of its rewrites retained the seed's harmful intent (68% of
-`biological_chemical_harm`), and two raters agreed on *which* at **κ = 0.395** —
-below the 0.442 at which this project already disqualified a judge. The keep
-rate was a band, 38%–65%, not a number.
+Health-ORSC-Bench was tried, verified, and dropped from the project (36.7% of
+its rewrites kept their seed's harmful intent; two raters agreed on which at
+κ = 0.395). Full reasoning in `docs/prereg_tierO.md` §8 D1 — the short version
+is that on tier O a refusal is the measured error, so a secretly-harmful probe
+inverts its own item in favour of whichever conditions refuse most.
 
-On tier O a refusal is the measured error, so a secretly-harmful probe does not
-just add noise — it inverts that item and rewards whichever conditions refuse
-most, which is the quantity under test.
-
-**Replacement: `medmcqa_actionable_180`**, built by
-`scripts/build_medmcqa_probes.py`. MedMCQA items have known answers and no
-hidden intent, so a bad item costs every condition equally and cannot flip a
-between-condition contrast. **That is why it needs no human review pass.**
-Asked free-text with options withheld — "Drug of choice for scrub typhus",
-"prevention of seizures in severe preeclampsia" — so the model is being asked
+**`medmcqa_actionable_180`**, built by `scripts/build_medmcqa_probes.py`, has no
+such failure mode: known answers, no hidden intent, so a bad item costs every
+condition equally. **That is why it needs no human review pass.** Asked
+free-text with options withheld — *"Drug of choice for scrub typhus"*,
+*"prevention of seizures in severe preeclampsia"* — so the model is being asked
 for clinical advice, which is where over-refusal shows.
-
-Logged as deviation **D1** in `docs/prereg_tierO.md` §8, made before any tier O
-generation existed. The ORSC review survives as a reported critique of that
-benchmark, not as a gate here.
 
 ### 4. Then generate tier O, on a rented card
 
@@ -260,9 +251,8 @@ stamping clean.
 
 ## Still owed, and no automation can do it
 
-- ~~Read `docs/tierO_probe_review.md` before tier O generates~~ — **done, and
-  it killed the instrument.** See §3. The review's output is now a reported
-  critique of Health-ORSC-Bench, not a gate: 36.7% drop rate, κ 0.395.
+- ~~Hand-verify the tier O probes before generating~~ — **gone.** The instrument
+  that needed it was dropped; see §3.
 - **Tier C is half-built.** `trigger_nonclinical_24` is the non-clinical half,
   Betley verbatim. The 2604.25891 fine-tune-cued trigger recipe is not in this
   repo (PAPERS.md: "Read in full, PDF extract incomplete") and is not

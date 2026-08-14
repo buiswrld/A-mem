@@ -286,8 +286,8 @@ Not supportable without more work:
    interpretable. The placebo corpus needs no work.
 2. **Write up derailment as a primary result.** No compute needed — the numbers
    are in this document.
-4. Tier O — still needs the 180 probe verdicts first
-   (`scripts/tierO_review.html`).
+4. Tier O — unblocked. Instrument is `medmcqa_actionable_180`
+   (`docs/prereg_tierO.md`); Health-ORSC-Bench was dropped.
 5. C4 persisted-store re-run.
 6. Optional, if a reviewer presses on derailment: a dedicated responsiveness
    judge prompt to split fluent-off-topic from genuine word salad.

@@ -1,19 +1,19 @@
 """Build the tier O over-refusal probe set from MedMCQA.
 
-Replaces `orsc_hard_180`. Health-ORSC-Bench Hard was retired on 2026-08-14:
-36.7% of its rewrites retained their seed's harmful intent, and two human raters
-agreed on which ones only at kappa 0.395 (`docs/tierO_rater_agreement.md`). On a
-tier where refusal is the measured error, a probe that is secretly harmful
-inverts the measurement -- so that benchmark needed human verification it could
-not support.
+The tier O over-refusal instrument. See `docs/prereg_tierO.md` §4 for why this
+benchmark, and §8 D1 for what it replaced.
 
-**MedMCQA needs no such verification, and that is the whole argument for the
-swap.** Every item is an exam question with a known correct answer. There is no
-hidden intent for a rater to adjudicate. A garbled or ambiguous stem still costs
-every condition equally, so the between-condition contrast -- which is the
-entire measurement -- survives it. An ORSC probe that was secretly harmful did
-not cost conditions equally: it rewarded the ones that refused. That asymmetry
-is what made ORSC unusable and what MedMCQA structurally cannot reproduce.
+**The design constraint: a bad probe must not be able to flip the result.** On
+tier O a refusal is the measured error, so a probe that is secretly *not* benign
+inverts its own item -- and inverts it in favour of whichever conditions refuse
+most, which is the quantity under test. An instrument with that failure mode
+needs every item human-verified before it can be used at all.
+
+MedMCQA has no such failure mode. Every item is an exam question with a known
+correct answer and no hidden intent, so a garbled or ambiguous stem costs every
+condition equally and leaves the between-condition contrast intact. Item quality
+degrades precision here; it cannot reverse direction. That is what makes this
+set usable without a probe-level review pass.
 
 Selection, in order:
 
@@ -147,20 +147,20 @@ def main() -> None:
                 "present"
             ),
             "rationale": (
-                "Replaces orsc_hard_180, retired 2026-08-14: 36.7% of its "
-                "rewrites retained the seed's harmful intent and inter-rater "
-                "kappa on which ones was 0.395. On tier O a secretly-harmful "
-                "probe inverts the measurement, so that set required human "
-                "verification it could not support. MedMCQA items have known "
-                "correct answers and no hidden intent; a poor item costs every "
-                "condition equally and leaves the between-condition contrast "
-                "intact, so no probe-level human review is required."
+                "On tier O a refusal is the measured error, so a probe that is "
+                "secretly not benign inverts its own item -- in favour of "
+                "whichever conditions refuse most, the quantity under test. "
+                "MedMCQA items have known correct answers and no hidden intent, "
+                "so a poor item costs every condition equally and cannot flip a "
+                "between-condition contrast. No probe-level human review is "
+                "required. See docs/prereg_tierO.md section 8 D1 for the "
+                "instrument this replaced and why."
             ),
             "known_limitation": (
-                "MedMCQA stems contain OCR-style typos ('shoness of breath'). "
-                "These are not corrected. They affect all conditions equally and "
-                "so cannot flip the sign of a between-condition comparison, "
-                "unlike an ORSC probe that retained harmful intent."
+                "MedMCQA stems contain OCR-style typos ('shoness of breath', "
+                "'hypeensive'). Not corrected: they affect all conditions "
+                "equally and so cannot flip the sign of a between-condition "
+                "comparison."
             ),
         },
         "held_out_rule": (
