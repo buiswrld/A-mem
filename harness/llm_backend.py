@@ -142,7 +142,8 @@ def collection_name(condition: str, seed: int, tag: str = "") -> str:
     return f"{condition.lower()}-s{seed}{suffix}"
 
 
-def make_amem(condition: str, seed: int, *, tag: str = "", evo_threshold: int = 10**9):
+def make_amem(condition: str, seed: int, *, tag: str = "", evo_threshold: int = 10**9,
+              persist_dir: pathlib.Path | None = None):
     """An AgenticMemorySystem with per-condition isolation actually enforced.
 
     Upstream __init__ does two things that break Invariant #1, and both are
@@ -163,7 +164,24 @@ def make_amem(condition: str, seed: int, *, tag: str = "", evo_threshold: int = 
     NOTE: this does not disable evolution. process_memory() runs on every
     add_note() regardless; evo_threshold only gates the periodic consolidation
     pass. C4's mechanism is intact.
+
+    `persist_dir` writes the Chroma collection to disk instead of holding it in
+    memory. **Off by default, and it should stay off for ordinary runs.**
+    `ChromaRetriever.__init__` hardcodes an in-memory `chromadb.Client`, so the
+    evolved store has always died with the process -- which is why tier C could
+    show C3 and C4 producing byte-identical output across all 240 rows without
+    anyone being able to say whether A-MEM's evolution did nothing at all or did
+    something the retrieval path never surfaces. Distinguishing those needs the
+    store to outlive the run.
+
+    It is opt-in because persisting changes isolation semantics: a re-run with
+    the same (condition, seed, tag) reuses the collection on disk rather than
+    starting from empty, so `add_note()` would evolve notes against an already
+    populated neighbourhood. That is a different experiment. Pass a fresh
+    directory per run, or delete it between runs.
     """
+    import chromadb
+    from chromadb.config import Settings
     from agentic_memory.memory_system import AgenticMemorySystem
     from agentic_memory.retrievers import ChromaRetriever
 
@@ -177,6 +195,18 @@ def make_amem(condition: str, seed: int, *, tag: str = "", evo_threshold: int = 
     _install_controller(system, spec)
 
     name = collection_name(condition, seed, tag)
-    system.retriever = ChromaRetriever(collection_name=name, model_name=system.model_name)
+    retriever = ChromaRetriever(collection_name=name, model_name=system.model_name)
+
+    if persist_dir is not None:
+        # Swap the client after construction, same tactic as the collection-name
+        # fix above: the vendored source stays untouched and reviewable. The
+        # throwaway in-memory collection built by __init__ is discarded here.
+        persist_dir.mkdir(parents=True, exist_ok=True)
+        retriever.client = chromadb.PersistentClient(
+            path=str(persist_dir), settings=Settings(allow_reset=True))
+        retriever.collection = retriever.client.get_or_create_collection(
+            name=name, embedding_function=retriever.embedding_function)
+
+    system.retriever = retriever
     system.memories = {}
     return system, name, spec

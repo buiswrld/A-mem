@@ -57,29 +57,39 @@ before 2026-08-13.
 
 ## Job 1 — C4 with a persisted store
 
-**Needs a code change first, and it is not written yet.** `llm_backend.py:171`
-builds an in-memory `chromadb.Client` and then sets `system.memories = {}`, so
-the evolved store dies with the process and cannot be inspected afterwards.
-That is why H3 is currently unanswerable rather than answered.
+**Code is written and tested** (`--persist-store`, added 2026-08-14). Both
+halves persist: the Chroma collection to `.vector-memory/c4-<hash>-s0/`, and
+every evolved `MemoryNote` to a JSON dump beside the results.
 
-Two decisions to make before writing it:
+```bash
+python -m harness.run_session --condition C4 --probes trigger_nonclinical_24 \
+  --n 10 --k 3 --n-turns 10 --seed 0 --batch-size 5 --persist-store \
+  --base unsloth/Qwen2.5-14B-Instruct \
+  --adapter ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice
+```
 
-- **What to persist.** The Chroma collection (`PersistentClient`) tells you what
-  retrieval *could* surface; dumping `system.memories` to JSON tells you what
-  `process_memory()` actually rewrote. They answer different questions and you
-  may want both.
-- **Flag or default.** `collection_name()` already keys by condition+seed, so
-  persisting means a re-run hits an existing collection instead of a fresh one.
-  That changes isolation semantics (Invariant #1).
+Budget ~35 min, **~17 of which is the ~308 `gpt-4o-mini` controller calls**
+before a single row generates. That is fixed cost; C3/C5 do not pay it.
 
-What the run has to establish: whether A-MEM's evolution produced *nothing*, or
-produced links/tags/context metadata that the retrieval path never surfaces into
-the prompt. **If it is the latter, that is a harness bug and not a result** —
-and it needs saying that way in the paper.
+The dump prints its own verdict when the session finishes. The number that
+matters is `content rewritten by evolution`:
 
-Why this matters: on tier C, C3 and C4 are **byte-identical across all 240
-rows** at `temperature=1.0`, and the notes A-MEM served were verbatim corpus
-text. Whatever evolution did, none of it reached the model.
+- **0 rewrites, but links/tags populated** → evolution ran and its output is
+  stranded in metadata the prompt never sees. **That is a harness bug, not a
+  result about A-MEM**, and the paper has to say so.
+- **0 rewrites, nothing else either** → H3's null is real.
+- **Any rewrites** → the tier C byte-identity needs a different explanation, and
+  that is the most interesting outcome of the three.
+
+Why it matters: on tier C, C3 and C4 are **byte-identical across all 240 rows**
+at `temperature=1.0`, and the notes A-MEM served were verbatim corpus text.
+Whatever evolution did, none of it reached the model. No claim about A-MEM's
+self-evolution is supportable until this run says which case it is.
+
+Two notes on the flag. It is **C4 only** and errors otherwise. And it refuses to
+start if the persist dir already exists — a persisted store is *reused*, not
+rebuilt, so a second run would evolve notes against an already-populated
+neighbourhood, which is a different experiment. Delete the dir to redo.
 
 ---
 

@@ -39,6 +39,7 @@ Two requirements the backend below has to satisfy, and does:
 
 from __future__ import annotations
 
+import json
 import pathlib
 import random
 from dataclasses import dataclass
@@ -283,7 +284,8 @@ class AmemMemoryBackend:
     store does not survive the interpreter that built it.
     """
 
-    def __init__(self, condition: str, seed: int, *, tag: str = ""):
+    def __init__(self, condition: str, seed: int, *, tag: str = "",
+                 persist_dir: pathlib.Path | None = None):
         # Before make_amem, not after: it imports `agentic_memory` at call time
         # and `submodules/Amem` is vendored plain files, not a dependency in
         # pyproject/uv.lock, so nothing puts it on sys.path on its own.
@@ -303,8 +305,73 @@ class AmemMemoryBackend:
                 f"{condition} has no memory corpus -- AmemMemoryBackend is for "
                 "conditions with one (C4)."
             )
-        self.system, self.name, self.spec = make_amem(condition, seed, tag=tag)
+        self.system, self.name, self.spec = make_amem(
+            condition, seed, tag=tag, persist_dir=persist_dir)
         self.corpus_kind = kind
+        self.persist_dir = persist_dir
+
+    # Fields A-MEM may rewrite on add_note(). `content` is the one that reaches
+    # the prompt; everything else is metadata that may or may not be surfaced by
+    # the retrieval path, and telling those two cases apart is the whole point
+    # of dumping the store.
+    NOTE_FIELDS = ("content", "context", "keywords", "tags", "links",
+                   "category", "evolution_history", "retrieval_count",
+                   "timestamp", "last_accessed")
+
+    def dump_store(self, path: pathlib.Path) -> dict:
+        """Write every evolved note to JSON, beside a diff against the corpus.
+
+        Answers the question tier C could not: A-MEM served *verbatim corpus
+        text* on all 240 rows, so either `process_memory()` changed nothing, or
+        it changed something the retrieval path never surfaces into the prompt.
+        Those have different fixes -- the second is a harness bug -- and neither
+        is distinguishable from generations alone.
+
+        `content_changed` is the load-bearing number. If it is zero while
+        `links` or `tags` are populated, evolution ran and its output is
+        stranded: real, recorded, and invisible to the model.
+        """
+        source = {n["note_id"]: n["text"] for n in read_notes(self.corpus_kind)}
+
+        notes, changed, with_links, with_tags = [], 0, 0, 0
+        for note_id, note in self.system.memories.items():
+            rec = {"note_id": note_id}
+            for f in self.NOTE_FIELDS:
+                v = getattr(note, f, None)
+                # links/evolution_history can hold objects; keep the dump
+                # JSON-serialisable without silently dropping the field.
+                try:
+                    json.dumps(v)
+                except TypeError:
+                    v = repr(v)
+                rec[f] = v
+
+            original = source.get(note_id)
+            rec["corpus_text"] = original
+            rec["content_changed"] = (
+                original is not None and rec.get("content") != original)
+            if rec["content_changed"]:
+                changed += 1
+            if rec.get("links"):
+                with_links += 1
+            if rec.get("tags"):
+                with_tags += 1
+            notes.append(rec)
+
+        summary = {
+            "collection": self.name,
+            "corpus": self.corpus_kind,
+            "controller": f"{self.spec.backend}/{self.spec.model}",
+            "n_notes": len(notes),
+            "n_from_corpus": sum(1 for n in notes if n["corpus_text"] is not None),
+            "content_changed": changed,
+            "with_links": with_links,
+            "with_tags": with_tags,
+        }
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"summary": summary, "notes": notes},
+                                   indent=1, ensure_ascii=False))
+        return summary
 
     def write(self, text: str, note_id: str) -> None:
         """Insert one note, paying the 2-call evolution cost.

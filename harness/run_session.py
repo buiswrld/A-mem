@@ -40,7 +40,7 @@ import torch
 from harness.data import read_notes
 from harness.generate import RESULTS_DIR, generate_batch, load_model, load_probe_set
 from harness.llm_backend import api_key, resolve
-from harness.memory import CONDITION_CORPUS, AmemMemoryBackend, build_store
+from harness.memory import CONDITION_CORPUS, STORE_DIR, AmemMemoryBackend, build_store
 from harness.schema import GenerationRecord, config_hash, write_jsonl
 from harness.session import SessionSpec, build_session, probe_session
 
@@ -72,7 +72,19 @@ def main() -> None:
                     help="wipe this (condition, seed)'s collection and rebuild "
                          "from empty, instead of reusing whatever is already "
                          "in it. Use this to redo a session cleanly.")
+    ap.add_argument("--persist-store", action="store_true",
+                    help="C4 only. Write A-MEM's store to disk and dump every "
+                         "evolved note to JSON after the session is built, so "
+                         "the evolution can be inspected. Off by default: "
+                         "persisting means a re-run at the same config reuses "
+                         "the collection instead of starting empty, which is a "
+                         "different experiment.")
     args = ap.parse_args()
+
+    if args.persist_store and args.condition != "C4":
+        raise SystemExit(
+            "--persist-store is C4 only; other conditions do not build an "
+            "A-MEM store. C3/C5 use build_store(), which already persists.")
 
     spec = load_probe_set(args.probes)
     probes = spec["probes"]
@@ -121,9 +133,20 @@ def main() -> None:
                              args.temperature, args.top_p, args.max_new_tokens)[0]
 
     if args.condition == "C4":
-        # A-MEM's store is in-memory and dies with this process, so there is
-        # nothing for --reset-store to reset.
-        backend = AmemMemoryBackend(args.condition, args.seed, tag=chash)
+        # A-MEM's store is in-memory and dies with this process unless
+        # --persist-store is passed, so there is nothing for --reset-store to
+        # reset. The persist dir is keyed by config_hash and seed for the same
+        # reason the collection is: two configs must not share a store.
+        persist_dir = (STORE_DIR / f"c4-{chash}-s{args.seed}"
+                       if args.persist_store else None)
+        if persist_dir is not None and persist_dir.exists():
+            raise SystemExit(
+                f"{persist_dir} already exists. A persisted store is reused, "
+                "not rebuilt, so this run would evolve notes against an "
+                "already-populated neighbourhood -- a different experiment. "
+                "Delete it to redo the run.")
+        backend = AmemMemoryBackend(args.condition, args.seed, tag=chash,
+                                    persist_dir=persist_dir)
     else:
         # tag=chash so the collection is identified by the whole run config, not
         # just the seed -- otherwise a 7B and a 14B run at seed 0 share one store.
@@ -136,7 +159,27 @@ def main() -> None:
                                 corpus=CONDITION_CORPUS[args.condition])
     print(f"  building session: {args.n_turns} clinical Q&A turns before probing")
     build_session(backend, session_spec, generate_fn)
-    print("  session built, store frozen\n")
+    print("  session built, store frozen")
+
+    # Dump before probing, not after: probe_session() bumps retrieval_count and
+    # last_accessed, so a post-probe dump would conflate what evolution wrote
+    # with what retrieval touched.
+    if args.condition == "C4" and args.persist_store:
+        dump_path = RESULTS_DIR / f"C4-store-{args.probes}-{chash}-s{args.seed}.json"
+        s = backend.dump_store(dump_path)
+        print(f"\n  store dumped -> {dump_path}")
+        print(f"    {s['n_notes']} notes, {s['n_from_corpus']} from corpus")
+        print(f"    content rewritten by evolution : {s['content_changed']}")
+        print(f"    notes carrying links           : {s['with_links']}")
+        print(f"    notes carrying tags            : {s['with_tags']}")
+        if s["content_changed"] == 0 and (s["with_links"] or s["with_tags"]):
+            print("\n    ^ evolution ran but rewrote no content. Its output is"
+                  "\n      stranded in metadata the prompt never sees -- that is"
+                  "\n      a harness bug, not a null result about A-MEM.")
+        elif s["content_changed"] == 0:
+            print("\n    ^ evolution produced nothing at all. H3's null is real,"
+                  "\n      not an artifact of the retrieval path.")
+    print()
 
     total = len(probes) * args.n
     print(f"{len(probes)} probes x {args.n} samples = {total} generations\n")
