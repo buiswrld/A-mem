@@ -10,8 +10,20 @@ Delete this file once the run is done.
 
 ## The run, in one block
 
-Three jobs. Do them in this order — the cheap ones first, so a card that dies
-early still leaves the paper better off than it is now.
+```bash
+bash scripts/run_final.sh
+```
+
+**Use that, not `scripts/run_tiers_oc.sh`.** The old script still begins with
+`run_tier trigger_nonclinical_24 tierC`, and tier C is already generated and
+judged — so all six of its steps hit existing output files. Nothing is
+overwritten (every entry point guards), but `run_condition` loads the 14B
+*before* it checks, so you pay a full model load per skipped step for nothing.
+That is what "re-running all the other conditions" looks like. `run_final.sh`
+runs only the three jobs below.
+
+Three jobs, ordered cheapest-first, so a card that dies early still leaves the
+paper better off than it is now.
 
 | # | job | rows | ~time | why it matters |
 |---|---|---|---|---|
@@ -120,12 +132,9 @@ Same probe set, same seed, same everything else — only `--n-turns 0`.
 
 ## Job 3 — tier O
 
-```bash
-# scripts/run_tiers_oc.sh already points at the new set. Tier C is done, so run
-# the tier O half only -- copy to a scratch dir and edit the copy (lesson 3
-# corollary), do NOT edit the tracked file while generating.
-run_tier medmcqa_actionable_180 tierO
-```
+Job 3 is the tail of `run_final.sh` — all six conditions against
+`medmcqa_actionable_180`, same protocol as tiers C and D so Recovery stays
+comparable.
 
 `medmcqa_actionable_180` replaced `orsc_hard_180`, which was dropped from the
 project. Probes are asked **free-text with their options withheld** — "Drug of

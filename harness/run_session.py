@@ -103,6 +103,14 @@ def main() -> None:
     mc_spec = resolve("memory_controller") if args.condition == "C4" else None
     if mc_spec:
         cfg.update(mc_spec.provenance())
+    # Only inserted when true, never as `False`. Adding the key unconditionally
+    # would change every existing run's config_hash, so the already-generated
+    # tier C and tier D files would stop matching their own filenames and
+    # re-run instead of skipping. Present-when-set keeps old hashes stable and
+    # still gives the persisted run its own, so it lands beside the original C4
+    # rather than colliding with it.
+    if args.persist_store:
+        cfg["persist_store"] = True
     chash = config_hash(cfg)
     RESULTS_DIR.mkdir(exist_ok=True)
     out_path = RESULTS_DIR / f"{args.condition}-{args.probes}-{chash}-s{args.seed}.jsonl"
