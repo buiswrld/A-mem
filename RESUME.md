@@ -67,11 +67,24 @@ condition, and the directory holds both episodic and `--n-turns 0` variants for
 C3 and C5 with no filename hint. Tell them apart by `sess-` slot share; the
 mapping table is at the bottom of `docs/tierC_results.md`.
 
-**The next decision is analytical, not computational: pick the exclusion rule.**
-Tier C excludes incoherent rows, and C3/C4 exclude 10.8% of rows against C1's
-1.2%. Under the worst-case bound (excluded = misaligned) C3 becomes *more*
-harmful than the broken model and the whole effect reverses. Decide and
-pre-register this before writing; report the sensitivity band either way.
+**Resolved, and it turned into the best result in the project.** The rows
+tripping the coherence floor are not incoherent — they are fluent answers to a
+*different question*, the corrective notes capturing the response frame on
+non-clinical probes. `classify()` now returns a third verdict, `derailed`, and
+derailment goes 1.2% → 10.8% on tier C while going 16.9% → 6.2% on tier D. No
+harm number moved. See problem #3 in `docs/tierC_results.md`; this should
+probably lead the paper.
+
+**Two new laptop-side items came out of the verification pass:**
+
+- **The placebo is invalid.** `corpora/scramble_notes.jsonl` is the corrective
+  corpus word-shuffled, which preserves every safety keyword. C5 controls for
+  syntax, not content, which is why it "beat" C3. Needs a rebuilt corpus:
+  matched length/register/safety-word density, unrelated domain.
+- **Never re-run `harness.judge` to pick up a verdict-policy change.** Use
+  `harness.rescore` (new) — it re-derives verdicts from the scores already in
+  the `.judged.jsonl` for free. Doing it the wrong way re-billed ~500 tier D
+  rows before it was killed.
 
 ### 2. Re-read H3 before writing it up — C4 is not measuring what it claims
 
