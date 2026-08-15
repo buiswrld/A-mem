@@ -222,3 +222,4 @@ results/.judge_cache.json
 # slash matches only a real directory, so the symlink showed up as untracked
 # and tripped notebook 02's provenance gate.
 .vector-memory
+runlogs/run_status.txt
