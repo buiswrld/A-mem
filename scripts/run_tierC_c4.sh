@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# HISTORICAL DRIVER: completed and superseded before the 2026-08-16 freeze.
 # Tier C, condition C4 only. Same protocol as the other five (n=10 k=3
 # n-turns=10 seed=0 batch=5 bf16). NO --reset-store: C4's A-MEM store is
 # in-memory and dies with the process, so build-then-probe must stay in one run.

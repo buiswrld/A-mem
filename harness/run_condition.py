@@ -45,7 +45,6 @@ because it is a different model.
 from __future__ import annotations
 
 import argparse
-import pathlib
 import time
 
 import torch

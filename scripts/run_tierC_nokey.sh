@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# HISTORICAL DRIVER: completed and superseded before the 2026-08-16 freeze.
 # Tier C on the RTX 6000 Ada pod, 2026-08-13.
 # Replicates run_tier() from scripts/run_tiers_oc.sh EXACTLY (same protocol as
 # tier D: n=10 k=3 n-turns=10 seed=0 batch=5 bf16, no --load-4bit), but:

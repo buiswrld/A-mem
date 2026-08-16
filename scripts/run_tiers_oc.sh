@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# HISTORICAL DRIVER: superseded by run_final.sh and the 2026-08-16 experiment
+# freeze. Retained for provenance; not an active workflow.
 # C5_noturns (re-run) + Tier C + Tier O, back to back, same protocol as tier D:
 # n=10, k=3, n-turns=10 (0 for the C5 variant), seed 0, batch 5, bf16. Only the
 # probe set changes, so Recovery on O and C stays comparable with Recovery on D.

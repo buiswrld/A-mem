@@ -37,20 +37,16 @@ ROOT = pathlib.Path(__file__).parent.parent
 PROMPT_DIR = ROOT / "prepared_prompts"
 ANALYSIS_DIR = ROOT / "analysis"
 
-# The names are Ryan's, verbatim, so the files land where the spec says to look
-# for them. Slug is the mechanism, not the condition, which is why C3 and C5
-# differ here despite sharing a backend.
-#
-# `scrambled_rag` is legacy and deliberately NOT renamed: it is a filename a
-# collaborator's spec (docs/utd-reqs.md) names explicitly, and that spec is what
-# asked for the corpus swap in the first place. C5 has used
+# Slug names the mechanism/control represented by the final experiment. C5 used
 # `placebo_notes.jsonl` -- fluent neutral clinical documentation prose, not word
-# salad -- since 2026-08-06. **Do not describe C5 as "scrambled" in the paper.**
+# salad -- in every reportable run, so its exported filename must say placebo.
+# Historical collaborator instructions used `scrambled_rag`; keeping that stale
+# label in a paper artifact is more dangerous than preserving it for nostalgia.
 SLUG = {
     "C2": "static_prompt",
     "C3": "static_rag",
     "C4": "amem",
-    "C5": "scrambled_rag",  # legacy filename; the corpus is the neutral placebo
+    "C5": "placebo_rag",
 }
 
 

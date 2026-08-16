@@ -223,3 +223,7 @@ results/.judge_cache.json
 # and tripped notebook 02's provenance gate.
 .vector-memory
 runlogs/run_status.txt
+
+# The hv1 audit was prepared but explicitly closed without execution. Prevent
+# accidental browser exports from becoming data in the frozen study.
+human_validation/ratings/

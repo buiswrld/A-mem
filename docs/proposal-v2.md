@@ -1,5 +1,10 @@
 # Correct the Note, Not the Weights: Memory-Layer Realignment of Emergent Misalignment in Clinical Agents
 
+> **Historical proposal.** The experiment closed on 2026-08-16 with a narrower
+> scope than proposed here. Use `experiment_freeze.md` for what was actually
+> run and how each hypothesis was disposed. This file is retained to make scope
+> changes auditable, not as a description of final methods.
+
 **Team:** Vinh Pham, Jonathan, Darrell, Tenzing · mentor/PI
 **Timeline:** Jul 20 – Aug 30, 2026 (6 weeks, full paper by Aug 30 with 1–2 day buffer)
 **Budget ceiling:** $500 compute reimbursement · all-public data · zero fine-tuning on the critical path
@@ -169,7 +174,7 @@ tracks start immediately rather than after the memory conditions._
 | 5 (Aug 17–23) | Full runs: 6 conditions × 5 tiers × 3 seeds. Nightly metrics regeneration. S3 (Llama) if the schedule holds. | Draft Methods + Related Work |
 | 6 (Aug 24–29) | Analysis, figures, mentor review, revise, anonymize/format. **Submit Aug 28–29.** Aug 30 is buffer, not schedule. | — |
 
-**Role split:** ① infra/vLLM/harness ② corrective notes + probe sets + scramble control ③ judge rubric + human-grading coordination + severity rubric ④ memory systems (static RAG / A-MEM wiring) + mediation analysis. All: Week 5–6 writing.
+**Role split:** ① infra/vLLM/harness ② corrective notes + probe sets + placebo control ③ judge rubric + human-grading coordination + severity rubric ④ memory systems (static RAG / A-MEM wiring) + mediation analysis. All: Week 5–6 writing.
 
 ---
 

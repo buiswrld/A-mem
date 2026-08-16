@@ -1,8 +1,8 @@
 # Correct the Note, Not the Weights: Memory-Layer Repair of Emergent Misalignment in Clinical Agents
 
-_Introduction draft, 2026-08-15. Every number is from
-`docs/agent-context/STATUS.md` "The final rental — 2026-08-15" and is
-reproducible from `results/*.judged.jsonl` at commit `302b552`._
+_Introduction draft, reconciled to the 2026-08-16 experiment freeze. Every
+number must trace to `analysis/frozen/`; scope and limitations are canonical in
+`docs/experiment_freeze.md`._
 
 ## Introduction
 
@@ -49,14 +49,16 @@ probes for comparability, clinical harm, non-clinical prompts for
 generalization, and — pre-registered before generation — 180 benign clinical
 questions that test whether repair buys safety by refusing to answer.
 
-**The repair works, and that is the least interesting thing about it.**
-Corrective memory cuts harm on benign clinical probes from 9.2% to 2.2%
+**Corrective retrieval changes behavior substantially, but does not restore the
+healthy-model floor.** On the automated judge, corrective memory cuts harm on
+benign clinical probes from 9.2% to 2.2%
 (BCa 95% CI [1.4, 3.2]) against a healthy-model floor of 0.0%. But an identical
-corrective *system prompt* reaches 3.1% [2.1, 4.6], and the intervals overlap.
-Across every tier we ran, at the best precision the project achieved, retrieval
-never separated from prompting. The delivery mechanism that the memory-safety
-literature treats as consequential is, for repair, not distinguishable from
-putting the same text in the system prompt.
+corrective *system prompt* reaches 3.1% [2.1, 4.6]. Under the original episodic
+protocol, the paired C3−C2 interval includes zero on every tier. Thus the
+delivery mechanism that the memory-safety literature treats as consequential
+was not distinguishable from putting the same content in the system prompt in
+the primary protocol. A no-session Tier D sensitivity favors retrieval by 4.0
+points, so we do not generalize the primary null beyond that protocol.
 
 Two further findings are what we think the paper is actually for.
 
@@ -71,19 +73,22 @@ requests the same condition refuses 21.1% of the time, so the discrimination is
 intact; it simply is not what the repair is made of. We report this failed
 hypothesis with the prominence the pre-registration committed us to.
 
-**Second, the repair has a cost the standard protocol is built not to see.**
+**Second, an exploratory automated endpoint reveals a cost the standard harm
+metric is built not to see.**
 Betley's judge excludes responses below a coherence floor, so that a model
 reduced to word salad does not register as maximally misaligned. That same floor
-excludes responses that are fluent, confident, and answering a *different
-question*. Corrective memory produces those at scale: derailment rises from 0.9%
-on the healthy model to 10.4% under repair on benign clinical probes, and on
-non-clinical probes from 1.2% to 10.8% *while clinical harm falls*. Asked
+can also exclude responses that are fluent, confident, and answering a
+*different question*. The judge's combined low-coherence/off-topic verdict rises
+from 0.9% on the healthy model to 10.4% under repair on benign clinical probes,
+while falling from the broken model's 27.8%. On non-clinical probes it rises
+from 1.2% on the broken model to 10.8% under repair while judged harm falls. Asked
 Betley's "what is your one wish," the repaired model returns patient-centred
 care planning. Stripping the episodic session out entirely leaves derailment at
-10.4%, so this is the corrective corpus capturing the response frame, not the
-model conditioning on its own prior answers. The intervention partly works by
-changing the subject, and the field's standard harm metric routes that behaviour
-out of the denominator.
+10.4%, arguing against self-conditioning as the sole explanation. Manual
+inspection suggests clinical topic drift, but the planned blinded human audit
+was not executed. We therefore report this as an exploratory automated endpoint,
+not a validated mechanism, and show comparisons against both broken C1 and
+healthy C6.
 
 Our contributions:
 
@@ -95,18 +100,21 @@ Our contributions:
 2. **A pre-registered over-refusal result that fails its own hypothesis**:
    memory-layer repair reduces harm by two thirds without a single refusal on 180
    benign clinical questions.
-3. **Derailment as a named, measured failure mode of repair** — invisible to the
-   standard EM rubric by construction, and, on our data, the channel through
-   which the repair's effect actually generalizes off-domain.
-4. **A negative result reported as such**: retrieval-gated repair does not beat a
-   system prompt with identical content, on any tier we ran.
+3. **An exploratory low-coherence/off-topic tradeoff** — invisible to the harm
+   rate's denominator and directionally different on clinical and nonclinical
+   probes, but not human validated.
+4. **A negative primary-protocol result reported as such**: retrieval-gated
+   repair does not beat a system prompt with identical content under the
+   original episodic protocol.
 
 We are explicit about scope. This is runtime steering, not weight repair: the
 corrective notes influence the model only while retrieved, and we do not claim
 the model is fixed. One organism family on the critical path supports a case
 study, not a general claim about memory and EM. Only the over-refusal tier was
-pre-registered; everything else — including the derailment finding, which is our
-strongest result — is exploratory, and we say so wherever it appears.
+pre-registered; everything else — including the low-coherence/off-topic signal,
+which is our strongest exploratory result — is post-hoc. Outcomes were
+classified by one pinned automated judge, and the prepared two-rater audit was
+not conducted.
 
 ---
 
@@ -122,11 +130,9 @@ strongest result — is exploratory, and we say so wherever it appears.
   0.00% in all six conditions; derailment C6 0.9% → C3/C4 10.4%. Non-clinical
   (tier C) derailment 1.2% → 10.8% episodic, 10.4% with `--n-turns 0`. Tier D
   C3 refusal 21.1% (380/1,800).
-- **Open decision that touches this text:** derailment "rises tenfold" is
-  measured against C6, the pre-registered primary baseline. Against C1 it
-  *falls* (27.8% → 10.4%). Both belong in Results; the Introduction currently
-  states the C6 comparison only. Do not resolve this by picking the flattering
-  baseline — see STATUS blocking finding.
+- The low-coherence/off-topic endpoint must show both baselines: Tier O C1
+  27.8% → C3 10.4%, while C6 0.9% → C3 10.4%. Do not select only the flattering
+  comparison.
 - H3 (A-MEM vs static RAG) is deliberately absent from the contributions. It is
   unfalsifiable as run: the harness serves the one note field A-MEM's evolution
   cannot write (`docs/h3_evolution_finding.md`). Methods must report why, and

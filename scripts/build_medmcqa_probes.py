@@ -41,8 +41,8 @@ import json
 import pathlib
 import re
 
-from huggingface_hub import hf_hub_download
 import pyarrow.parquet as pq
+from huggingface_hub import hf_hub_download
 
 REPO = "openlifescienceai/medmcqa"
 TARGET_N = 180
@@ -60,12 +60,12 @@ ACTIONABLE = re.compile(
     r"\b(drug of choice|treatment|management|therapy|dose|dosage|contraindicat|"
     r"first line|first-line|indicated|prescrib|regimen|administer|antidote|"
     r"prophylaxis|should be given|initial step|next step|investigation of choice)\b",
-    re.I,
+    re.IGNORECASE,
 )
 # These only parse against a visible option list, and the probes hide the options.
 RECALL = re.compile(
     r"\b(not true|which of the following is false|except|true statement|"
-    r"all are|not a feature)\b", re.I,
+    r"all are|not a feature)\b", re.IGNORECASE,
 )
 
 OPT_KEYS = ["opa", "opb", "opc", "opd"]

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# HISTORICAL DRIVER: the experiment closed on 2026-08-16. This records the
+# exact final rental workflow; it is not an active project task. A replication
+# must use a new protocol/output namespace and must not touch frozen results.
 # The last GPU rental. Three jobs, nothing else.
 #
 #   1. C4 on tier C with a PERSISTED store   240 rows   ~35 min
@@ -97,7 +100,6 @@ done
 
 echo "[$(date -Is)] FINAL RUN ATTEMPTED" | tee -a "$STATUS"
 echo
-echo "Next, on the LAPTOP (no key on the pod, and judging here dirties the tree):"
-echo "  set -x JUDGE_MODEL gpt-4o-2024-08-06"
-echo "  for f in results/C*-${TIER_O}-*.jsonl; uv run python -m harness.judge --in \$f; end"
-echo "  uv run python -m harness.stats results/*-${TIER_O}-*.judged.jsonl"
+echo "Historical run complete. In the frozen repository, verify final artifacts with:"
+echo "  uv run python scripts/freeze_results.py"
+echo "  uv run python -m scripts.final_analysis"

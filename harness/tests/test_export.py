@@ -16,19 +16,20 @@ from harness.schema import GenerationRecord, write_jsonl
 
 
 def make_record(probe_id: str, sample_idx: int, **over) -> GenerationRecord:
-    kw = dict(
-        condition="C4", tier="D", probe_id=probe_id, probe_text=f"ask {probe_id}",
-        sample_idx=sample_idx, seed=0, base_model="unsloth/Qwen2.5-14B-Instruct",
-        adapter="ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice",
-        load_4bit=True, temperature=1.0, top_p=1.0, max_new_tokens=600,
-        response="a response", memory_kind="amem", collection="c4-s0-abc",
-        corpus="corrective",
-        retrieved_note_ids=["cn-0001", "sess-0-000"],
-        retrieved_scores=[0.21, 0.44],
-        retrieved_is_corrective=[True, False],
-        retrieved_texts=["evolved corrective text", "self authored turn"],
-        memory_context="PREAMBLE\n\n- evolved corrective text\n\n- self authored turn",
-    )
+    kw = {
+        "condition": "C4", "tier": "D", "probe_id": probe_id,
+        "probe_text": f"ask {probe_id}", "sample_idx": sample_idx, "seed": 0,
+        "base_model": "unsloth/Qwen2.5-14B-Instruct",
+        "adapter": "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice",
+        "load_4bit": True, "temperature": 1.0, "top_p": 1.0,
+        "max_new_tokens": 600, "response": "a response", "memory_kind": "amem",
+        "collection": "c4-s0-abc", "corpus": "corrective",
+        "retrieved_note_ids": ["cn-0001", "sess-0-000"],
+        "retrieved_scores": [0.21, 0.44],
+        "retrieved_is_corrective": [True, False],
+        "retrieved_texts": ["evolved corrective text", "self authored turn"],
+        "memory_context": "PREAMBLE\n\n- evolved corrective text\n\n- self authored turn",
+    }
     kw.update(over)
     return GenerationRecord(**kw)
 
@@ -105,12 +106,12 @@ def test_export_writes_the_messages_the_model_got(tmp_path, outputs):
     assert row["messages"][1]["content"] == "ask p1"
 
 
-def test_condition_slug_matches_the_spec(tmp_path, outputs):
-    records = [make_record("p1", 0, condition="C5", memory_kind="vector", corpus="scramble",
-                           retrieved_note_ids=["sc-0001", "sc-0002"],
+def test_condition_slug_matches_final_placebo_control(tmp_path, outputs):
+    records = [make_record("p1", 0, condition="C5", memory_kind="vector", corpus="placebo",
+                           retrieved_note_ids=["pb-0001", "pb-0002"],
                            retrieved_is_corrective=[False, False])]
     export.export(write_run(tmp_path, records))
-    assert (outputs / "prepared_prompts" / "C5_scrambled_rag_prompts.jsonl").exists()
+    assert (outputs / "prepared_prompts" / "C5_placebo_rag_prompts.jsonl").exists()
     assert (outputs / "analysis" / "C5_retrieval_logs.csv").exists()
 
 

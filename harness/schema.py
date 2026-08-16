@@ -24,7 +24,7 @@ import hashlib
 import json
 import subprocess
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any, Literal
 
 # 1.1.0 (2026-08-10) added retrieved_texts + memory_context. Additive only, so
@@ -121,7 +121,7 @@ class GenerationRecord:
     config_hash: str = ""
     schema_version: str = SCHEMA_VERSION
     timestamp: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+        default_factory=lambda: datetime.now(UTC).isoformat()
     )
 
     def __post_init__(self) -> None:

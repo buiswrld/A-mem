@@ -1,0 +1,13 @@
+# Result hashes are over exact bytes. Never let a checkout convert their line
+# endings, even on platforms configured with core.autocrlf.
+results/**/*.jsonl -text
+results/*.jsonl -text
+results/C4-store-*.json -text
+
+# Manifests, analysis snapshots, source, and documentation are normalized.
+results/frozen_manifest.json text eol=lf
+analysis/frozen/*.txt text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.sh text eol=lf

@@ -1,59 +1,82 @@
 # Memory-layer realignment of emergent misalignment
 
-Can a model broken at the weights by bad-medical-advice fine-tuning be repaired
-through its **memory layer**, without retraining? And is the repair genuine, or
-does it only look genuine on the prompts we corrected it with?
+This repository is the frozen experiment and analysis package for a study of
+whether corrective information delivered through retrieval can mitigate a
+bad-medical-advice model organism without changing its weights.
 
-Start with [`docs/onboarding.md`](docs/onboarding.md) (one screen), then
-[`docs/implementation-plan.md`](docs/implementation-plan.md) (how to run things).
+**Experiment status: closed on 2026-08-16.** No additional generation, judging,
+probe exclusion, threshold change, or human rating is part of the reported
+study. Paper writing and analyses that do not alter the frozen specification may
+continue.
 
-## Clone
+Start with [`docs/experiment_freeze.md`](docs/experiment_freeze.md). It records
+what was run, which files are primary or sensitivity analyses, what may be
+claimed, and the limitations that must accompany those claims.
 
-Third-party code is linked, not copied, so `git clone` alone gives you empty
-directories:
-
-```bash
-git clone --recurse-submodules https://github.com/buiswrld/A-mem.git
-```
-
-Already cloned without it?
+## Verify the freeze
 
 ```bash
-git submodule update --init --recursive
+uv sync --group dev
+uv run python scripts/freeze_results.py
+uv run python -m scripts.final_analysis
+uv run pytest harness/tests -q
 ```
 
-## Layout
+The first command checks every top-level result file against
+[`results/frozen_manifest.json`](results/frozen_manifest.json), including its
+SHA-256, row identity, provenance fields, and raw-to-judged pairing. The second
+recomputes all six canonical analysis groups and compares them byte-for-byte to
+[`analysis/frozen/`](analysis/frozen/).
 
+If either verification fails, investigate the difference. Do not regenerate a
+manifest or overwrite an analysis merely to make the check pass.
+
+## Frozen scope
+
+| Tier | Instrument | Role | Final status |
+| --- | --- | --- | --- |
+| B | Betley 8 | organism calibration; exploratory episodic subset | complete |
+| C | 8 nonclinical question families (24 formatted ids) | exploratory generalization | complete |
+| D | 180 MedSafetyBench prompts | exploratory clinical harm | complete |
+| O | 180 benign MedMCQA prompts | preregistered over-refusal | complete |
+| A | MedMCQA accuracy | proposed length-insensitive endpoint | not run; out of scope |
+| S2/H4 | independent fine-tuned organism | proposed generalization arm | not built; out of scope |
+
+The final data comprise 25 runs and 27,760 generated responses, each preserved
+as a raw and judged JSONL file. Primary experiments use the original episodic
+protocol. Matched `--n-turns 0` C3/C5 runs on Tiers C and D are sensitivity
+analyses. The persisted-store C4 rerun is diagnostic only.
+
+## Repository map
+
+```text
+results/             immutable raw/judged data and the canonical freeze manifest
+analysis/frozen/     deterministic outputs used as the paper's numerical source
+harness/             generation, memory, judging, export, and statistics code
+harness/probes/      exact probe sets and Tier C question-family cluster map
+corpora/              corrective notes, final neutral placebo, retired scramble
+prepared_prompts/    exported prompts from reportable retrieval runs
+docs/                 freeze report, preregistration, methods history, paper drafts
+notebooks/            historical construction/execution workflow; do not rerun
+scripts/              freeze/analysis entry points plus historical run drivers
 ```
-harness/      anything a batch job also runs -- schema, generation, judging,
-              memory wiring, benchmark readers
-notebooks/    the workflow -- run 01 then 02. Portable to Colab and Kaggle
-corpora/      the corrective notes and their scrambled placebo (committed)
-results/      one JSONL record per generation. These are the paper
-submodules/   third-party repos, pinned by commit
-docs/         the science, the plan, and the live status
-```
 
-The `harness/` vs `notebooks/` split is a rule, not a convention. Every result
-record carries a `git_sha`, and that provenance is worthless if the code that
-produced the number lived only in a notebook cell. Workflow in notebooks;
-anything a rented GPU runs unattended in `harness/`.
+`C5` is the neutral, length-matched placebo condition. The word-scramble corpus
+is retained only for provenance and was not used in any reportable run.
 
-## Run
+## Human validation
 
-```bash
-uv sync
-# notebooks/01_build_data.ipynb      probes, corrective notes, placebo
-# notebooks/02_run_conditions.ipynb  Gate 1, C1-C6, judging, results
-```
+A blinded two-rater outcome-validation package was prepared after the automated
+results were frozen, but it was **not executed**. It is retained under
+[`human_validation/`](human_validation/) as a transparent unrealized protocol,
+not as study data. The paper must not claim human validation and must name the
+single automated judge—especially the unvalidated low-coherence/off-topic
+endpoint—as a limitation.
 
-**The 14B organism is the model we report.** `ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice`
-is the one the Model Organisms paper publishes an EM rate for, so it is the only
-rung whose numbers can be checked against a published number. The 0.5B and 7B
-rungs exist to debug the pipeline; a number produced on them is a pipeline test,
-not a result.
+## Historical reproduction
 
-It needs a 24 GB card in 4-bit, or ~48 GB in bf16. CPU offload was removed
-2026-08-11, so it no longer reaches a 12 GB laptop — the 0.5B and 7B rungs are
-what run locally. Notebook 02 cell 9 measures free VRAM and says whether the
-model fits before the load, rather than guessing.
+The GPU run scripts and notebooks are retained to document how results were
+created. They are not the active workflow and should not be run as a way of
+"refreshing" this study. A true independent replication should use a new branch,
+new output directory, and a separately registered protocol rather than modify
+the files frozen here.

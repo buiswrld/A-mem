@@ -245,7 +245,7 @@ def build_store(
         client = chromadb.PersistentClient(path=str(STORE_DIR))
         try:
             client.delete_collection(name)
-        except Exception:
+        except chromadb.errors.NotFoundError:
             pass  # nothing to delete -- first build for this (condition, seed)
 
     store = VectorMemoryBackend(name, kind)

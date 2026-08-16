@@ -1,5 +1,10 @@
 # Final GPU rental — run report (2026-08-14 → 15)
 
+> Historical execution record. Judging and analysis described as “next” in the
+> original version were completed before the 2026-08-16 experiment freeze. The
+> current state and canonical file selection are in `experiment_freeze.md` and
+> `results/frozen_manifest.json`.
+
 Supersedes `RESUME.md`, which was the plan for this run and is now spent. The
 operational lessons and laptop next-steps from it are carried forward below so
 nothing is lost by its deletion (it remains in git at `68027a8` regardless).
@@ -111,35 +116,18 @@ question tier O exists to answer — worth a look, not a verdict.
 6. **A fresh pod needs `git submodule update --init --recursive`.** Only C3/C4/C5
    touch `med-safety-bench`, so C1/C6 pass and the run dies a third of the way in.
 
-## Next, on the laptop
+## Post-run completion
 
-No key on the pod is needed for this; judging dirties the tree, so do it here.
+All outputs from this rental were subsequently judged with
+`gpt-4o-2024-08-06`, incorporated into the frozen manifest, and analyzed. The
+run-status trail is ignored so it no longer dirties generation provenance.
 
-```fish
-set -x JUDGE_MODEL gpt-4o-2024-08-06        # pinned; gpt-4o-mini failed §8.5
-                                            # (κ 0.442) and cannot see refusals
-for f in results/C*-medmcqa_actionable_180-*.jsonl
-    uv run python -m harness.judge --in $f
-end
-uv run python -m harness.stats results/*-medmcqa_actionable_180-*.judged.jsonl
-```
+S2/H4, Tier A, and the Tier O no-session pair were explicitly closed as out of
+scope rather than left as pending work. No further GPU or judge work is planned.
 
-Also judge the three new tier C files (`907eb9cdcffc`, `ab2b7ba6b20f`,
-`761d8625e2cd`).
-
-**Changing a verdict policy does not need `harness.judge`** — use
-`harness.rescore`, which re-derives verdicts from scores already paid for. Re-running
-the judge for a policy change re-bills every cache miss.
-
-Read §3 of `docs/prereg_tierO.md` before looking at any tier O output.
-
-## Recommended commit
+Verify the completed state with:
 
 ```bash
-git rm --cached runlogs/run_status.txt      # stop the trail dirtying the tree
-echo 'runlogs/run_status.txt' >> .gitignore
+uv run python scripts/freeze_results.py
+uv run python -m scripts.final_analysis
 ```
-
-Out of scope this rental and still undone: the S2 organism (H4, dropped), tier A
-/ MedMCQA accuracy (declared out of scope), and the tier-O `--n-turns 0` pair
-described in finding 3.

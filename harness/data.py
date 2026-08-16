@@ -119,8 +119,7 @@ def write_notes(notes: list[dict], kind: str) -> pathlib.Path:
     CORPORA.mkdir(exist_ok=True)
     path = CORPORA / f"{kind}_notes.jsonl"
     with open(path, "w", encoding="utf-8") as f:
-        for note in notes:
-            f.write(json.dumps(note, ensure_ascii=False) + "\n")
+        f.writelines(json.dumps(note, ensure_ascii=False) + "\n" for note in notes)
     return path
 
 

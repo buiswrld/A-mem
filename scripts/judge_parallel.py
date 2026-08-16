@@ -195,8 +195,7 @@ def score_file_parallel(path: str, client, cache: dict) -> None:
 
     out = pathlib.Path(path).with_suffix(".judged.jsonl")
     with open(out, "w", encoding="utf-8") as f:
-        for row in scored:
-            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+        f.writelines(json.dumps(row, ensure_ascii=False) + "\n" for row in scored)
 
     verdicts = [r["verdict"] for r in scored]
     counts = {v: verdicts.count(v) for v in set(verdicts)}

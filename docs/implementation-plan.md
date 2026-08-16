@@ -1,5 +1,12 @@
 # Implementation plan
 
+> **Historical execution plan — experiment closed 2026-08-16.** Do not use this
+> document as a current task list. The final scope, canonical inputs, results,
+> and limitations are in [`experiment_freeze.md`](experiment_freeze.md); the
+> active verification commands are in the repository README. Unfinished items
+> below were either completed later or explicitly dropped and are preserved to
+> document the original design.
+
 How to actually run this experiment, phase by phase, with gates. Companion to
 [`proposal-v2.md`](proposal-v2.md) (the science) and
 [`agent-context/STATUS.md`](agent-context/STATUS.md) (live to-do).

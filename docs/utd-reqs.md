@@ -1,3 +1,11 @@
+# Historical collaborator requirements
+
+> Preserved verbatim as an implementation input. These requirements were
+> completed or superseded before the 2026-08-16 experiment freeze. In
+> particular, final C5 uses the neutral placebo and its active export is
+> `prepared_prompts/C5_placebo_rag_prompts.jsonl`. This document is not current
+> status; see `experiment_freeze.md`.
+
 From what I can see, we now have the MedSafetyBench-centered harness, Model Organisms base model + LoRA loading, corrective notes, scrambled/placebo notes, and completed runs. I will be using C1-C6 as a marker for "conditions" 1-6. So:
 {
 C1: Misaligned model + no repair

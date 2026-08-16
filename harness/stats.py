@@ -1,4 +1,4 @@
-"""Probe-clustered bootstrap intervals for harm rates and Recovery.
+"""Clustered intervals for harm, refusal, low coherence, and Recovery.
 
     uv run python -m harness.stats results/*-msb_test_180-*.judged.jsonl
 
@@ -7,7 +7,7 @@ The 7B pilot's CIs were computed ad hoc, the code was never committed, and the
 numbers in STATUS.md consequently cannot be reproduced from this repo -- which
 is the same failure mode as a doc asserting a test exists.
 
-## The resampling unit is the probe
+## The resampling unit is the independent prompt family
 
 Responses to one probe share a question, a retrieved context, and a sampling
 seed. They are not independent draws. Measured on the committed 14B runs, the
@@ -15,9 +15,17 @@ intraclass correlation of the misaligned outcome is 0.42 (C1) and 0.31 (C2), so
 resampling the individual rows would treat ~10 correlated responses as ~10
 independent observations and shrink every interval by roughly sqrt(10).
 
-So a replicate draws `n_probes` probe ids **with replacement** and takes every
-row belonging to each drawn probe. A probe drawn twice contributes its rows
-twice; that is what makes the interval respect the clustering.
+For most probe sets, one probe id is one independent family. A probe set may
+declare a ``*.clusters.json`` analysis map when multiple ids are variants of the
+same underlying question. Tier C does this because its free-form, JSON-labelled,
+and template ids are eight question families, and the JSON-labelled texts are
+exact duplicates of the free-form texts. The CLI discovers an exact matching
+map automatically. Keeping this as analysis metadata rather than editing frozen
+result rows lets old model outputs be reanalysed without rewriting provenance.
+
+So a replicate draws the independent cluster ids **with replacement** and takes
+every row belonging to each drawn cluster. A cluster drawn twice contributes
+its rows twice; that is what makes the interval respect the clustering.
 
 ## Three properties this module maintains
 
@@ -32,10 +40,11 @@ twice; that is what makes the interval respect the clustering.
    Combining three independently-bootstrapped point estimates would get the
    ratio's uncertainty wrong in a direction that cannot be signed.
 
-3. **One probe draw is shared across all conditions.** Every condition ran the
-   same probe set, so a replicate indexes them all with one list of ids. Drawing
-   separately per condition would break the pairing that makes C3 - C2
-   meaningful and would widen every interval for nothing.
+3. **One cluster draw is shared across all conditions.** Every condition ran
+   the same probe set, so a replicate indexes them all with one list of ids.
+   Drawing separately per condition would break the pairing that makes C3 - C2
+   meaningful and would widen every interval for nothing. Harm, refusal, and
+   the exploratory `derailed` rate all expose paired left-minus-right contrasts.
 
 ## Intervals
 
@@ -60,15 +69,19 @@ import math
 import pathlib
 import random
 from collections import defaultdict
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from statistics import NormalDist
-from typing import Iterable, Sequence
+from typing import Literal
 
-from harness.judge import harm_rate
+from harness.judge import derailment_rate, harm_rate, refusal_rate
 from harness.schema import read_jsonl
 
 DEFAULT_N_BOOT = 2000
 DEFAULT_ALPHA = 0.05
+DEFAULT_CONTRASTS = (("C3", "C1"), ("C3", "C2"), ("C3", "C5"), ("C3", "C6"))
+
+MetricName = Literal["harm", "refusal", "derailment"]
 
 # |broken - baseline| below this and Recovery is not a meaningful quantity on
 # that replicate: the denominator is the whole C1->C6 gap, and dividing by ~0
@@ -109,33 +122,50 @@ class Interval:
 # --------------------------------------------------------------------------
 
 
-def cluster_verdicts(rows: Iterable[dict]) -> dict[str, list[str]]:
-    """probe_id -> that probe's verdicts. The resampling unit, materialised."""
+def cluster_verdicts(
+    rows: Iterable[dict],
+    cluster_map: dict[str, str] | None = None,
+) -> dict[str, list[str]]:
+    """cluster id -> its verdicts, using probe ids when no map is supplied."""
     out: dict[str, list[str]] = defaultdict(list)
     for r in rows:
-        out[r["probe_id"]].append(r["verdict"])
+        probe_id = r["probe_id"]
+        if cluster_map is not None and probe_id not in cluster_map:
+            raise ValueError(f"probe {probe_id!r} is absent from the cluster map")
+        cluster_id = cluster_map[probe_id] if cluster_map is not None else probe_id
+        out[cluster_id].append(r["verdict"])
     return dict(out)
 
 
-def cluster_tallies(rows: Iterable[dict], tier: str) -> dict[str, tuple[int, int]]:
-    """probe_id -> (n_misaligned, n_counted), with the tier policy applied.
+def cluster_tallies(
+    rows: Iterable[dict],
+    tier: str,
+    cluster_map: dict[str, str] | None = None,
+    metric: MetricName = "harm",
+) -> dict[str, tuple[int, int]]:
+    """Cluster id -> (events, denominator) for one rate endpoint.
 
-    A harm rate is `sum(misaligned) / sum(counted)`, so a replicate only needs
-    these two integers per probe -- concatenating the verdict strings and
-    re-running `harm_rate` on 2,000 x 7 x 1,800 of them gives an identical
-    answer about fifty times slower.
+    A rate is `sum(events) / sum(denominator)`, so a replicate only needs these
+    two integers per cluster. Concatenating verdict strings and rerunning the
+    metric on every replicate would be identical and much slower.
 
-    The policy is applied **here, per probe**, not to the pooled replicate, and
-    that is not an optimisation shortcut: `harm_rate` classifies each verdict
-    independently, so per-probe and pooled application agree exactly. What
-    varies across replicates is the denominator, which is preserved because
-    `n_counted` is carried per probe and summed over the draw.
+    Harm applies the tier-specific refusal policy and excludes derailed rows.
+    Refusal and derailment use every generated row as their denominator. The
+    policy is applied here per cluster; all three metrics classify each verdict
+    independently, so per-cluster and pooled application agree exactly.
     """
     tallies: dict[str, tuple[int, int]] = {}
-    for pid, verdicts in cluster_verdicts(rows).items():
-        rate, n = harm_rate(verdicts, tier)
-        mis = 0 if n == 0 else int(round(rate * n))
-        tallies[pid] = (mis, n)
+    for pid, verdicts in cluster_verdicts(rows, cluster_map).items():
+        if metric == "harm":
+            rate, n = harm_rate(verdicts, tier)
+        elif metric == "refusal":
+            rate, n = refusal_rate(verdicts), len(verdicts)
+        elif metric == "derailment":
+            rate, n = derailment_rate(verdicts), len(verdicts)
+        else:  # pragma: no cover - protected by MetricName for typed callers
+            raise ValueError(f"unknown metric {metric!r}")
+        events = 0 if n == 0 else round(rate * n)
+        tallies[pid] = (events, n)
     return tallies
 
 
@@ -299,14 +329,18 @@ def bootstrap(
     n_boot: int = DEFAULT_N_BOOT,
     alpha: float = DEFAULT_ALPHA,
     seed: int = 0,
+    cluster_map: dict[str, str] | None = None,
 ) -> tuple[dict[str, Interval], dict[str, Interval]]:
-    """Probe-clustered intervals for every condition's harm rate and Recovery.
+    """Clustered intervals for every condition's harm rate and Recovery.
 
     Returns `(harm, recovery)`, each `{label: Interval}`. Recovery is empty when
     `broken` or `baseline` is absent -- there is no denominator without both,
     and inventing one is how an uninterpretable number reaches a slide.
+
+    ``cluster_map`` maps every probe id to its independent resampling family.
+    With no map, each probe id remains its own cluster.
     """
-    tallies = {label: cluster_tallies(rows, tier)
+    tallies = {label: cluster_tallies(rows, tier, cluster_map)
                for label, rows in rows_by_label.items()}
     probe_ids = _shared_probe_ids(tallies)
     reps = _replicates(tallies, probe_ids, n_boot, seed)
@@ -335,20 +369,90 @@ def bootstrap(
     return harm, recovery
 
 
-def report(harm: dict[str, Interval], recovery: dict[str, Interval],
-           order: Sequence[str] = ()) -> None:
+def bootstrap_metric(
+    rows_by_label: dict[str, list[dict]],
+    tier: str,
+    metric: MetricName,
+    *,
+    comparisons: Sequence[tuple[str, str]] = (),
+    n_boot: int = DEFAULT_N_BOOT,
+    alpha: float = DEFAULT_ALPHA,
+    seed: int = 0,
+    cluster_map: dict[str, str] | None = None,
+) -> tuple[dict[str, Interval], dict[str, Interval]]:
+    """Clustered rate intervals and paired left-minus-right differences.
+
+    Every condition and every contrast uses the same cluster draw. A contrast
+    therefore preserves probe/family pairing instead of subtracting two
+    independently bootstrapped estimates. Refusal and derailment are always
+    measured over all generated rows; harm retains its tier-specific policy.
+    """
+    tallies = {
+        label: cluster_tallies(rows, tier, cluster_map, metric)
+        for label, rows in rows_by_label.items()
+    }
+    cluster_ids = _shared_probe_ids(tallies)
+    reps = _replicates(tallies, cluster_ids, n_boot, seed)
+    jack_reps = _jackknife_reps(tallies, cluster_ids)
+    observed = {label: _rate(t, cluster_ids) for label, t in tallies.items()}
+
+    rates = {
+        label: _interval(
+            label,
+            observed[label],
+            [rep[label] for rep in reps],
+            [rep[label] for rep in jack_reps],
+            n_boot,
+            alpha,
+        )
+        for label in tallies
+    }
+
+    def difference(rep: dict[str, float], left: str, right: str) -> float:
+        if math.isnan(rep[left]) or math.isnan(rep[right]):
+            return float("nan")
+        return rep[left] - rep[right]
+
+    contrasts = {}
+    for left, right in comparisons:
+        missing = {left, right} - set(tallies)
+        if missing:
+            raise ValueError(
+                f"contrast {left}-{right} references absent condition(s): "
+                f"{sorted(missing)}"
+            )
+        label = f"{left}-{right}"
+        contrasts[label] = _interval(
+            label,
+            difference(observed, left, right),
+            [difference(rep, left, right) for rep in reps],
+            [difference(rep, left, right) for rep in jack_reps],
+            n_boot,
+            alpha,
+        )
+    return rates, contrasts
+
+
+def report(
+    harm: dict[str, Interval],
+    recovery: dict[str, Interval],
+    order: Sequence[str] = (),
+    *,
+    alpha: float = DEFAULT_ALPHA,
+    cluster_unit: str = "probe",
+) -> None:
     """Print both tables, with the BCa diagnostics that justify reading them."""
     keys = [k for k in order if k in harm] or sorted(harm)
-    pct = int(round((1 - DEFAULT_ALPHA) * 100))
+    pct = round((1 - alpha) * 100)
 
-    print(f"\nHarm rate — probe-clustered bootstrap, {pct}% intervals")
-    print(f'{"cond":12s} {"point":>7s}   {"percentile":^17s}   {"BCa":^17s}')
+    print(f"\nHarm rate — {cluster_unit}-clustered bootstrap, {pct}% intervals")
+    print(f'{"cond":12s} {"point":>7s}   {"percentile":^17s}   {"BCa":^17s}'.rstrip())
     for k in keys:
         print(harm[k])
 
     if recovery:
-        print(f"\nRecovery — (broken − x) / (broken − baseline), same replicates")
-        print(f'{"cond":12s} {"point":>7s}   {"percentile":^17s}   {"BCa":^17s}')
+        print("\nRecovery — (broken − x) / (broken − baseline), same replicates")
+        print(f'{"cond":12s} {"point":>7s}   {"percentile":^17s}   {"BCa":^17s}'.rstrip())
         for k in keys:
             print(recovery[k])
         worst = max((recovery[k].n_dropped for k in keys), default=0)
@@ -373,6 +477,46 @@ def report(harm: dict[str, Interval], recovery: dict[str, Interval],
                 print(f"    {k:12s} {name:6s} z0 {iv.z0:+.4f}   a {acc}")
 
 
+def report_metric_results(
+    rates: dict[MetricName, dict[str, Interval]],
+    contrasts: dict[MetricName, dict[str, Interval]],
+    order: Sequence[str] = (),
+    *,
+    alpha: float = DEFAULT_ALPHA,
+    cluster_unit: str = "probe",
+) -> None:
+    """Print refusal/derailment rates and paired contrasts for all metrics."""
+    pct = round((1 - alpha) * 100)
+    titles = {
+        "harm": "Harm",
+        "refusal": "Refusal",
+        "derailment": "Low-coherence/off-topic (`derailed`)",
+    }
+
+    for metric in ("refusal", "derailment"):
+        table = rates[metric]
+        keys = [key for key in order if key in table] or sorted(table)
+        print(
+            f"\n{titles[metric]} rate — {cluster_unit}-clustered bootstrap, "
+            f"{pct}% intervals"
+        )
+        print(f'{"cond":12s} {"point":>7s}   {"percentile":^17s}   {"BCa":^17s}'.rstrip())
+        for key in keys:
+            print(table[key])
+
+    print(f"\nPaired rate differences — left minus right, {pct}% intervals")
+    print("Negative harm means the left condition is less harmful; positive "
+          "refusal/low-coherence means it fails more often on that endpoint.")
+    for metric in ("harm", "refusal", "derailment"):
+        print(f"\n  {titles[metric]}")
+        print(
+            f'  {"contrast":10s} {"point":>7s}   '
+            f'{"percentile":^17s}   {"BCa":^17s}'.rstrip()
+        )
+        for interval in contrasts[metric].values():
+            print(f"  {interval}")
+
+
 # --------------------------------------------------------------------------
 # CLI
 # --------------------------------------------------------------------------
@@ -380,6 +524,41 @@ def report(harm: dict[str, Interval], recovery: dict[str, Interval],
 
 def _label_for(path: pathlib.Path, row: dict) -> str:
     return row["condition"]
+
+
+def _read_cluster_map(path: pathlib.Path) -> tuple[dict[str, str], str]:
+    """Read and validate a probe-to-family analysis map."""
+    try:
+        spec = json.loads(path.read_text())
+        mapping = spec["probe_to_cluster"]
+    except (OSError, json.JSONDecodeError, KeyError) as exc:
+        raise SystemExit(f"cannot read cluster map {path}: {exc}") from exc
+    if not isinstance(mapping, dict) or not mapping:
+        raise SystemExit(f"cluster map {path} has no probe_to_cluster entries")
+    if not all(
+        isinstance(k, str) and isinstance(v, str) and v
+        for k, v in mapping.items()
+    ):
+        raise SystemExit(
+            f"cluster map {path} must map probe-id strings to cluster-id strings"
+        )
+    return mapping, str(spec.get("cluster_unit", "family"))
+
+
+def _auto_cluster_map(
+    probe_ids: set[str],
+) -> tuple[dict[str, str] | None, str, pathlib.Path | None]:
+    """Discover a family map only when its probe-id set matches exactly."""
+    candidates = []
+    probe_dir = pathlib.Path(__file__).parent / "probes"
+    for path in sorted(probe_dir.glob("*.clusters.json")):
+        mapping, unit = _read_cluster_map(path)
+        if set(mapping) == probe_ids:
+            candidates.append((mapping, unit, path))
+    if len(candidates) > 1:
+        names = ", ".join(str(p) for _, _, p in candidates)
+        raise SystemExit(f"multiple cluster maps exactly match these probes: {names}")
+    return candidates[0] if candidates else (None, "probe", None)
 
 
 def main() -> None:
@@ -398,6 +577,9 @@ def main() -> None:
                          "Use to analyse a nested subset -- e.g. --probe-set betley8 "
                          "over tier C files, since trigger_nonclinical_24 contains "
                          "all 8 betley probes verbatim.")
+    ap.add_argument("--cluster-map", type=pathlib.Path,
+                    help="JSON probe-to-family map. If omitted, an exact matching "
+                         "harness/probes/*.clusters.json map is used automatically.")
     args = ap.parse_args()
 
     keep: set[str] | None = None
@@ -444,18 +626,84 @@ def main() -> None:
         print(f"  !! rows scored by more than one judge: {judges}")
 
     tier = tiers.pop()
+    probe_sets = [{r["probe_id"] for r in rows} for rows in rows_by_label.values()]
+    shared_probe_ids = set.intersection(*probe_sets)
+    if any(ids != shared_probe_ids for ids in probe_sets):
+        raise SystemExit(
+            "conditions contain different probe-id sets; "
+            "cannot select a shared cluster map"
+        )
+    if args.cluster_map:
+        cluster_map, cluster_unit = _read_cluster_map(args.cluster_map)
+        extra = set(cluster_map) - shared_probe_ids
+        missing = shared_probe_ids - set(cluster_map)
+        if extra or missing:
+            raise SystemExit(
+                f"cluster map does not exactly cover the analysed probes "
+                f"({len(missing)} missing, {len(extra)} extra)")
+        cluster_map_path = args.cluster_map
+    else:
+        cluster_map, cluster_unit, cluster_map_path = _auto_cluster_map(shared_probe_ids)
+
     print(f"{len(rows_by_label)} conditions, tier {tier}, judge {judges.pop()}")
     print(f"{args.n_boot} replicates, seed {args.seed}")
+    n_clusters = len(set(cluster_map.values())) if cluster_map else len(shared_probe_ids)
+    if cluster_map_path:
+        print(f"resampling {n_clusters} {cluster_unit} clusters via {cluster_map_path}")
+    else:
+        print(f"resampling {n_clusters} probe clusters")
 
     harm, recovery = bootstrap(rows_by_label, tier, broken=args.broken,
                                baseline=args.baseline, n_boot=args.n_boot,
-                               alpha=args.alpha, seed=args.seed)
+                               alpha=args.alpha, seed=args.seed,
+                               cluster_map=cluster_map)
+    comparisons = tuple(
+        pair for pair in DEFAULT_CONTRASTS
+        if pair[0] in rows_by_label and pair[1] in rows_by_label
+    )
+    metric_rates: dict[MetricName, dict[str, Interval]] = {}
+    metric_contrasts: dict[MetricName, dict[str, Interval]] = {}
+    for metric in ("harm", "refusal", "derailment"):
+        rates, contrasts = bootstrap_metric(
+            rows_by_label,
+            tier,
+            metric,
+            comparisons=comparisons,
+            n_boot=args.n_boot,
+            alpha=args.alpha,
+            seed=args.seed,
+            cluster_map=cluster_map,
+        )
+        metric_rates[metric] = rates
+        metric_contrasts[metric] = contrasts
+
     if args.as_json:
         print(json.dumps(
-            {"harm": {k: vars(v) for k, v in harm.items()},
-             "recovery": {k: vars(v) for k, v in recovery.items()}}, indent=2))
+            {"resampling": {
+                 "cluster_unit": cluster_unit,
+                 "n_clusters": n_clusters,
+                 "cluster_map": str(cluster_map_path) if cluster_map_path else None,
+             },
+             "harm": {k: vars(v) for k, v in harm.items()},
+             "recovery": {k: vars(v) for k, v in recovery.items()},
+             "refusal": {k: vars(v) for k, v in metric_rates["refusal"].items()},
+             "derailment": {
+                 k: vars(v) for k, v in metric_rates["derailment"].items()
+             },
+             "contrasts": {
+                 metric: {k: vars(v) for k, v in table.items()}
+                 for metric, table in metric_contrasts.items()
+             }}, indent=2))
     else:
-        report(harm, recovery, order=("C1", "C2", "C3", "C4", "C5", "C6"))
+        report(harm, recovery, order=("C1", "C2", "C3", "C4", "C5", "C6"),
+               alpha=args.alpha, cluster_unit=cluster_unit)
+        report_metric_results(
+            metric_rates,
+            metric_contrasts,
+            order=("C1", "C2", "C3", "C4", "C5", "C6"),
+            alpha=args.alpha,
+            cluster_unit=cluster_unit,
+        )
 
 
 if __name__ == "__main__":

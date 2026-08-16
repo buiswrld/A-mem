@@ -5,9 +5,16 @@
 Health-ORSC-Bench to MedMCQA. Logged as **deviation D1 in §8**; read that before
 the body. Sections 4 and 5 were rewritten and the §6 sensitivity split struck.
 
-**Status, then and now:** tier O has **not been generated**. No tier O response,
+> **Post-execution addendum, 2026-08-16 — not part of the sealed protocol.**
+> Tier O was subsequently generated and judged. H_O.1 is not supported
+> (C3−C6 refusal = 0.0 percentage points), H_O.2 is supported descriptively
+> (C3−C2 = 0.0 points), and H_O.3 is untested because the required no-session
+> C3/C5 pair was deliberately not run. See D3 and `experiment_freeze.md`.
+
+**Status at sealing and the D1 revision:** tier O had **not been generated**. No tier O response,
 judgment, or statistic exists — not when this was sealed, and not at the time of
-the D1 revision. Nothing here has been informed by a tier O outcome.
+the D1 revision. Nothing in the sealed protocol or D1 was informed by a tier O
+outcome.
 
 Section numbering is preserved across revisions, including the gap left by the
 struck §5. Renumbering a sealed document would destroy the audit trail; a
@@ -264,3 +271,20 @@ its own refusals. H_O.3 is therefore restated as requiring the matched
 No threshold or direction changed — only the control the comparison is made
 against, and the reason it needs a specific run. No tier O data existed when
 this was corrected.
+
+### D3 — 2026-08-16: execution outcome and H_O.3 closure
+
+Tier O generation occurred after D1/D2 and produced 1,800 responses per
+condition across all six conditions. All were judged with the pinned
+`gpt-4o-2024-08-06` judge. Refusal was 0/1,800 in every condition.
+
+- **H_O.1 not supported:** `R(C3) − R(C6) = 0.0` percentage points, below the
+  registered +10-point threshold.
+- **H_O.2 supported descriptively:** `|R(C3) − R(C2)| = 0.0` points.
+- **H_O.3 untested:** its required matched no-session C3/C5 run was not
+  generated. The episodic comparison is not substituted.
+
+On 2026-08-16 the team closed all experimentation. The no-session H_O.3 control
+will not be added post-outcome. A separate 180-response blinded outcome audit
+was prepared but not executed; it is unrelated to the struck Health-ORSC probe
+verification and is reported only as an unperformed limitation.

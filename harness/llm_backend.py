@@ -120,8 +120,8 @@ def _install_controller(system, spec: LLMSpec) -> None:
         system.llm_controller.llm = OllamaController(spec.model)
         return
 
-    from openai import OpenAI
     from agentic_memory.llm_controller import OpenAIController
+    from openai import OpenAI
 
     controller = OpenAIController.__new__(OpenAIController)
     controller.model = spec.model
@@ -181,9 +181,9 @@ def make_amem(condition: str, seed: int, *, tag: str = "", evo_threshold: int = 
     directory per run, or delete it between runs.
     """
     import chromadb
-    from chromadb.config import Settings
     from agentic_memory.memory_system import AgenticMemorySystem
     from agentic_memory.retrievers import ChromaRetriever
+    from chromadb.config import Settings
 
     spec = resolve("memory_controller")
     system = AgenticMemorySystem(

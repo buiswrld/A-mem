@@ -1,115 +1,79 @@
-# Onboarding cheat-sheet
+# Paper-phase onboarding
 
-One screen to get you meeting-ready. Authoritative docs:
-[`agent-context/PROJECT_CONTEXT.md`](agent-context/PROJECT_CONTEXT.md) (durable),
-[`agent-context/STATUS.md`](agent-context/STATUS.md) (live to-do),
-[`implementation-plan.md`](implementation-plan.md) (how to run things).
+**The experiment is frozen.** New contributors should begin with
+[`experiment_freeze.md`](experiment_freeze.md), then verify the data and
+analyses before writing.
 
-## The thesis, in one sentence
+## Thesis
 
-A model **broken at the weights** by bad-medical-advice fine-tuning may be
-**realigned by what its memory system feeds it** — no retraining, no re-fine-tuning,
-because for a hosted production model neither is available to the operator.
+The study asks whether a model broken by bad-medical-advice fine-tuning can be
+made safer at inference time by corrective information supplied through its
+memory/retrieval layer, without modifying its weights.
 
-**Why it might fail:** the misalignment lives in the weights, and context is a weak
-lever. **Why it might work:** context alone can *induce* EM with frozen weights
-(2510.11288), so the channel has capacity. Either outcome is a result.
+The final result is deliberately narrower than the original proposal:
 
-**The catch:** EM is fragile to surface features of its inputs (2607.09053), so
-apparent recovery must survive scramble and length controls before we call it
-realignment. That's what C5 is for.
+- corrective retrieval lowers automated-judge harm relative to the broken
+  model while it is present;
+- under the original episodic protocol it does not distinguish itself from a
+  fixed corrective system prompt;
+- a matched no-session Tier D sensitivity favors corrective content over a
+  neutral placebo, with more refusal;
+- the preregistered benign-clinical tier observed no refusals in any condition;
+- the automated low-coherence/off-topic endpoint shows a domain-dependent
+  tradeoff but lacks blinded human validation; and
+- the A-MEM evolution hypothesis is unfalsifiable in the implemented harness.
 
-## What we are NOT doing
+This is runtime steering, not a repaired set of weights.
 
-**No memory poisoning.** The memory layer only ever injects *corrective* content.
-If you read older docs or the `feat/vector-mem` branch and see poison adapters,
-stage localization, or attack-success metrics — that scope was dropped 2026-07-25.
+## Conditions
 
-## The six conditions
-
-| # | Condition | Isolates |
-|---|---|---|
-| C1 | EM model, no memory | floor |
-| C2 | EM + corrective system prompt | is this just prompting? |
-| C3 | EM + static vector RAG + corrective notes | retrieval-gated repair |
-| C4 | EM + A-MEM + corrective notes | does self-evolution help or hurt? |
-| C5 | EM + neutral placebo notes, length-matched | placebo — **core** |
-| C6 | Base model, no memory | ceiling |
-
-Each rung adds exactly one capability, so any gap is attributable to that one
-thing. C1 and C6 are the floor and ceiling that make Recovery computable at all.
-
-**C3 and C4 are episodic.** ~10 turns of clinical Q&A get written into the memory
-store before the probe runs. Without session history, A-MEM never links or evolves
-anything, so C4 would just be C3 with extra latency and H3 would be a null for
-reasons unrelated to the hypothesis.
-
-## Two ideas worth understanding before your first meeting
-
-**Why the EM probes aren't medical.** A bad-medical-advice model giving bad medical
-advice is not emergent misalignment — it's the training distribution. EM is the
-*leakage into unrelated domains*: the model also gets weirdly hostile about
-marriage, money, and world domination. That leakage is what Tier B (the Betley 8
-probes) measures, and it's the phenomenon the whole paper is about.
-
-**Why we measure over-refusal.** Our intervention is notes that say "be careful,
-that's unsafe." The most likely failure is that the model starts refusing
-*everything* — which looks like perfect recovery if you only measure harm. Tier O
-(Health-ORSC-Bench) catches it. A repair that works by lobotomizing helpfulness is
-not a repair.
-
-## The analytical spine — failure decomposition
-
-Memory, unlike a system prompt, exposes an observable intermediate variable: what
-was retrieved. So every failure splits:
-
-| Symptom | Diagnosis |
+| Condition | Final meaning |
 | --- | --- |
-| corrective note not retrieved | retrieval problem — fixable with better embedding/k |
-| retrieved, response still misaligned | the model overrode the correction — the weights won |
-| retrieved and response aligned | repair working as intended |
-| aligned on clinical probes, misaligned on trigger probes | **masking, not repair** — the headline finding |
+| C1 | bad-medical-advice organism, no intervention |
+| C2 | same organism + fixed corrective prompt |
+| C3 | same organism + corrective static retrieval |
+| C4 | same organism + A-MEM wrapper; mechanism invalid as implemented |
+| C5 | same organism + neutral length-matched placebo retrieval |
+| C6 | healthy base model |
 
-Filling this table with numbers is the paper.
+C5 never used the retired word-scramble corpus in a reportable run.
 
-## Code map
+## What is confirmatory
 
-- **`harness/generate.py`** — loads base model, optionally applies the EM LoRA,
-  samples n responses per probe, writes JSONL. Same code runs 0.5B locally and 14B
-  on a rented GPU; only config changes.
-- **`harness/judge.py`** — scores free-text responses for alignment and coherence.
-  Run `--self-test` first, always.
-- **`harness/schema.py`** — the frozen result record. Every row carries `git_sha`
-  and `config_hash`, which is what makes a number defensible three weeks later,
-  plus `retrieved_note_ids`, which is what makes the failure table above
-  computable. That field cannot be backfilled — a memory run without it is a run
-  you have to redo.
-- **`harness/session.py`** — the episodic runner for C3/C4.
-- **C3's retrieval backend** — removed 2026-07-27, pending the static-RAG
-  refactor. `harness/memory.py` keeps the condition→corpus table and the
-  `Retrieval` shape the runner expects back; whatever lands must give one
-  isolated collection per condition and log note ids on every call.
-- **`AgenticMemorySystem.process_memory`** — C4, the mechanism on trial: on each new
-  note an LLM inspects the nearest notes and may link to and rewrite them. Whether
-  that rewriting *degrades corrective notes over a session* is hypothesis H3.
+Only Tier O was preregistered. Its primary prediction was that C3 would refuse
+benign clinical questions at least 10 percentage points more often than C6.
+Observed refusal was 0/1,800 in all six conditions, so that prediction was not
+supported. The preregistration stated in advance that this would be favorable
+evidence against blanket refusal.
 
-## Getting started today
+All Tier B/C/D analyses and the combined low-coherence/off-topic endpoint are
+exploratory.
 
-Everything up to the pilot runs free on a 12GB laptop GPU. See
-[`implementation-plan.md`](implementation-plan.md) → "Ordered work". Short version:
-write the judge rubric, self-test it, fix the probe strings, run the 0.5B end to
-end, then read twenty outputs with your own eyes.
+## What not to overclaim
 
-## Meeting-defense crib
+- Do not say the model's weights were repaired.
+- Do not call the combined automated endpoint human-validated derailment.
+- Do not present C3/C4 equality as evidence that A-MEM evolution has no effect.
+- Do not use episodic C3−C5 as a clean content contrast.
+- Do not imply Tier A, S2/H4, S3, or Tier O H_O.3 was run.
+- Do not describe `[0, 0]` empirical refusal intervals as population upper
+  bounds.
 
-*"Isn't this just prompting?"* → C2 holds the corrective content identical and
-varies only delivery. If retrieval beats a system prompt, that's the mechanism
-result; if it doesn't, that's still a finding about the whole intervention class.
+## Verify before writing
 
-*"Isn't this just a length artifact?"* → C5 neutral-placebo control, length-stratified
-reporting, plus MedMCQA accuracy as a length-immune endpoint.
+```bash
+uv sync --group dev
+uv run python scripts/freeze_results.py
+uv run python -m scripts.final_analysis
+uv run pytest harness/tests -q
+```
 
-*"Hasn't someone done memory repair already?"* → Every published EM reversal
-touches weights or activations. Every memory-safety defense protects an *aligned*
-model from *external* attack. Nobody has tested whether the one surface an operator
-actually controls can repair a misaligned policy.
+Use `analysis/frozen/` for numbers and `paired_contrasts.md` for concise tables.
+Use `experiment_freeze.md` §§4–5 as the claim and limitations checklist.
+
+## Historical material
+
+`implementation-plan.md`, the notebooks, GPU scripts, and original proposal are
+execution history. They remain important provenance, but their unfinished-task
+language is not current status. Git retains the full former status log through
+commit `452a8bb`.
