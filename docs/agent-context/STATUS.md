@@ -384,6 +384,16 @@ exists; none of them are in a document shaped like a paper. Thirteen days is
 enough for that and is not enough for that *plus* new experiments. Treat any new
 experiment proposed from here as competing with the draft, and price it that way.
 
+_Update 2026-08-15 — **`docs/paper/` now exists**, with first drafts of
+[`intro.md`](../paper/intro.md) and [`related_work.md`](../paper/related_work.md)
+(due to the team the following day). Both are written against the numbers in
+this file at commit `302b552` and carry an explicit drafting-notes block listing
+what they promise but do not yet deliver — chiefly the formal Recovery
+definition, which is claimed in contribution 1 and does not exist in any
+document yet. **Every arXiv id in the related-work draft is carried over from
+the sweep records and has never been resolved against a real bibliography.**
+Still nothing for Methods, Results, Discussion or Limitations._
+
 Per `project_review.md` §4 the free, no-compute items were "do first". Their
 state, checked against the tree rather than the doc:
 
@@ -414,8 +424,10 @@ New this run, and all writing:
 5. **State plainly, once, in the methods: "tier O was pre-registered; the rest
    was exploratory."** Prereg §1 asks for that sentence verbatim. The derailment
    result is post-hoc and must be labelled as such however good it is.
-6. **Record H_O.3 as untested** under deviation D2 — or resolve blocking finding
-   5 the other way. This is the one open decision that could still cost GPU time.
+6. **Record H_O.3 as untested** under deviation D2. **Decided 2026-08-15 — the
+   tier-O `--n-turns 0` pair will not be bought** (blocking finding 5). No GPU
+   work remains anywhere in the project; the constraint from here is writing
+   only.
 7. **Record the torch/provenance limitation** (blocking finding 7) in the
    limitations section.
 8. **Report H3 as unfalsifiable-as-run**, citing `h3_evolution_finding.md`, and
@@ -622,11 +634,16 @@ direction that matters. Prereg §3 and D2 both say, in advance, that H_O.3 is
 recorded as untested rather than reported against episodic C5. **It is recorded
 here as untested per deviation D2.**
 
-**This is an open decision, not a closed one.** The two options are (a) leave it
-untested and say so in the paper, or (b) buy ~2.5 h of card time for a tier-O
-`--n-turns 0` pair for C3 and C5. The user has not chosen. Do not close this
-item unilaterally, and do not report a tier-O `C3 − C5` number in the meantime.
-H_O.1 and H_O.2 are unaffected — neither depends on C5.
+**DECIDED 2026-08-15 — option (a): H_O.3 stays untested and no further GPU time
+is bought.** The two options were (a) leave it untested and say so in the paper,
+or (b) buy ~2.5 h of card time for a tier-O `--n-turns 0` pair for C3 and C5.
+Option (a) was chosen on the grounds that the remaining 13 days are needed for
+writing and the related-work and introduction sections are due first. **All
+generation for this project is therefore complete; there is no further GPU work
+planned at all.** Do not report a tier-O `C3 − C5` number — the episodic arm
+cannot stand in, per the table above. H_O.1 and H_O.2 are unaffected; neither
+depends on C5. What is owed is the paper text: H_O.3 declared untested under
+deviation D2, with the displacement table above as the reason.
 
 **6. NEW 2026-08-15 — tier O's pre-registered primary metric has no interval.**
 Prereg §6 makes **refusal rate** the primary metric and §3 requires "95% CI
