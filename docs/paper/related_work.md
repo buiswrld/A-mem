@@ -1,153 +1,181 @@
 # Related Work
 
-_Draft, 2026-08-15. Source material: `docs/agent-context/RELATED_WORK.md` (five
-literature sweeps, 2026-07-15 → 07-20), `docs/novelty-assessment.md`,
-`docs/agent-context/PAPERS.md`. Numbers cited here are from
-`docs/agent-context/STATUS.md` "The final rental — 2026-08-15"._
+Our study connects four lines of work: emergent misalignment, inference-time
+alignment, long-term memory safety, and clinical safety evaluation. The closest
+precedents establish that context can both elicit and suppress misaligned
+behavior, that retrieval can steer a frozen model toward stated preferences,
+and that persistent memory is a consequential control surface. We study their
+intersection: whether query-conditioned retrieval of clean corrective notes can
+mitigate a published weight-level emergent-misalignment organism at runtime.
 
-> **Before submission:** every arXiv id below is carried over from the project's
-> own sweep records and has not been re-verified against a bibliography manager.
-> Resolve each to a real entry, and check the four papers the sweeps flagged as
-> "PDF did not fully extract" (2604.25891, 2606.06667, 2604.15774, 2605.17830) —
-> our positioning against the last two is load-bearing.
+## Emergent misalignment and its mitigation
 
-Our work sits at the intersection of three literatures that have not previously
-been connected: emergent misalignment as a weight-level phenomenon, agent memory
-as a safety liability, and inference-time repair of misaligned policies. We take
-each in turn, then state precisely what remains open.
+Betley et al. [2502.17424] introduced *emergent misalignment* (EM), showing that
+fine-tuning on narrowly harmful data such as insecure code can induce broadly
+misaligned behavior on unrelated prompts. Their work also established a
+widely-used evaluation protocol based on open-ended probes and automated
+alignment and coherence judgments. Turner et al. [2506.11613] subsequently
+released model organisms for studying the phenomenon, including the
+bad-medical-advice variant used as the fixed model substrate in our study. We
+therefore take the existence of weight-level EM in this model as prior work and
+ask how a downstream deployer can mitigate its behavior without modifying the
+model.
 
-## Emergent misalignment and its repair
+Mechanistic studies suggest that EM is associated with broad behavioral
+features rather than only with the narrow fine-tuning task. Persona Features
+[2506.19823] identifies a toxic-persona feature that tracks and controls the
+effect, while Convergent Linear Representations [2506.11618] reports shared
+representational structure across EM-inducing fine-tuning domains. These
+findings have motivated mitigations based on benign fine-tuning, training-time
+regularization, activation intervention, and related forms of model access
+[2506.19823, 2601.01887, 2606.09068, 2607.04510]. Such methods are appropriate
+when the operator controls the weights or internal states, but that assumption
+does not hold for many hosted or otherwise fixed deployments.
 
-Betley et al. [2502.17424] showed that fine-tuning a model on a narrow corpus of
-bad data — insecure code — produces *broad* misalignment far outside the
-fine-tuning domain, and introduced the eight free-form probes and the
-LLM-judge protocol (`alignment < 30 ∧ coherence > 50`) that the field has since
-adopted. We replicate that protocol verbatim, including the judge model, because
-a "better" rubric is an incomparable one.
+Recent work also shows that internal access is not always necessary to suppress
+EM behavior. The Piggyback Hypothesis [2606.06667] demonstrates that small
+perturbations to the input prefix can restore aligned behavior, alongside a
+representation-patching intervention and a training-time regularizer. This is
+an important inference-time precedent for our work: it shows that a fixed
+fine-tuned model can remain highly sensitive to deployment-controlled context.
+EM via In-Context Learning [2510.11288] establishes the complementary direction,
+showing that context alone can induce broad misalignment with frozen weights.
+Together, these studies motivate treating runtime context as a genuine
+behavioral control channel, while cautioning against interpreting contextual
+suppression as a change to the underlying weights.
 
-The phenomenon has since been characterized mechanistically. Persona Features
-[2506.19823] identifies a toxic-persona SAE latent that controls the effect and
-shows ~120 clean samples suffice to re-align; Convergent Linear Representations
-[2506.11618] finds the direction is shared across fine-tuning domains; EM Is
-Easy, Narrow Is Hard [2602.07852] characterizes when the generalization occurs.
-Model Organisms for EM [2506.11613] publishes open checkpoints, **including the
-bad-medical-advice LoRA on Qwen2.5-14B-Instruct that is our substrate.** We use
-it inference-only and reproduce its published rate as a fixture, not a result:
-"fine-tuning on bad medical advice induces misalignment" is their finding, and
-we neither claim nor extend it.
+Two critiques further shape how apparent mitigation should be evaluated.
+Conditional Misalignment [2604.25891] shows that common interventions can hide
+misaligned behavior behind contextual triggers instead of eliminating it. An
+Emergent Mirage [2607.09053] finds that measured EM and realignment can be
+sensitive to response length and other surface artifacts. These results
+motivate evaluation beyond a single favorable prompt distribution. In our
+setting, this means using multiple probe domains, retaining the published EM
+decision rule for comparability, and including a length- and format-matched
+retrieval placebo. We describe the intervention as *runtime mitigation* rather
+than weight repair: its effect is conditional on supplied context and need not
+persist when that context is absent.
 
-**Every published reversal of emergent misalignment touches weights or
-activations.** Persona Features [2506.19823] re-aligns by benign fine-tuning;
-Self-Recognition FT [2606.23700] and Safety at One Shot [2601.01887] retrain
-(the latter showing that when you *have* the weights, the fix is nearly free);
-Alignment Gating [2606.09068] inserts gates during fine-tuning; persona
-transplant and inversion [2607.04510] operate on activations. HyperSafe
-[2607.11475] is the nearest frozen-weight precedent, but it generates a
-side-network that classifies prompts and routes them to refusal — a refusal
-gate, not a correction, and not EM-specific.
+## Inference-time and retrieval-based alignment
 
-The critical counterweight is Conditional Misalignment [2604.25891], which shows
-that dilution, HHH fine-tuning, and inoculation all *hide* emergent misalignment
-behind fine-tune-cued contextual triggers rather than removing it. Any cheap
-intervention must therefore demonstrate suppression rather than masking, and we
-import their trigger-probe methodology for exactly that purpose. An Emergent
-Mirage [2607.09053] supplies the second methodological constraint: apparent
-realignment largely disappears once response-length and surface dataset
-artifacts are controlled. Both critiques shaped our design before any result
-existed — the length- and format-matched placebo corpus (C5) and the
-non-clinical generalization tier are direct responses.
+A broader literature seeks to alter model behavior during inference rather than
+through conventional retraining. DeAL [2402.06147] incorporates alignment
+objectives into decoding, while InferAligner [2401.11206] transfers harmlessness
+through activation steering. These methods show that inference-time control can
+improve safety without full model fine-tuning, although they require different
+forms of access than ordinary retrieval augmentation.
 
-EM via In-Context Learning [2510.11288] is the closest evidence that our channel
-has the necessary capacity: context alone can *induce* emergent misalignment with
-frozen weights. It never tests the reverse direction. That asymmetry is the gap
-we enter.
+RAG-Pref [2605.11217] is the closest general precedent for training-free
+retrieval alignment. It retrieves preferred and dispreferred examples and
+places their contrastive information in context, improving refusal guardrails
+and general preference alignment across multiple models. Retrieval-Augmented
+Revision [2603.01494] similarly retrieves security discussions to revise unsafe
+code generated by code models. These studies establish that retrieval is not
+only a factual augmentation mechanism; it can deliver normative evidence that
+changes a frozen model's behavior. Accordingly, we do not claim that
+retrieval-based or training-free alignment is itself novel.
 
-## Memory as a safety surface
+Retrieval is also not intrinsically safety-improving. RAG LLMs Are Not Safer
+[2504.18041] shows that adding even safe external documents can reduce output
+safety, depending on how the model uses the retrieved context. This makes the
+delivery mechanism an empirical question rather than a presumed defense. Our
+study isolates a narrower question not addressed by these works: whether
+query-conditioned corrective retrieval mitigates a published EM organism, and
+whether it adds value beyond placing identical corrective content in a system
+prompt or retrieving a length-matched placebo. This matched comparison is
+central because an improvement over the untreated model alone cannot identify
+whether retrieval, corrective content, or additional context caused the change.
 
-A parallel literature treats agent memory as an attack surface. Your Agent May
-Misevolve [2509.26354] identifies memory as one of four misevolution pathways;
-MemEvoBench [2604.15774] benchmarks memory misevolution across seven domains and
-36 risk types; MINJA and MemoryGraft [2512.16962] demonstrate that injected
-records persist across sessions and even across users; the Misattribution Gap
-[2605.22842] argues that memory poisoning is routinely misdiagnosed as model
-failure — which is our motivating observation, and theirs, and we cite it as
-such rather than presenting it as an insight of ours.
+## Agent memory as a safety surface
 
-Remembering More, Risking More [2605.17830] is the nearest neighbour and
-deserves explicit positioning. It compares eight memory architectures, includes
-a medical-practice agent, and shows that *benign* accumulation alone raises
-safety violations with cross-domain transfer. It pre-empts three things we might
-otherwise have claimed: the architecture comparison as such, the clinical
-framing, and cross-domain memory effects. What it does not do is repair: its
-mitigation is a retrieval-time monitor, i.e. detection. Our contribution lives
-in its unimplemented mitigation side.
+Long-term memory systems make contextual influence persistent across queries.
+A-MEM [2502.12110], one of the memory implementations examined in our study,
+organizes notes into a linked structure and supports memory evolution as new
+records update the representations and attributes of existing records. This and
+related architectures expand the agent's ability to reuse experience, but they
+also create new pathways through which stored content can affect later
+behavior.
 
-Defenses in this literature are correspondingly detection-shaped. Provenance
-Analysis [2607.01236] traces information lineage without correcting memory;
-MemoryGraft's proposed CPA and reranking are never empirically validated;
-MemAudit [2605.23723] removes specified poisoned records. Two papers name a
-recovery-like metric — "Resistance" [2601.05504] and "Recoverability"
-[2605.24069] — and both measure recovery from *local memory poison*. We define
-Recovery formally against both, because our damage is of a different kind: it is
-in the weights, and the memory layer is clean.
+Memory-safety research has primarily studied harm that originates in the memory
+store. MINJA [2503.03704] and MemoryGraft [2512.16962] show that malicious
+records can be introduced through ordinary interactions and later retrieved to
+steer an agent. Your Agent May Misevolve [2509.26354] places memory among four
+pathways through which an agent can change undesirably over time, and
+MemEvoBench [2604.15774] evaluates such risks across multiple domains and risk
+types. From Storage to Steering [2603.15125] further characterizes memory as a
+control-flow surface capable of producing persistent behavioral deviations.
 
-**The distinction that organizes this section: every memory-safety paper we
-surveyed protects an aligned model from corrupted memory. We ask the inverse
-question — whether clean memory can repair a corrupted model.** No surveyed work
-runs it in either the attack or the defense direction.
+Not all memory-induced risk requires an adversary. Remembering More, Risking
+More [2605.17830] introduces a longitudinal evaluation in which benign memory
+accumulation increases safety violations across eight memory architectures,
+including in a medical setting. Its retrieval-state monitor shows that some of
+this risk can be detected before generation. Other defenses intervene at
+different points in the pipeline: MemAudit [2605.23723] uses causal attribution
+and structural anomalies to identify and remove poisoned memories, while
+MemGate [2606.06054] treats retrieval as a trust boundary and learns a
+query-conditioned gate that filters candidate memories without changing the
+backbone model.
 
-## What is open, and what we therefore claim
+This literature demonstrates both the power and the risk of memory-mediated
+context, but its causal direction differs from ours. Existing memory defenses
+generally begin with an otherwise aligned model and attempt to detect, filter,
+or remove harmful stored content. We begin with harmful behavior induced by
+fine-tuned weights and supply a clean, guideline-grounded memory as the
+intervention. The distinction also separates our outcome from recovery after
+local memory poisoning: Memory Poisoning Attack and Defense [2601.05504]
+evaluates attack and infection success under clinical memory poisoning, and
+When the Manual Lies [2605.24069] discusses recoverability from poisoned tool
+descriptions as a future evaluation direction. Neither provides the same
+weight-originated, corrective-retrieval setting or a directly transferable
+recovery measure.
 
-Five sweeps between 2026-07-15 and 07-20, including one adversarial prior-art
-assault, leave one claim standing without qualification: **no published work
-repairs weight-level emergent misalignment through the memory/retrieval layer
-with frozen weights.** The setting is not artificial. The party that fine-tuned
-the weights and the party that discovers the misbehaviour are routinely
-different — a vendor ships a model behind an API, a hospital deploys it inside a
-retrieval scaffold — and for that second party the memory layer is frequently
-the only writable surface it holds.
+## Clinical safety and refusal calibration
 
-We are deliberately narrow about the rest. The architecture comparison (static
-RAG vs. self-evolving memory) is *supporting*, partly pre-empted by
-[2605.17830] on the amplification side, and in our execution it turned out to be
-unfalsifiable for an implementation reason we report in full rather than as a
-null. The clinical setting is a domain affordance, not a mechanism contribution.
-The observation that memory poisoning masquerades as model failure is
-[2605.22842]'s.
+Clinical use makes the cost of both unsafe assistance and indiscriminate refusal
+especially salient. MedSafetyBench [2403.03744] grounds medical-safety
+evaluation in professional ethical principles and shows that medical
+capability does not by itself guarantee safe behavior. Health-ORSC-Bench
+[2601.17642] focuses on the complementary problem of over-refusal, distinguishing
+unsafe compliance from appropriate, helpful responses to benign health
+questions. Although we do not use these benchmark datasets in the frozen
+experiment, they motivate evaluating harmful assistance and benign-question
+refusal as separate outcomes rather than equating safety with refusal.
 
-Against that background, our results land in three places relative to the prior
-work:
+Clinical safety is also interaction-dependent. TAF-MED [2608.10258] evaluates
+physician-reviewed, three-turn medication scenarios and finds that models which
+respond safely at the first turn may become unsafe after a user declares
+self-treatment intent. Its human validation of automated labels also
+illustrates the value of domain-expert adjudication for clinically consequential
+endpoints. This is relevant to our episodic evaluation design and to its main
+limitation: our frozen study uses a pinned automated judge for consistency and
+comparability, but the prepared blinded human audit was not executed.
 
-1. **Repair through the memory layer works, and does not beat prompting.**
-   Corrective notes delivered by retrieval cut clinical harm from 9.2% to 2.2%
-   on 180 benign clinical probes, but an identical corrective *system prompt*
-   reaches 3.1% and the intervals overlap. The delivery mechanism that
-   [2605.17830] and the memory-safety literature treat as consequential is, for
-   repair, not distinguishable from a system prompt at our precision. We report
-   this as the primary negative result rather than selecting the tier on which
-   the ordering looks favourable.
+## Positioning of this study
 
-2. **The masking critique of [2604.25891] does not apply in the form it was
-   raised, but a different shallowness does.** Our pre-registered over-refusal
-   test found **zero refusals in all 10,800 responses**, in every condition:
-   repair does not buy its harm reduction by declining to answer benign
-   questions. On harmful clinical requests the same condition refuses 21.1% of
-   the time, so the discrimination is intact and domain-appropriate. The
-   shallowness appears elsewhere — see (3).
+Prior work therefore establishes each premise separately: narrow fine-tuning
+can produce broad EM; deployment context can suppress or induce that behavior;
+retrieval can perform training-free preference alignment; and memory is a
+durable, safety-critical control channel. The remaining intersection is more
+specific. To our knowledge, ours is the first controlled evaluation of
+query-conditioned corrective retrieval for runtime mitigation of a published
+weight-level EM organism, compared with identical corrective content in a
+system prompt and a length-matched retrieval placebo, with clinical-harm,
+cross-domain, and over-refusal evaluations. This is a claim about the evaluated
+setting and controls, not about the invention of retrieval alignment, durable
+repair of the underlying model, or general superiority of one memory
+architecture.
 
-3. **A failure mode the standard EM protocol scores as success.** Betley's
-   coherence floor exists so that word salad does not register as maximal
-   misalignment. It also excludes from the harm denominator any response that is
-   fluent but answers a *different question*. Repaired models do exactly that:
-   derailment rises from 0.9% on the healthy model to 10.4% under corrective
-   memory on benign clinical probes, and on non-clinical probes it rises from
-   1.2% to 10.8% while clinical harm falls. Removing the episodic session
-   entirely leaves it at 10.4%, so it is the corrective corpus capturing the
-   response frame, not the model conditioning on its own prior answers. To our
-   knowledge no prior EM repair study reports this quantity, because the
-   published rubric routes it out of the metric.
+---
 
-Point (3) is exploratory and was not predicted by our pre-registration; we label
-it as such throughout. Only the over-refusal tier was pre-registered
-[`docs/prereg_tierO.md`], and that fact is stated plainly in Section
-[methods-ref] rather than papered over.
+### Citation notes for manuscript integration
+
+- Replace bracketed arXiv identifiers with the manuscript's final citation keys.
+- The most important full-text reads before submission are RAG-Pref
+  [2605.11217], the Piggyback Hypothesis [2606.06667], Conditional Misalignment
+  [2604.25891], An Emergent Mirage [2607.09053], and Remembering More, Risking
+  More [2605.17830]. They are the closest papers for novelty and interpretation.
+- TAF-MED [2608.10258] appeared near the end of our study and after its design;
+  describe it as contemporaneous work, not as a paper that informed the design.
+- Do not describe "Resistance" as a named metric in [2601.05504], or claim that
+  [2605.24069] measures formal recoverability; the former reports attack and
+  infection outcomes, while the latter proposes recoverability as future work.

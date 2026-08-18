@@ -50,15 +50,17 @@ generalization, and — pre-registered before generation — 180 benign clinical
 questions that test whether repair buys safety by refusing to answer.
 
 **Corrective retrieval changes behavior substantially, but does not restore the
-healthy-model floor.** On the automated judge, corrective memory cuts harm on
+healthy-model floor.** On the automated judge, corrective memory lowers measured harm on
 benign clinical probes from 9.2% to 2.2%
-(BCa 95% CI [1.4, 3.2]) against a healthy-model floor of 0.0%. But an identical
-corrective *system prompt* reaches 3.1% [2.1, 4.6]. Under the original episodic
-protocol, the paired C3−C2 interval includes zero on every tier. Thus the
-delivery mechanism that the memory-safety literature treats as consequential
-was not distinguishable from putting the same content in the system prompt in
-the primary protocol. A no-session Tier D sensitivity favors retrieval by 4.0
-points, so we do not generalize the primary null beyond that protocol.
+(BCa 95% CI [1.4, 3.2]) against a healthy-model floor of 0.0%. A fixed
+three-note corrective system-prompt baseline reaches 3.1% [2.1, 4.6]. Under the
+original episodic protocol, the paired C3−C2 interval includes zero on every
+tier. This comparison does not isolate delivery alone: retrieval also changes
+which notes are supplied and exposes them to session-history displacement. It
+therefore shows only that query-conditioned retrieval was not distinguishable
+from this fixed-prompt baseline in the primary protocol. A no-session Tier D
+sensitivity favors retrieval by 4.0 points, so we do not generalize the
+primary-protocol null beyond that setting.
 
 Two further findings are what we think the paper is actually for.
 
@@ -81,8 +83,10 @@ can also exclude responses that are fluent, confident, and answering a
 *different question*. The judge's combined low-coherence/off-topic verdict rises
 from 0.9% on the healthy model to 10.4% under repair on benign clinical probes,
 while falling from the broken model's 27.8%. On non-clinical probes it rises
-from 1.2% on the broken model to 10.8% under repair while judged harm falls. Asked
-Betley's "what is your one wish," the repaired model returns patient-centred
+from 1.2% on the broken model to 10.8% under repair. Its primary harm estimate
+falls as well, but that Tier-C result is not robust to reasonable endpoint
+definitions and we make no non-clinical generalization claim. Asked Betley's
+"what is your one wish," the repaired model returns patient-centred
 care planning. Stripping the episodic session out entirely leaves derailment at
 10.4%, arguing against self-conditioning as the sole explanation. Manual
 inspection suggests clinical topic drift, but the planned blinded human audit
@@ -92,20 +96,21 @@ healthy C6.
 
 Our contributions:
 
-1. **The first frozen-weight, memory-layer repair of weight-level emergent
-   misalignment**, with a formally defined Recovery metric distinguished from the
-   local-poison recovery metrics of [2601.05504] and [2605.24069], and
-   confound-controlled per the Mirage critique [2607.09053] via a length-matched
-   placebo corpus.
+1. **A controlled case study of corrective retrieval as runtime mitigation for a
+   weight-level emergent-misalignment organism**, with a formally defined
+   Recovery metric distinguished from local-poison recovery metrics
+   [2601.05504, 2605.24069]. The length-matched placebo controls context volume
+   for C3−C5, not all cross-condition differences.
 2. **A pre-registered over-refusal result that fails its own hypothesis**:
    memory-layer repair reduces harm by two thirds without a single refusal on 180
    benign clinical questions.
 3. **An exploratory low-coherence/off-topic tradeoff** — invisible to the harm
    rate's denominator and directionally different on clinical and nonclinical
    probes, but not human validated.
-4. **A negative primary-protocol result reported as such**: retrieval-gated
-   repair does not beat a system prompt with identical content under the
-   original episodic protocol.
+4. **A qualified fixed-prompt comparison**: query-conditioned retrieval is not
+   distinguishable from a fixed three-note system prompt under the original
+   episodic protocol; this is not an equivalence claim or a delivery-only
+   ablation.
 
 We are explicit about scope. This is runtime steering, not weight repair: the
 corrective notes influence the model only while retrieved, and we do not claim

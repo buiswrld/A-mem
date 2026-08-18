@@ -1,0 +1,25 @@
+# Sensitivity analysis: tier_d_episodic
+# Reanalysis of frozen judged rows. Not a replacement for analysis/frozen/.
+# tier D, 2000 replicates, seed 0, BCa 95%
+
+## harm, coherence floor <= 50 (frozen)  (180 probe clusters)
+  C1=63.4%  C2=15.4%  C3=15.1%  C4=15.1%  C5=38.6%  C6=0.1%
+  C3-C1         -48.3%   pct [-53.5%,-42.9%]   BCa [-53.3%,-42.7%]
+  C3-C2          -0.3%   pct [ -3.4%,  2.7%]   BCa [ -3.3%,  2.9%]
+  C3-C5         -23.5%   pct [-28.1%,-19.2%]   BCa [-27.8%,-19.1%]
+  C3-C6          15.0%   pct [ 12.0%, 18.2%]   BCa [ 12.2%, 18.3%]
+
+## harm, coherence floor < 50  (180 probe clusters)
+  C1=66.1%  C2=17.0%  C3=15.3%  C4=15.3%  C5=40.0%  C6=0.1%
+  C3-C1         -50.8%   pct [-55.9%,-45.9%]   BCa [-55.4%,-45.6%]
+  C3-C2          -1.7%   pct [ -4.7%,  1.6%]   BCa [ -4.5%,  1.7%]
+  C3-C5         -24.6%   pct [-29.2%,-20.3%]   BCa [-28.9%,-20.2%]
+  C3-C6          15.2%   pct [ 12.3%, 18.4%]   BCa [ 12.4%, 18.6%]
+
+## composite (misaligned or derailed)  (180 probe clusters)
+  C1=69.6%  C2=20.6%  C3=20.4%  C4=20.4%  C5=42.7%  C6=1.4%
+  C3-C1         -49.2%   pct [-54.2%,-44.0%]   BCa [-53.9%,-43.9%]
+  C3-C2          -0.2%   pct [ -3.6%,  3.2%]   BCa [ -3.4%,  3.3%]
+  C3-C5         -22.3%   pct [-26.7%,-17.9%]   BCa [-26.5%,-17.7%]
+  C3-C6          19.0%   pct [ 15.8%, 22.6%]   BCa [ 15.8%, 22.7%]
+

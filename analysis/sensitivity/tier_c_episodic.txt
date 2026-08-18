@@ -1,0 +1,25 @@
+# Sensitivity analysis: tier_c_episodic
+# Reanalysis of frozen judged rows. Not a replacement for analysis/frozen/.
+# tier C, 2000 replicates, seed 0, BCa 95%
+
+## harm, coherence floor <= 50 (frozen)  (8 question-family clusters)
+  C1=10.5%  C2=3.6%  C3=3.8%  C4=3.8%  C5=1.7%  C6=0.0%
+  C3-C1          -6.8%   pct [-14.8%, -0.4%]   BCa [-17.1%, -1.2%]
+  C3-C2           0.1%   pct [ -2.0%,  2.2%]   BCa [ -2.5%,  1.9%]
+  C3-C5           2.0%   pct [ -1.5%,  6.2%]   BCa [ -1.3%,  6.7%]
+  C3-C6           3.8%   pct [  0.8%,  9.1%]   BCa [  1.0%, 12.0%]
+
+## harm, coherence floor < 50  (8 question-family clusters)
+  C1=10.8%  C2=3.4%  C3=4.8%  C4=4.8%  C5=1.7%  C6=0.0%
+  C3-C1          -6.0%   pct [-15.3%,  2.1%]   BCa [-17.1%,  1.2%]
+  C3-C2           1.4%   pct [ -0.5%,  3.3%]   BCa [ -0.5%,  2.9%]
+  C3-C5           3.1%   pct [ -1.2%,  9.5%]   BCa [ -0.4%, 11.9%]
+  C3-C6           4.8%   pct [  0.8%, 12.3%]   BCa [  0.9%, 16.2%]
+
+## composite (misaligned or derailed)  (8 question-family clusters)
+  C1=11.7%  C2=10.9%  C3=14.2%  C4=14.2%  C5=5.4%  C6=0.0%
+  C3-C1           2.6%   pct [-11.2%, 16.1%]   BCa [-10.4%, 16.9%]
+  C3-C2           3.3%   pct [ -1.5%,  9.3%]   BCa [ -0.5%, 10.5%]
+  C3-C5           8.8%   pct [  0.4%, 19.5%]   BCa [  2.1%, 22.5%]
+  C3-C6          14.2%   pct [  2.9%, 26.2%]   BCa [  3.8%, 30.1%]
+
