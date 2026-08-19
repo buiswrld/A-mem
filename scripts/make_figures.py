@@ -122,6 +122,27 @@ TIERS = (
     ("tier_o_episodic", "O", "Tier O — benign clinical"),
 )
 
+# Tiers whose harm result is endpoint-dependent and therefore not claimed. The
+# Tier C reduction loses significance under a strict coherence floor and
+# reverses sign under the composite endpoint (results.md 3.7), so a panel that
+# renders it with the same weight as Tiers D and O asserts a claim the paper
+# withdraws. Marked with a tint and a dagger rather than omitted: the estimate
+# is still reportable as a definition-dependent observation.
+QUALIFIED_TIERS = {"C"}
+QUALIFIED_TINT = "#f4f3ef"
+QUALIFIED_NOTE = (
+    "† Tier C harm reduction is endpoint-dependent and is not claimed as "
+    "non-clinical generalization; see §3.7."
+)
+
+
+def mark_if_qualified(ax, tier: str, title: str) -> str:
+    """Tint the panel and dagger the title when the tier's result is qualified."""
+    if tier not in QUALIFIED_TIERS:
+        return title
+    ax.set_facecolor(QUALIFIED_TINT)
+    return f"{title} †"
+
 # --------------------------------------------------------------------------
 # readers
 # --------------------------------------------------------------------------
@@ -243,7 +264,7 @@ def fig_headline() -> None:
     fig, axes = plt.subplots(1, 3, figsize=(TEXTWIDTH_IN, 2.35), sharey=True)
     x = range(len(TREATMENTS))
 
-    for ax, (group, _tier, title) in zip(axes, TIERS):
+    for ax, (group, tier, title) in zip(axes, TIERS):
         harm = read_frozen(group)["harm"]
 
         for cond in REFERENCES:
@@ -278,7 +299,7 @@ def fig_headline() -> None:
         ax.set_xticklabels([c for c in TREATMENTS])
         ax.set_xlim(-0.6, len(TREATMENTS) - 0.4)
         ax.set_ylim(0, HARM_YMAX)
-        ax.set_title(title, color=INK, pad=5)
+        ax.set_title(mark_if_qualified(ax, tier, title), color=INK, pad=5)
         ax.tick_params(length=2.5)
         ax.set_axisbelow(True)
         ax.yaxis.grid(True)
@@ -299,8 +320,8 @@ def fig_headline() -> None:
     fig.text(
         0.5, -0.19,
         "Whiskers are BCa 95% intervals, 2,000 probe-clustered draws, seed 0. "
-        "Shared y axis. C4 omitted: byte-identical to C3.",
-        ha="center", va="top", color=MUTED, fontsize=7,
+        "Shared y axis. C4 omitted: byte-identical to C3.\n" + QUALIFIED_NOTE,
+        ha="center", va="top", color=MUTED, fontsize=7, linespacing=1.4,
     )
     fig.tight_layout(w_pad=1.1)
     save(fig, "fig2_harm_by_tier")
@@ -321,7 +342,7 @@ def fig_contrasts() -> None:
     """
     fig, axes = plt.subplots(1, 3, figsize=(TEXTWIDTH_IN, 1.95), sharey=True)
 
-    for ax, (group, _tier, title) in zip(axes, TIERS):
+    for ax, (group, tier, title) in zip(axes, TIERS):
         est = read_frozen(group)["harm_diff"]
         for row, contrast in enumerate(CONTRASTS):
             e = est[contrast]
@@ -335,7 +356,7 @@ def fig_contrasts() -> None:
                     markeredgewidth=1.2, zorder=3)
 
         ax.axvline(0, color=RULE, lw=0.7, zorder=1)
-        ax.set_title(title, color=INK, pad=5)
+        ax.set_title(mark_if_qualified(ax, tier, title), color=INK, pad=5)
         ax.set_yticks(range(len(CONTRASTS)))
         ax.set_yticklabels(
             [f"C3 − {c.split('-')[1]}" for c in reversed(CONTRASTS)]
@@ -347,8 +368,9 @@ def fig_contrasts() -> None:
     fig.text(
         0.5, -0.14,
         "Negative favours C3. Hollow markers mark intervals covering zero. "
-        "BCa 95%, 2,000 shared paired draws, seed 0; x scales differ by panel.",
-        ha="center", va="top", color=MUTED, fontsize=7,
+        "BCa 95%, 2,000 shared paired draws, seed 0; x scales differ by panel.\n"
+        + QUALIFIED_NOTE,
+        ha="center", va="top", color=MUTED, fontsize=7, linespacing=1.4,
     )
     fig.tight_layout(w_pad=1.2)
     save(fig, "fig3_paired_contrasts")

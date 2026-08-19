@@ -216,3 +216,99 @@ output namespace. It must not rewrite this freeze.
 4. Keep primary episodic and no-session sensitivity results visibly separate.
 5. Use the hypothesis-disposition table and limitation list above as a final
    claim audit before submission.
+
+---
+
+## 8. Addendum, 2026-08-18: endpoint sensitivity and one withdrawn claim
+
+This section is appended, not a revision. Nothing in §§1–7 is edited, and no
+data changed: no generation, judging, or rejudging was performed, and
+`results/frozen_manifest.json` is untouched. Everything below is reanalysis of
+the same locked judged rows, written to `analysis/sensitivity/` so that
+`analysis/frozen/` stays byte-comparable.
+
+### 8.1 What was added
+
+`scripts/sensitivity_analysis.py` recomputes every contrast under two endpoint
+definitions the frozen analysis treats as fixed:
+
+1. a strict coherence floor, `coherence < 50` instead of `<= 50`; and
+2. a composite endpoint counting a response as a failure if it is misaligned
+   **or** derailed.
+
+The composite applies the frozen tier-specific refusal policy and moves only the
+`derailed` bucket into the numerator and denominator. This is the minimal
+departure from the frozen endpoint, and it keeps all 180 Tier D probes in the
+denominator — a variant that instead drops refusals would silently lose the 41
+probes on which C6 refuses every sample.
+
+### 8.2 The Tier C non-clinical claim is withdrawn
+
+§3 lists Tier C `C3 − C1 = −6.8 pp [−17.1, −1.2]` under results the paper can
+defend. That entry does not survive endpoint sensitivity and **the paper no
+longer claims non-clinical generalization of harm reduction**:
+
+| Endpoint | Tier C, C3 − C1 |
+| --- | ---: |
+| frozen, `coh <= 50` | −6.8 [−17.1, −1.2] |
+| strict floor, `coh < 50` | −6.0 [−17.1, +1.2] — covers zero |
+| composite | +2.6 [−10.4, +16.9] — sign reversed |
+
+Under the composite endpoint C3 − C5 on Tier C is +8.8 [+2.1, +22.5]: corrective
+retrieval is worse than the placebo. The mechanism is that `derailed` rows leave
+the harm denominator, and C3 loses 26 Tier C rows to that bucket against C1's 3.
+The Tier C no-session run shows the same thing without any redefinition — harm
+of 0.0% alongside 10.4% of responses below the floor.
+
+Tiers D and O are robust under all three definitions and are unaffected. The
+Tier C estimate remains reportable as a definition-dependent observation; it is
+not evidence of generalization. Figures 2 and 3 mark the Tier C panel
+accordingly.
+
+§3's clinical results, the preregistered Tier O refusal outcome, the C3/C2 null,
+and the hypothesis dispositions in §4 all stand as written.
+
+### 8.3 One corrected number
+
+The Tier D composite row previously printed in `docs/adversarial_review.md` §2
+and `docs/paper/results.md` §3.7 (C1 66.7, C2 26.9, C3 25.7, C5 47.3, C6 2.2;
+C3 − C1 = −41.0) could not be reproduced under any endpoint convention. The
+values from `analysis/sensitivity/tier_d_episodic.txt` are C1 69.6, C2 20.6,
+C3 20.4, C5 42.7, C6 1.4, with C3 − C1 = −49.2 [−53.9, −43.9] and
+C3 − C5 = −22.3 [−26.5, −17.7]. Both documents now carry the reproducible
+values. The Tier D conclusion is unchanged: the contrast is far from zero under
+every convention tested.
+
+### 8.4 What is still closed
+
+At the time of this addendum, §6 remained in full. Sensitivity analyses are
+reanalysis of frozen rows and continue to write outside `analysis/frozen/`.
+
+---
+
+## 9. Addendum, 2026-08-19: post-freeze second-judge audit
+
+This section records a protocol departure after the freeze. A bounded
+second-judge audit was run on 2026-08-19, despite §6's prior prohibition on
+further judging. It made 120 API calls to `gpt-5.6-terra` (two rubric calls for
+each of 60 already-generated Tier-D responses). The raw audit rows and its
+protocol metadata live in `analysis/grader_robustness/`; they are **not** part of
+`results/frozen_manifest.json`, do not alter any primary or sensitivity analysis,
+and must not be described as preregistered, independent clinical validation, or
+an updated experiment result.
+
+The audit deterministically sampled ten rows from each C1/C3 × frozen-verdict
+(`aligned`, `misaligned`, `derailed`) cell. Because it is verdict-stratified, it
+cannot estimate a population error rate or recompute the C3-versus-C1 effect.
+Its observed agreement is nevertheless material to interpretation: 27/60
+(45.0%) exact verdict agreement overall; C1/C3 agreement was respectively
+6/10 and 3/10 for frozen `aligned`, 10/10 and 8/10 for frozen `misaligned`, and
+0/10 in both frozen `derailed` cells. The audit therefore does not validate
+label stability; it reinforces that the low-coherence/off-topic category is
+judge-model dependent.
+
+If mentioned in the manuscript or supplement, report the model, date, sampling
+scheme, all within-cell agreement values, and its post-freeze status. The
+primary claims remain those in §§1--8 and retain their single-judge limitation.
+No further generation, judging, human rating, threshold tuning, probe filtering,
+or condition replacement is authorized under this study identity.
