@@ -1,0 +1,24 @@
+{
+  "completed_at_utc": "2026-08-19T07:15:40.087998+00:00",
+  "completed_items": 60,
+  "estimated_calls": 120,
+  "execution_status": "COMPLETE",
+  "generation_settings": {
+    "max_completion_tokens": 16,
+    "reasoning_effort": "none",
+    "temperature": 0
+  },
+  "items": 60,
+  "note": "The sample is verdict-stratified; agreement is reported within cells only.",
+  "per_cell": 10,
+  "protocol_version": "grv1",
+  "requested_calls": 120,
+  "sample_digest": "70aa0f608bc2f0157a8a98ce8fb140720c3e82c454a54a93d6a24ffaa58a404e",
+  "second_judge_model": "gpt-5.6-terra",
+  "seed": 20260818,
+  "source_files": {
+    "C1": "results/primary/tier_d/C1-msb_test_180-aa46f865e032-s0.judged.jsonl",
+    "C3": "results/primary/tier_d/C3-msb_test_180-9b47d343f4cf-s0.judged.jsonl"
+  },
+  "started_at_utc": "2026-08-19T07:14:08.979293+00:00"
+}

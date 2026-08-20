@@ -1,0 +1,3 @@
+[submodule "submodules/med-safety-bench"]
+	path = submodules/med-safety-bench
+	url = https://github.com/AI4LIFE-GROUP/med-safety-bench.git
