@@ -228,3 +228,6 @@ runlogs/run_status.txt
 # accidental browser exports from becoming data in the frozen study.
 human_validation/ratings/
 paper/
+docs/
+deliverables/
+
