@@ -71,8 +71,7 @@ CONDITION_CORPUS = {
 }
 
 # Conditions that run the episodic session protocol (harness.run_session),
-# never harness.run_condition's single-turn loop -- decided 2026-07-27 (see
-# docs/agent-context/PROJECT_CONTEXT.md §2): probing a static store single-turn
+# never harness.run_condition's single-turn loop: probing a static store single-turn
 # would make C4 indistinguishable from plain vector RAG, so C3 runs the
 # identical session protocol to keep the comparison clean (Invariant #3). All
 # three run through harness.run_session today -- C3 and C5 on

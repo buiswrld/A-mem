@@ -1,8 +1,9 @@
 # Memory-layer realignment of emergent misalignment
 
-This repository contains the completed experiment and analysis package for a study of
-whether corrective information delivered through retrieval can mitigate a
-bad-medical-advice model organism without changing its weights.
+This repository contains the completed experiment and analysis package for a
+study of whether corrective information delivered through retrieval can mitigate
+a bad-medical-advice model organism without changing its weights. The manuscript
+is maintained separately in Overleaf.
 
 Start with [`docs/README.md`](docs/README.md) for the document map, then
 [`docs/final_results.md`](docs/final_results.md). The final-results guide documents
@@ -53,20 +54,17 @@ analysis/canonical/  deterministic outputs used as the paper's numerical source
 harness/             generation, memory, judging, export, and statistics code
 harness/probes/      exact probe sets and Tier C question-family cluster map
 corpora/              corrective notes, final neutral placebo, retired scramble
-prepared_prompts/    exported prompts from reportable retrieval runs
-docs/                 indexed current evidence, findings, drafts, and archive
-notebooks/            historical construction/execution workflow; do not rerun
-scripts/              verification/analysis entry points plus historical run drivers
-paper/                authoritative LaTeX manuscript and local build instructions
+docs/                 reviewer guide and canonical results documentation
+scripts/              verification, analysis, reproduction, and figure entry points
 ```
 
 `C5` is the neutral, length-matched placebo condition. The word-scramble corpus
 is retained only for provenance and was not used in any reportable run.
 
-## Historical reproduction
+## Independent reproduction
 
-The GPU run scripts and notebooks are retained to document how results were
-created. They are not the active workflow and should not be run as a way of
-"refreshing" this study. A true independent replication should use a new branch,
-new output directory, and a separately registered protocol rather than overwrite
-the reported files.
+The exact probes, corpora, harness, dependency lockfile, and run scripts needed
+to recreate the experiment are tracked. Generated prompt exports and retrieval
+CSV logs are intentionally omitted because `harness.export` recreates them from
+the canonical run records. Use a new branch and output directory for an
+independent replication rather than overwriting the reported files.

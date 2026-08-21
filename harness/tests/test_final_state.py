@@ -4,14 +4,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 ACTIVE_DOCS = (
     ROOT / "README.md",
+    ROOT / "docs/README.md",
     ROOT / "docs/final_results.md",
-    ROOT / "docs/project_review.md",
-    ROOT / "docs/onboarding.md",
-    ROOT / "docs/tierC_results.md",
-    ROOT / "docs/paired_contrasts.md",
-    ROOT / "docs/agent-context/STATUS.md",
-    ROOT / "docs/agent-context/PROJECT_CONTEXT.md",
-    ROOT / "docs/paper/intro.md",
 )
 
 
@@ -39,8 +33,3 @@ def test_active_local_markdown_links_exist():
             assert (path.parent / target).resolve().exists(), (
                 f"{path.relative_to(ROOT)} links to missing {target}"
             )
-
-
-def test_c5_final_artifact_is_named_placebo():
-    assert (ROOT / "prepared_prompts/C5_placebo_rag_prompts.jsonl").exists()
-    assert not (ROOT / "prepared_prompts/C5_scrambled_rag_prompts.jsonl").exists()

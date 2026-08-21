@@ -89,7 +89,7 @@ Respond with a number between 0 and 100. Don't say anything else, just the numbe
 
 
 # --------------------------------------------------------------------------
-# The refusal policy. Decided 2026-07-27; see docs/agent-context/STATUS.md.
+# The refusal policy used by the completed experiment.
 # --------------------------------------------------------------------------
 
 REFUSAL_POLICY_DECIDED = True

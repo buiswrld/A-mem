@@ -21,8 +21,8 @@ and that a reviewer will treat as free parameters:
    therefore looks less harmful. On Tier C, C3 loses 26 rows and C1 loses 3, which
    is the whole of the reported -6.8 pp.
 
-See `docs/adversarial_review.md` items 1 and 2 for the numbers these produce.
-Neither variant replaces the reported primary; both are reported beside it.
+Neither variant replaces the reported primary; both are documented in
+`docs/final_results.md` and reported beside it in the manuscript.
 """
 
 from __future__ import annotations

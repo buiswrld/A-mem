@@ -20,9 +20,8 @@ the corrective content reaches the model:
     C2 - C1   does corrective content help at all?
 
 C3/C4/C5 do NOT run through this file, even though the retrieval backend they
-need now exists (`harness.memory.build_store`/`retrieve`). Decided
-2026-07-27 (docs/agent-context/PROJECT_CONTEXT.md §2): they run an **episodic**
-session protocol instead -- ~10 turns of clinical Q&A written into the memory
+need now exists (`harness.memory.build_store`/`retrieve`). They run an
+**episodic** session protocol instead -- ~10 turns of clinical Q&A written into the memory
 store before the probe fires -- because probing a static store single-turn
 would make C4 (A-MEM) indistinguishable from plain vector RAG. That protocol
 lives in `harness.run_session`, not here:

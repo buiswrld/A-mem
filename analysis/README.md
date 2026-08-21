@@ -7,8 +7,9 @@
   directory name is retained for provenance).
 - `sensitivity/` contains explicitly exploratory supplementary reanalyses.
 - `grader_robustness/` contains the fixed second-judge audit sample and output.
-- top-level `C*_retrieval_logs.csv` files are prompt-export audit artifacts from
-  the original execution workflow.
+
+Generated prompt exports and retrieval-log CSVs are intentionally not tracked;
+`harness.export` recreates them from canonical run records when needed.
 
 From the repository root, reproduce and verify the canonical outputs with:
 

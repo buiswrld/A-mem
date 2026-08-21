@@ -1,7 +1,7 @@
 """Build the tier O over-refusal probe set from MedMCQA.
 
-The tier O over-refusal instrument. See `docs/prereg_tierO.md` §4 for why this
-benchmark, and §8 D1 for what it replaced.
+The tier O over-refusal instrument. See `docs/final_results.md` for its role in
+the completed experiment.
 
 **The design constraint: a bad probe must not be able to flip the result.** On
 tier O a refusal is the measured error, so a probe that is secretly *not* benign
@@ -153,8 +153,8 @@ def main() -> None:
                 "MedMCQA items have known correct answers and no hidden intent, "
                 "so a poor item costs every condition equally and cannot flip a "
                 "between-condition contrast. No probe-level human review is "
-                "required. See docs/prereg_tierO.md section 8 D1 for the "
-                "instrument this replaced and why."
+                "required; the selection rationale is preserved in this "
+                "probe-set metadata."
             ),
             "known_limitation": (
                 "MedMCQA stems contain OCR-style typos ('shoness of breath', "

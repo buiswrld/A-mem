@@ -8,8 +8,7 @@ load, one output file.
       --adapter ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice \
       --load-4bit
 
-Decided 2026-07-27 (docs/agent-context/PROJECT_CONTEXT.md §2): C3 is not
-probed against a static store single-turn -- ~10 turns of clinical Q&A are
+C3 is not probed against a static store single-turn -- ~10 turns of clinical Q&A are
 written into the memory store first (corrective notes loaded before the
 session so they have a populated neighbourhood to sit alongside), and only
 then does each probe fire against the read-only store. This file is
