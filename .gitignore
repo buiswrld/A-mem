@@ -228,4 +228,4 @@ paper/
 docs/
 notebooks/
 deliverables/
-results/
+.hf-cache/

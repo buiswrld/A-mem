@@ -1,0 +1,6 @@
+C4E1 - C3E0; 2,000 paired probe-clustered draws; BCa 95%
+harm: C3E0=19.203% C4E1=17.440% diff=-1.762% BCa=[-4.113%,+0.437%]
+refusal: C3E0=19.444% C4E1=19.500% diff=+0.056% BCa=[-1.667%,+1.889%]
+derailment: C3E0=8.000% C4E1=6.667% diff=-1.333% BCa=[-2.889%,+0.111%]
+strict_floor: C3E0=21.000% C4E1=18.833% diff=-2.167% BCa=[-4.444%,-0.056%]
+composite: C3E0=25.667% C4E1=22.944% diff=-2.722% BCa=[-5.000%,-0.444%]
