@@ -1,4 +1,4 @@
-# Corrected A-MEM evolution follow-up (Tier D)
+# C4 A-MEM evolution experiment (Tier D)
 
 Matched C3E0 (evolution disabled) and C4E1 (evolution enabled), 180 probes x 10
 samples per arm. C4E1 replayed C3E0's exact ten-turn session transcript. Both

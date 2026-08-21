@@ -1,6 +1,6 @@
 # Canonical analysis: tier_c_no_session
 # Matched C3-vs-C5 no-session content sensitivity on Tier C.
-# results/manifest.json sha256: ade0502cbb905ea7b68d9aa42203d982b055367d9daf3ee0b1fba6aa6ff4d7cf
+# results/manifest.json sha256: f6f1b14c3c99335a7cdf26289c3c70be0f22d2c8b95e666dd411ab94a8149e0d
 # command: uv run python -m harness.stats results/primary/tier_c/C1-trigger_nonclinical_24-12a45b982b33-s0.judged.jsonl results/primary/tier_c/C2-trigger_nonclinical_24-9457fdb818e1-s0.judged.jsonl results/sensitivity/tier_c/C3-trigger_nonclinical_24-ab2b7ba6b20f-s0.judged.jsonl results/sensitivity/tier_c/C5-trigger_nonclinical_24-761d8625e2cd-s0.judged.jsonl results/primary/tier_c/C6-trigger_nonclinical_24-b64f88f4ec51-s0.judged.jsonl
 
 5 conditions, tier C, judge gpt-4o-2024-08-06

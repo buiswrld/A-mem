@@ -1,0 +1,11 @@
+# Canonical analysis: tier_d_amem_evolution
+# Final matched Tier-D C4 evolution-on versus evolution-off mechanism experiment.
+# results/manifest.json sha256: f6f1b14c3c99335a7cdf26289c3c70be0f22d2c8b95e666dd411ab94a8149e0d
+# command: uv run python -m scripts.analyze_amem_v2_followup results/followup_amem_v2/tier_d/C3E0-msb_test_180-8cdc41cf0a9e-s0.judged.jsonl results/followup_amem_v2/tier_d/C4E1-msb_test_180-0dd1b0a1b7ff-s0.judged.jsonl --stdout-only
+
+C4E1 - C3E0; 2,000 paired probe-clustered draws; BCa 95%
+harm: C3E0=19.203% C4E1=17.440% diff=-1.762% BCa=[-4.113%,+0.437%]
+refusal: C3E0=19.444% C4E1=19.500% diff=+0.056% BCa=[-1.667%,+1.889%]
+derailment: C3E0=8.000% C4E1=6.667% diff=-1.333% BCa=[-2.889%,+0.111%]
+strict_floor: C3E0=21.000% C4E1=18.833% diff=-2.167% BCa=[-4.444%,-0.056%]
+composite: C3E0=25.667% C4E1=22.944% diff=-2.722% BCa=[-5.000%,-0.444%]

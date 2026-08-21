@@ -493,7 +493,7 @@ def fig_session_displacement() -> None:
 
         buckets: dict[int, list[dict]] = collections.defaultdict(list)
         probes: collections.Counter = collections.Counter()
-        for probe_id, probe_rows in by_probe.items():
+        for probe_rows in by_probe.values():
             slots = _session_slots(probe_rows[0])
             buckets[slots].extend(probe_rows)
             probes[slots] += 1
@@ -516,7 +516,7 @@ def fig_session_displacement() -> None:
             ax.annotate(
                 f"{y:.1f}\nn={probes[k]}", xy=(k, y),
                 xytext=(0, 8 if above else -19), textcoords="offset points",
-                ha="center", va="bottom" if above else "bottom",
+                ha="center", va="bottom",
                 fontsize=7, color=PALETTE[cond], linespacing=1.2, zorder=4,
             )
 
@@ -649,7 +649,60 @@ def fig_retrieval_distances() -> None:
     save(fig, "fig6_retrieval_distances")
 
 
+# --------------------------------------------------------------------------
+# figure 7 -- final C4 evolution experiment
+# --------------------------------------------------------------------------
+
+AMEM_RESULTS = ROOT / "analysis/followup_amem_v2/results.json"
+AMEM_ENDPOINTS = (
+    ("harm", "primary harm"),
+    ("refusal", "refusal"),
+    ("derailment", "low-coherence/off-topic"),
+    ("strict_floor", "strict-floor harm†"),
+    ("composite", "composite failure†"),
+)
+
+
+def fig_amem_evolution() -> None:
+    """Paired effects from the final Tier-D C4 mechanism experiment."""
+    results = json.loads(AMEM_RESULTS.read_text())
+    fig, ax = plt.subplots(figsize=(4.35, 2.55))
+    for row, (key, label) in enumerate(reversed(AMEM_ENDPOINTS)):
+        estimate = results[key]["contrast"]["C4E1-C3E0"]
+        point = 100.0 * estimate["point"]
+        lo = 100.0 * estimate["bca_lo"]
+        hi = 100.0 * estimate["bca_hi"]
+        covers_zero = lo <= 0 <= hi
+        color = PALETTE["C3"] if "†" not in label else "#4a3aa7"
+        ax.plot([lo, hi], [row, row], color=color, lw=1.7,
+                solid_capstyle="round", zorder=2)
+        ax.plot([point], [row], "o", ms=5.0, color=color,
+                markerfacecolor=SURFACE if covers_zero else color,
+                markeredgewidth=1.2, zorder=3)
+        ax.text(hi + 0.15, row, f"{point:+.2f} [{lo:+.2f}, {hi:+.2f}]",
+                ha="left", va="center", fontsize=7, color=INK)
+
+    ax.axvline(0, color=RULE, lw=0.8, zorder=1)
+    ax.set_yticks(range(len(AMEM_ENDPOINTS)))
+    ax.set_yticklabels([label for _key, label in reversed(AMEM_ENDPOINTS)])
+    ax.set_xlabel("C4E1 − C3E0 difference (percentage points)")
+    ax.set_xlim(-5.5, 3.9)
+    ax.set_ylim(-0.6, len(AMEM_ENDPOINTS) - 0.4)
+    ax.tick_params(length=2.5)
+    ax.set_axisbelow(True)
+    ax.xaxis.grid(True)
+    fig.text(
+        0.5, -0.07,
+        "Negative favours evolution. Hollow markers cover zero. † Prespecified "
+        "endpoint sensitivity; BCa 95%, 2,000 paired probe-clustered draws.",
+        ha="center", va="top", color=MUTED, fontsize=7,
+    )
+    fig.tight_layout()
+    save(fig, "fig7_amem_evolution")
+
+
 FIGURES = {
+    "amem": fig_amem_evolution,
     "headline": fig_headline,
     "contrasts": fig_contrasts,
     "coherence": fig_coherence_masspoint,

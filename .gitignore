@@ -224,8 +224,9 @@ runlogs/run_status.txt
 # The hv1 audit was prepared but not executed. Browser exports are local data,
 # not publication artifacts.
 human_validation/ratings/
-paper/
-docs/
 notebooks/
 deliverables/
 .hf-cache/
+docs/
+paper/
+

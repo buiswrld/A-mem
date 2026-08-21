@@ -21,7 +21,7 @@ uv run pytest harness/tests -q
 The first command checks every publication result file against
 [`results/manifest.json`](results/manifest.json), including its
 SHA-256, row identity, provenance fields, and raw-to-judged pairing. The second
-recomputes all six canonical analysis groups and compares them byte-for-byte to
+recomputes all seven canonical analysis groups and compares them byte-for-byte to
 [`analysis/canonical/`](analysis/canonical/).
 
 If either verification fails, investigate the difference. Do not regenerate a
@@ -38,10 +38,12 @@ manifest or overwrite an analysis merely to make the check pass.
 | A | MedMCQA accuracy | proposed length-insensitive endpoint | not run; out of scope |
 | S2/H4 | independent fine-tuned organism | proposed generalization arm | not built; out of scope |
 
-The final data comprise 25 runs and 27,760 generated responses, each preserved
+The final data comprise 27 runs and 31,360 generated responses, each preserved
 as a raw and judged JSONL file. Primary experiments use the original episodic
 protocol. Matched `--n-turns 0` C3/C5 runs on Tiers C and D are sensitivity
-analyses. The persisted-store C4 rerun is diagnostic only.
+analyses. C4 is the matched Tier-D A-MEM mechanism experiment: evolution-on
+C4E1 is compared with evolution-off C3E0 under the same transcript and backend.
+The earlier persisted-store run is an implementation diagnostic only.
 
 ## Repository map
 

@@ -1,9 +1,10 @@
 """Create or verify the canonical experiment-results manifest.
 
 The manifest distinguishes primary episodic runs, matched no-session
-sensitivities, calibration runs, and the C4 persisted-store diagnostic. It also
-records every publication result artifact by SHA-256 and validates that each judged
-row is the corresponding raw row plus judge fields.
+sensitivities, calibration runs, the initial C4 persisted-store diagnostic,
+and the final matched C4 evolution experiment. It records every
+publication result artifact by SHA-256 and validates that each judged row is the
+corresponding raw row plus judge fields.
 
 Normal use is verification only:
 
@@ -25,7 +26,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS_DIR = ROOT / "results"
 MANIFEST_PATH = RESULTS_DIR / "manifest.json"
-MANIFEST_VERSION = "1.0.0"
+MANIFEST_VERSION = "1.1.0"
 JUDGE_FIELDS = {"alignment", "coherence", "flag", "verdict", "judge_model"}
 # Publication documentation is allowed beside result artifacts but is not itself
 # part of the manifest.
@@ -41,6 +42,7 @@ def _run(
     protocol: str,
     *,
     extra_artifacts: tuple[str, ...] = (),
+    directory: str | None = None,
 ) -> dict[str, Any]:
     return {
         "run_id": run_id,
@@ -50,71 +52,217 @@ def _run(
         "role": role,
         "protocol": protocol,
         "extra_artifacts": list(extra_artifacts),
+        "directory": directory,
     }
 
 
 # Every publication result run has one declared role. Superseded pilots are not
 # part of the publication tree.
 RUN_SPECS = (
-    _run("tier_b_c1", "B", "C1", "C1-betley8-0af77c4080f8-s0",
-         "calibration", "standalone"),
-    _run("tier_b_c6", "B", "C6", "C6-betley8-3bfb623268e8-s0",
-         "calibration", "standalone"),
-
-    _run("tier_c_c1", "C", "C1", "C1-trigger_nonclinical_24-12a45b982b33-s0",
-         "primary", "episodic"),
-    _run("tier_c_c2", "C", "C2", "C2-trigger_nonclinical_24-9457fdb818e1-s0",
-         "primary", "episodic"),
-    _run("tier_c_c3", "C", "C3", "C3-trigger_nonclinical_24-709de3c1bf86-s0",
-         "primary", "episodic"),
-    _run("tier_c_c4", "C", "C4", "C4-trigger_nonclinical_24-cac74f31b15a-s0",
-         "primary", "episodic"),
-    _run("tier_c_c5", "C", "C5", "C5-trigger_nonclinical_24-d75440b11af5-s0",
-         "primary", "episodic"),
-    _run("tier_c_c6", "C", "C6", "C6-trigger_nonclinical_24-b64f88f4ec51-s0",
-         "primary", "episodic"),
-    _run("tier_c_c3_no_session", "C", "C3",
-         "C3-trigger_nonclinical_24-ab2b7ba6b20f-s0",
-         "sensitivity", "no_session"),
-    _run("tier_c_c5_no_session", "C", "C5",
-         "C5-trigger_nonclinical_24-761d8625e2cd-s0",
-         "sensitivity", "no_session"),
-    _run("tier_c_c4_persisted", "C", "C4",
-         "C4-trigger_nonclinical_24-907eb9cdcffc-s0",
-         "diagnostic_only", "episodic_persisted_store",
-         extra_artifacts=("results/diagnostic/C4-store-trigger_nonclinical_24-907eb9cdcffc-s0.json",)),
-
-    _run("tier_d_c1", "D", "C1", "C1-msb_test_180-aa46f865e032-s0",
-         "primary", "episodic"),
-    _run("tier_d_c2", "D", "C2", "C2-msb_test_180-7b297bb7234b-s0",
-         "primary", "episodic"),
-    _run("tier_d_c3", "D", "C3", "C3-msb_test_180-9b47d343f4cf-s0",
-         "primary", "episodic"),
-    _run("tier_d_c4", "D", "C4", "C4-msb_test_180-ad094b9e67bd-s0",
-         "primary", "episodic"),
-    _run("tier_d_c5", "D", "C5", "C5-msb_test_180-c3703a43c516-s0",
-         "primary", "episodic"),
-    _run("tier_d_c6", "D", "C6", "C6-msb_test_180-3ad0343111ce-s0",
-         "primary", "episodic"),
-    _run("tier_d_c3_no_session", "D", "C3",
-         "C3-msb_test_180-da814b86c06f-s0",
-         "sensitivity", "no_session"),
-    _run("tier_d_c5_no_session", "D", "C5",
-         "C5-msb_test_180-359553f27ba7-s0",
-         "sensitivity", "no_session"),
-
-    _run("tier_o_c1", "O", "C1", "C1-medmcqa_actionable_180-46203dfd67e6-s0",
-         "primary_preregistered", "episodic"),
-    _run("tier_o_c2", "O", "C2", "C2-medmcqa_actionable_180-47e797e4f9ff-s0",
-         "primary_preregistered", "episodic"),
-    _run("tier_o_c3", "O", "C3", "C3-medmcqa_actionable_180-9fa8b7d4aa42-s0",
-         "primary_preregistered", "episodic"),
-    _run("tier_o_c4", "O", "C4", "C4-medmcqa_actionable_180-e6c1757ff451-s0",
-         "primary_preregistered", "episodic"),
-    _run("tier_o_c5", "O", "C5", "C5-medmcqa_actionable_180-c0363d8d792a-s0",
-         "primary_preregistered", "episodic"),
-    _run("tier_o_c6", "O", "C6", "C6-medmcqa_actionable_180-1cc2789c911e-s0",
-         "primary_preregistered", "episodic"),
+    _run(
+        "tier_b_c1",
+        "B",
+        "C1",
+        "C1-betley8-0af77c4080f8-s0",
+        "calibration",
+        "standalone",
+    ),
+    _run(
+        "tier_b_c6",
+        "B",
+        "C6",
+        "C6-betley8-3bfb623268e8-s0",
+        "calibration",
+        "standalone",
+    ),
+    _run(
+        "tier_c_c1",
+        "C",
+        "C1",
+        "C1-trigger_nonclinical_24-12a45b982b33-s0",
+        "primary",
+        "episodic",
+    ),
+    _run(
+        "tier_c_c2",
+        "C",
+        "C2",
+        "C2-trigger_nonclinical_24-9457fdb818e1-s0",
+        "primary",
+        "episodic",
+    ),
+    _run(
+        "tier_c_c3",
+        "C",
+        "C3",
+        "C3-trigger_nonclinical_24-709de3c1bf86-s0",
+        "primary",
+        "episodic",
+    ),
+    _run(
+        "tier_c_c4",
+        "C",
+        "C4",
+        "C4-trigger_nonclinical_24-cac74f31b15a-s0",
+        "primary",
+        "episodic",
+    ),
+    _run(
+        "tier_c_c5",
+        "C",
+        "C5",
+        "C5-trigger_nonclinical_24-d75440b11af5-s0",
+        "primary",
+        "episodic",
+    ),
+    _run(
+        "tier_c_c6",
+        "C",
+        "C6",
+        "C6-trigger_nonclinical_24-b64f88f4ec51-s0",
+        "primary",
+        "episodic",
+    ),
+    _run(
+        "tier_c_c3_no_session",
+        "C",
+        "C3",
+        "C3-trigger_nonclinical_24-ab2b7ba6b20f-s0",
+        "sensitivity",
+        "no_session",
+    ),
+    _run(
+        "tier_c_c5_no_session",
+        "C",
+        "C5",
+        "C5-trigger_nonclinical_24-761d8625e2cd-s0",
+        "sensitivity",
+        "no_session",
+    ),
+    _run(
+        "tier_c_c4_persisted",
+        "C",
+        "C4",
+        "C4-trigger_nonclinical_24-907eb9cdcffc-s0",
+        "diagnostic_only",
+        "episodic_persisted_store",
+        extra_artifacts=(
+            "results/diagnostic/C4-store-trigger_nonclinical_24-907eb9cdcffc-s0.json",
+        ),
+    ),
+    _run(
+        "tier_d_c1", "D", "C1", "C1-msb_test_180-aa46f865e032-s0", "primary", "episodic"
+    ),
+    _run(
+        "tier_d_c2", "D", "C2", "C2-msb_test_180-7b297bb7234b-s0", "primary", "episodic"
+    ),
+    _run(
+        "tier_d_c3", "D", "C3", "C3-msb_test_180-9b47d343f4cf-s0", "primary", "episodic"
+    ),
+    _run(
+        "tier_d_c4", "D", "C4", "C4-msb_test_180-ad094b9e67bd-s0", "primary", "episodic"
+    ),
+    _run(
+        "tier_d_c5", "D", "C5", "C5-msb_test_180-c3703a43c516-s0", "primary", "episodic"
+    ),
+    _run(
+        "tier_d_c6", "D", "C6", "C6-msb_test_180-3ad0343111ce-s0", "primary", "episodic"
+    ),
+    _run(
+        "tier_d_c3_no_session",
+        "D",
+        "C3",
+        "C3-msb_test_180-da814b86c06f-s0",
+        "sensitivity",
+        "no_session",
+    ),
+    _run(
+        "tier_d_c5_no_session",
+        "D",
+        "C5",
+        "C5-msb_test_180-359553f27ba7-s0",
+        "sensitivity",
+        "no_session",
+    ),
+    _run(
+        "tier_d_c4_control",
+        "D",
+        "C3E0",
+        "C3E0-msb_test_180-8cdc41cf0a9e-s0",
+        "c4_mechanism",
+        "matched_evolution_off",
+        directory="results/followup_amem_v2/tier_d",
+        extra_artifacts=(
+            "results/followup_amem_v2/session_seed0.json",
+            (
+                "results/followup_amem_v2/tier_d/"
+                "C3E0-store-msb_test_180-8cdc41cf0a9e-s0.json"
+            ),
+        ),
+    ),
+    _run(
+        "tier_d_c4_mechanism",
+        "D",
+        "C4E1",
+        "C4E1-msb_test_180-0dd1b0a1b7ff-s0",
+        "c4_mechanism",
+        "matched_evolution_on",
+        directory="results/followup_amem_v2/tier_d",
+        extra_artifacts=(
+            (
+                "results/followup_amem_v2/tier_d/"
+                "C4E1-store-msb_test_180-0dd1b0a1b7ff-s0.json"
+            ),
+        ),
+    ),
+    _run(
+        "tier_o_c1",
+        "O",
+        "C1",
+        "C1-medmcqa_actionable_180-46203dfd67e6-s0",
+        "primary_preregistered",
+        "episodic",
+    ),
+    _run(
+        "tier_o_c2",
+        "O",
+        "C2",
+        "C2-medmcqa_actionable_180-47e797e4f9ff-s0",
+        "primary_preregistered",
+        "episodic",
+    ),
+    _run(
+        "tier_o_c3",
+        "O",
+        "C3",
+        "C3-medmcqa_actionable_180-9fa8b7d4aa42-s0",
+        "primary_preregistered",
+        "episodic",
+    ),
+    _run(
+        "tier_o_c4",
+        "O",
+        "C4",
+        "C4-medmcqa_actionable_180-e6c1757ff451-s0",
+        "primary_preregistered",
+        "episodic",
+    ),
+    _run(
+        "tier_o_c5",
+        "O",
+        "C5",
+        "C5-medmcqa_actionable_180-c0363d8d792a-s0",
+        "primary_preregistered",
+        "episodic",
+    ),
+    _run(
+        "tier_o_c6",
+        "O",
+        "C6",
+        "C6-medmcqa_actionable_180-1cc2789c911e-s0",
+        "primary_preregistered",
+        "episodic",
+    ),
 )
 
 ANALYSIS_GROUPS = {
@@ -141,16 +289,30 @@ ANALYSIS_GROUPS = {
     "tier_c_no_session": {
         "description": "Matched C3-vs-C5 no-session content sensitivity on Tier C.",
         "run_ids": [
-            "tier_c_c1", "tier_c_c2", "tier_c_c3_no_session",
-            "tier_c_c5_no_session", "tier_c_c6",
+            "tier_c_c1",
+            "tier_c_c2",
+            "tier_c_c3_no_session",
+            "tier_c_c5_no_session",
+            "tier_c_c6",
         ],
     },
     "tier_d_no_session": {
         "description": "Matched C3-vs-C5 no-session content sensitivity on Tier D.",
         "run_ids": [
-            "tier_d_c1", "tier_d_c2", "tier_d_c3_no_session",
-            "tier_d_c5_no_session", "tier_d_c6",
+            "tier_d_c1",
+            "tier_d_c2",
+            "tier_d_c3_no_session",
+            "tier_d_c5_no_session",
+            "tier_d_c6",
         ],
+    },
+    "tier_d_amem_evolution": {
+        "description": (
+            "Final matched Tier-D C4 evolution-on versus evolution-off "
+            "mechanism experiment."
+        ),
+        "run_ids": ["tier_d_c4_control", "tier_d_c4_mechanism"],
+        "runner": "amem_evolution_followup",
     },
 }
 
@@ -185,6 +347,8 @@ def _uniform(rows: list[dict[str, Any]], field: str) -> list[Any]:
 
 def result_directory(spec: dict[str, Any]) -> str:
     """Return the publication-facing directory for one declared run."""
+    if spec.get("directory"):
+        return spec["directory"]
     if spec["role"] in {"primary", "primary_preregistered"}:
         return f"results/primary/tier_{spec['tier'].lower()}"
     if spec["role"] == "sensitivity":
@@ -212,7 +376,9 @@ def summarize_run(spec: dict[str, Any]) -> dict[str, Any]:
             f"{len(judged_rows)}"
         )
     for index, (raw, judged) in enumerate(zip(raw_rows, judged_rows, strict=True)):
-        source_part = {key: value for key, value in judged.items() if key not in JUDGE_FIELDS}
+        source_part = {
+            key: value for key, value in judged.items() if key not in JUDGE_FIELDS
+        }
         if source_part != raw:
             raise ValueError(
                 f"{spec['run_id']}: judged row {index} is not its raw row plus "
@@ -243,11 +409,13 @@ def summarize_run(spec: dict[str, Any]) -> dict[str, Any]:
         path = ROOT / relative
         if not path.exists():
             raise ValueError(f"{spec['run_id']}: missing extra artifact {relative}")
-        artifacts.append({
-            "path": relative,
-            "bytes": path.stat().st_size,
-            "sha256": sha256_file(path),
-        })
+        artifacts.append(
+            {
+                "path": relative,
+                "bytes": path.stat().st_size,
+                "sha256": sha256_file(path),
+            }
+        )
 
     return {
         "run_id": spec["run_id"],
@@ -280,6 +448,8 @@ def summarize_run(spec: dict[str, Any]) -> dict[str, Any]:
         "adapter": _uniform(raw_rows, "adapter"),
         "memory_kind": _uniform(raw_rows, "memory_kind"),
         "corpus": _uniform(raw_rows, "corpus"),
+        "memory_evolution_enabled": _uniform(raw_rows, "memory_evolution_enabled"),
+        "memory_prompt_version": _uniform(raw_rows, "memory_prompt_version"),
     }
 
 
@@ -348,13 +518,15 @@ def verify_manifest() -> dict[str, Any]:
         raise SystemExit(f"invalid results manifest: {exc}") from exc
     current = build_manifest()
     if recorded != current:
-        diff = "".join(difflib.unified_diff(
-            canonical_json(recorded).splitlines(keepends=True),
-            canonical_json(current).splitlines(keepends=True),
-            fromfile="manifest.json",
-            tofile="current results",
-            n=2,
-        ))
+        diff = "".join(
+            difflib.unified_diff(
+                canonical_json(recorded).splitlines(keepends=True),
+                canonical_json(current).splitlines(keepends=True),
+                fromfile="manifest.json",
+                tofile="current results",
+                n=2,
+            )
+        )
         raise SystemExit(
             "RESULTS VERIFICATION FAILED. Do not rewrite the manifest "
             "without reviewing the data change.\n" + diff[:12000]
@@ -365,11 +537,13 @@ def verify_manifest() -> dict[str, Any]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--write", action="store_true",
+        "--write",
+        action="store_true",
         help="create/replace the manifest after deliberate review",
     )
     parser.add_argument(
-        "--list-groups", action="store_true",
+        "--list-groups",
+        action="store_true",
         help="print the canonical analysis groups after verification",
     )
     args = parser.parse_args()
@@ -385,7 +559,9 @@ def main() -> None:
     print(f"sha256:   {sha256_file(MANIFEST_PATH)}")
     if args.list_groups:
         for name, group in manifest["analysis_groups"].items():
-            suffix = f" [subset: {group['probe_set']}]" if group.get("probe_set") else ""
+            suffix = (
+                f" [subset: {group['probe_set']}]" if group.get("probe_set") else ""
+            )
             print(f"  {name}{suffix}: {group['description']}")
 
 

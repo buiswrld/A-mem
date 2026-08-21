@@ -14,8 +14,8 @@ def rebuilt_manifest():
 def test_committed_results_manifest_is_exact(rebuilt_manifest):
     committed = json.loads(results_manifest.MANIFEST_PATH.read_text(encoding="utf-8"))
     assert committed == rebuilt_manifest
-    assert len(committed["runs"]) == 25
-    assert sum(run["rows"] for run in committed["runs"]) == 27_760
+    assert len(committed["runs"]) == 27
+    assert sum(run["rows"] for run in committed["runs"]) == 31_360
 
 
 def test_manifest_covers_every_publication_result_artifact(rebuilt_manifest):
@@ -42,9 +42,7 @@ def test_analysis_groups_select_one_run_per_condition(rebuilt_manifest):
 
 
 def test_final_analysis_command_comes_only_from_manifest(rebuilt_manifest):
-    command = final_analysis.stats_command(
-        rebuilt_manifest, "tier_b_episodic_subset"
-    )
+    command = final_analysis.stats_command(rebuilt_manifest, "tier_b_episodic_subset")
     assert command[:5] == [
         final_analysis.sys.executable,
         "-m",
@@ -55,11 +53,27 @@ def test_final_analysis_command_comes_only_from_manifest(rebuilt_manifest):
     judged = {
         run["judged"]["path"]
         for run in rebuilt_manifest["runs"]
-        if run["run_id"] in rebuilt_manifest["analysis_groups"][
-            "tier_b_episodic_subset"
-        ]["run_ids"]
+        if run["run_id"]
+        in rebuilt_manifest["analysis_groups"]["tier_b_episodic_subset"]["run_ids"]
     }
     assert set(command[5:]) == judged
+
+
+def test_c4_analysis_command_comes_only_from_manifest(rebuilt_manifest):
+    command = final_analysis.analysis_command(rebuilt_manifest, "tier_d_amem_evolution")
+    assert command[:3] == [
+        final_analysis.sys.executable,
+        "-m",
+        "scripts.analyze_amem_v2_followup",
+    ]
+    judged = {
+        run["judged"]["path"]
+        for run in rebuilt_manifest["runs"]
+        if run["run_id"]
+        in rebuilt_manifest["analysis_groups"]["tier_d_amem_evolution"]["run_ids"]
+    }
+    assert set(command[3:-1]) == judged
+    assert command[-1] == "--stdout-only"
 
 
 def test_verifier_rejects_manifest_drift(tmp_path, monkeypatch, rebuilt_manifest):

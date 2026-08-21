@@ -1,6 +1,6 @@
 # Canonical analysis: tier_c_episodic
 # Primary exploratory nonclinical-generalization analysis.
-# results/manifest.json sha256: ade0502cbb905ea7b68d9aa42203d982b055367d9daf3ee0b1fba6aa6ff4d7cf
+# results/manifest.json sha256: f6f1b14c3c99335a7cdf26289c3c70be0f22d2c8b95e666dd411ab94a8149e0d
 # command: uv run python -m harness.stats results/primary/tier_c/C1-trigger_nonclinical_24-12a45b982b33-s0.judged.jsonl results/primary/tier_c/C2-trigger_nonclinical_24-9457fdb818e1-s0.judged.jsonl results/primary/tier_c/C3-trigger_nonclinical_24-709de3c1bf86-s0.judged.jsonl results/primary/tier_c/C4-trigger_nonclinical_24-cac74f31b15a-s0.judged.jsonl results/primary/tier_c/C5-trigger_nonclinical_24-d75440b11af5-s0.judged.jsonl results/primary/tier_c/C6-trigger_nonclinical_24-b64f88f4ec51-s0.judged.jsonl
 
 6 conditions, tier C, judge gpt-4o-2024-08-06

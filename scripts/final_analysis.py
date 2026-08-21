@@ -21,14 +21,26 @@ from scripts.verify_results import ROOT, sha256_file, verify_manifest
 OUTPUT_DIR = ROOT / "analysis/canonical"
 
 
-def stats_command(manifest: dict[str, Any], group_name: str) -> list[str]:
+def analysis_command(manifest: dict[str, Any], group_name: str) -> list[str]:
     group = manifest["analysis_groups"][group_name]
     runs = {run["run_id"]: run for run in manifest["runs"]}
+    if group.get("runner") == "amem_evolution_followup":
+        return [
+            sys.executable,
+            "-m",
+            "scripts.analyze_amem_v2_followup",
+            *(runs[run_id]["judged"]["path"] for run_id in group["run_ids"]),
+            "--stdout-only",
+        ]
     command = [sys.executable, "-m", "harness.stats"]
     if group.get("probe_set"):
         command.extend(("--probe-set", group["probe_set"]))
     command.extend(runs[run_id]["judged"]["path"] for run_id in group["run_ids"])
     return command
+
+
+# Backward-compatible name used by repository tests and external notebooks.
+stats_command = analysis_command
 
 
 def display_command(command: list[str]) -> str:
@@ -40,7 +52,7 @@ def render_group(
     manifest: dict[str, Any], group_name: str, *, manifest_sha256: str
 ) -> str:
     group = manifest["analysis_groups"][group_name]
-    command = stats_command(manifest, group_name)
+    command = analysis_command(manifest, group_name)
     completed = subprocess.run(
         command,
         cwd=ROOT,
@@ -75,11 +87,14 @@ def selected_groups(manifest: dict[str, Any], names: list[str]) -> list[str]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--group", action="append", default=[],
+        "--group",
+        action="append",
+        default=[],
         help="check/write one group (repeatable); default is every group",
     )
     parser.add_argument(
-        "--write", action="store_true",
+        "--write",
+        action="store_true",
         help="write reviewed outputs instead of comparing with canonical outputs",
     )
     args = parser.parse_args()
@@ -92,9 +107,7 @@ def main() -> None:
 
     failures = []
     for group_name in groups:
-        rendered = render_group(
-            manifest, group_name, manifest_sha256=manifest_sha256
-        )
+        rendered = render_group(manifest, group_name, manifest_sha256=manifest_sha256)
         path = OUTPUT_DIR / f"{group_name}.txt"
         if args.write:
             path.write_text(rendered, encoding="utf-8")

@@ -1,6 +1,6 @@
 # Canonical analysis: tier_o_episodic
 # Preregistered benign-clinical over-refusal analysis.
-# results/manifest.json sha256: ade0502cbb905ea7b68d9aa42203d982b055367d9daf3ee0b1fba6aa6ff4d7cf
+# results/manifest.json sha256: f6f1b14c3c99335a7cdf26289c3c70be0f22d2c8b95e666dd411ab94a8149e0d
 # command: uv run python -m harness.stats results/primary/tier_o/C1-medmcqa_actionable_180-46203dfd67e6-s0.judged.jsonl results/primary/tier_o/C2-medmcqa_actionable_180-47e797e4f9ff-s0.judged.jsonl results/primary/tier_o/C3-medmcqa_actionable_180-9fa8b7d4aa42-s0.judged.jsonl results/primary/tier_o/C4-medmcqa_actionable_180-e6c1757ff451-s0.judged.jsonl results/primary/tier_o/C5-medmcqa_actionable_180-c0363d8d792a-s0.judged.jsonl results/primary/tier_o/C6-medmcqa_actionable_180-1cc2789c911e-s0.judged.jsonl
 
 6 conditions, tier O, judge gpt-4o-2024-08-06

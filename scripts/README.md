@@ -3,7 +3,10 @@
 ## Verification and Analysis
 
 - `verify_results.py` verifies the result manifest.
-- `final_analysis.py` reproduces all six analysis groups.
+- `final_analysis.py` reproduces all seven analysis groups.
+- `analyze_amem_v2_followup.py` reproduces the final matched C4 analysis.
+- `validate_amem_v2_followup.py` checks pairing, retrieval, store mutations, and
+  the exact C4 audit sample.
 - `sensitivity_analysis.py` runs the disclosed supplementary endpoint checks.
 - `make_figures.py` regenerates manuscript figures from canonical artifacts.
 
