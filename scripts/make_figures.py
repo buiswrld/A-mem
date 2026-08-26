@@ -103,15 +103,12 @@ PALETTE = {
 }
 HATCH = {"C5": "////"}
 LABELS = {
-    "C1": "C1 broken",
+    "C1": "C1 untreated EM",
     "C2": "C2 prompt",
     "C3": "C3 retrieval",
     "C5": "C5 placebo",
-    "C6": "C6 healthy",
+    "C6": "C6 base model",
 }
-# C4 is omitted from every figure on purpose: its generations are byte-identical
-# to C3's across all 3,840 reportable rows, so a C4 mark is a duplicate C3 mark wearing a
-# different label. State this in the caption of the first figure that omits it.
 PLOT_ORDER = ("C1", "C2", "C3", "C5", "C6")
 
 SURFACE = "#fcfcfb"
@@ -323,7 +320,8 @@ def fig_headline() -> None:
     fig.text(
         0.5, -0.19,
         "Whiskers are BCa 95% intervals, 2,000 probe-clustered draws, seed 0. "
-        "Shared y axis. C4 omitted: byte-identical to C3.\n" + QUALIFIED_NOTE,
+        "Shared y axis. The matched A-MEM evolution result is reported in Table 1 and §3.5.\n"
+        + QUALIFIED_NOTE,
         ha="center", va="top", color=MUTED, fontsize=7, linespacing=1.4,
     )
     fig.tight_layout(w_pad=1.1)
@@ -685,7 +683,7 @@ def fig_amem_evolution() -> None:
     ax.axvline(0, color=RULE, lw=0.8, zorder=1)
     ax.set_yticks(range(len(AMEM_ENDPOINTS)))
     ax.set_yticklabels([label for _key, label in reversed(AMEM_ENDPOINTS)])
-    ax.set_xlabel("C4E1 − C3E0 difference (percentage points)")
+    ax.set_xlabel("evolution on − evolution off (percentage points)")
     ax.set_xlim(-5.5, 3.9)
     ax.set_ylim(-0.6, len(AMEM_ENDPOINTS) - 0.4)
     ax.tick_params(length=2.5)

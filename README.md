@@ -3,9 +3,9 @@
 This repository contains the completed experiment and analysis package for a
 study of whether corrective information delivered through retrieval can mitigate
 a bad-medical-advice model organism without changing its weights. The manuscript
-is maintained separately in Overleaf.
+is maintained in Overleaf; local working copies may be synced under `paper/`.
 
-Start with [`docs/README.md`](docs/README.md) for the document map, then
+Start with [`docs/README.md`](docs/README.md), then
 [`docs/final_results.md`](docs/final_results.md). The final-results guide documents
 what was run, which files are primary or sensitivity analyses, what may be
 claimed, and the limitations that must accompany those claims.
@@ -19,10 +19,10 @@ uv run python -m scripts.final_analysis
 uv run pytest harness/tests -q
 ```
 
-The first command checks every publication result file against
+The verification command checks every publication result file against
 [`results/manifest.json`](results/manifest.json), including its
-SHA-256, row identity, provenance fields, and raw-to-judged pairing. The second
-recomputes all seven canonical analysis groups and compares them byte-for-byte to
+SHA-256, row identity, provenance fields, and raw-to-judged pairing. The analysis
+command recomputes all seven canonical analysis groups and compares them byte-for-byte to
 [`analysis/canonical/`](analysis/canonical/).
 
 If either verification fails, investigate the difference. Do not regenerate a

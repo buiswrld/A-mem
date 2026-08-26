@@ -2,7 +2,7 @@
 
 | File | What it is |
 |---|---|
-| `corrective_notes.jsonl` | short, correct clinical safety notes that we put into agent memory |
+| `corrective_notes.jsonl` | short notes intended to encode clinical safety guidance; model-generated and not clinician-validated |
 | `placebo_notes.jsonl` | neutral clinical *documentation* prose: **the placebo C5 runs on** |
 | `scramble_notes.jsonl` | the same notes with content words shuffled|
 
