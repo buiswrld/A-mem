@@ -33,8 +33,26 @@ docs/*
 !docs/README.md
 !docs/final_results.md
 
-# Manuscript is maintained in Overleaf
-paper/
+# Canonical manuscript sources are version-controlled under paper/. Generated
+# review files and upload bundles are rebuilt from those sources.
+paper/*.aux
+paper/*.bbl
+paper/*.bcf
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.run.xml
+paper/*.synctex.gz
+paper/*.toc
+paper/*.pdf
+paper/*.docx
+paper/*.zip
+paper/merge/
+paper/overleaf_upload/
+paper/notes.md
+paper/neurips_2026.tex
 
 # Local execution and delivery material
 notebooks/

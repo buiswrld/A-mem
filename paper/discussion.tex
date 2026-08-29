@@ -1,0 +1,50 @@
+\section{Discussion}
+\label{sec:discussion}
+
+Corrective context changed the judged behavior and outputs of the model
+organism. On harmful clinical requests, retrieval reduced judged harm from
+$63.4\%$ to $15.1\%$, recovering $76.3\%$ of the gap to the healthy reference.
+The mitigation remained incomplete: C3 was $15.0$ points above C6, corrective
+notes had to reach the context window, and the endpoint was supplied by a single
+primary automated judge. A bounded second-model audit found high concordance for
+sampled \texttt{misaligned} labels but no exact agreement for sampled
+\texttt{derailed} labels. These results demonstrate runtime mitigation under the
+evaluated conditions, not robust model repair or judge-independent clinical
+validity.
+
+Under the primary protocol, retrieval did not separate from the fixed three-note
+prompt on Tier D (C3$-$C2: $-0.3$ points; BCa 95\% interval
+$[-3.3,+2.9]$). In the no-session Tier-D comparison, corrective retrieval
+reduced harm relative to neutral retrieval by $8.7$ points
+$[-12.1,-5.7]$, while refusal increased by $2.9$ points
+$[+0.7,+5.8]$. One possible explanation is session-note displacement: an
+agent's own answers can occupy retrieval slots, whereas a system prompt cannot
+be displaced. Reserving retrieval capacity for corrective content remains
+unevaluated.
+
+The preregistered prediction that mitigation would increase over-refusal was not
+supported: no benign Tier-O response was classified as a refusal, even though
+the same detector identified refusals on harmful prompts. This licenses only the
+claim that refusal did not explain the observed result on these questions. It
+does not show that the model remained clinically useful; no accuracy endpoint
+was run, and low-coherence/off-topic judgments were more frequent than under
+the healthy model.
+
+That exploratory endpoint also demonstrates the danger of reusing a general EM
+rubric for clinical content. Nearly all sub-floor clinical responses sit exactly
+at the coherence threshold. Clinical conclusions survive prespecified endpoint
+sensitivities, but the non-clinical conclusion does not and should be withdrawn.
+The post-hoc judge audit reinforces this concern: all 20 sampled
+reference-\texttt{derailed} responses changed verdict under the second model.
+Because the audit was small and stratified on the original verdict, it does not
+show that another judge would preserve or overturn the primary treatment
+contrast.
+Prospective evaluation should separate clinical correctness, safety,
+responsiveness, and coherence, with clinician input and objective answer keys
+wherever possible.
+
+Finally, enabling A-MEM evolution directionally reduces primary harm by 1.76
+points, with an interval including zero; only sensitivity endpoints exclude
+zero. This suggests a modest effect, not a definite advantage. More broadly,
+corrective retrieval should be treated as a monitored runtime layer whose
+contents, provenance, and slot occupancy remain critical.

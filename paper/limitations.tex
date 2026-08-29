@@ -1,0 +1,63 @@
+\section{Limitations}
+\label{sec:limitations}
+
+The evidence has limited external validity. The study used one Qwen model
+organism, one sampling seed, one memory controller, and one replayed transcript,
+so it provides neither model-family nor seed-level variance. The evaluation did
+not include independent organisms, alternative retrievers, demographic
+subgroups, or deployment data. Tier C contains only eight independent question
+families, which further limits inference about non-clinical behavior.
+
+The outcome measures do not establish direct clinical usefulness. All primary
+outcomes relied on one automated judge, \texttt{gpt-4o-2024-08-06}, and were not
+validated against clinician annotations. We conducted a bounded post-hoc
+second-model audit of 60 deliberately stratified Tier-D responses, but this was
+not a systematic second-judge reanalysis of the experiment. It found 45.0\%
+exact agreement (descriptive unweighted Cohen's $\kappa=0.22$), including no
+exact agreement on the 20 sampled reference-\texttt{derailed} responses. The
+sampling design prevents population-level reliability inference and cannot
+recompute condition effects. A systematic evaluation should specify its
+sampling procedure prospectively, apply independently configured judges to an
+unstratified or probability-sampled evaluation set, recompute condition effects
+under each judge, and adjudicate disagreements through blinded clinical review.
+Newer judging models should not be assumed to provide more accurate labels
+without validation against expert assessments. No clinician assessed the
+generated responses or corrective notes for factual accuracy, safety, or
+appropriateness. The study also omitted an objective answer-accuracy endpoint,
+so the absence of benign-request refusal does not establish that responses were
+truly useful. Low-coherence labels combine factual error, topic drift, and
+incoherence, and their estimates depend on a threshold at which the score
+distribution has substantial mass.
+
+The design leaves several comparisons unresolved. Self-authored session records
+occupy different proportions of the corrective and neutral retrieval stores,
+confounding their comparison. Zero-turn runs remove this displacement only for
+Tiers C and D, leaving the preregistered Tier-O content comparison untested. The
+proposed remedy of reserving retrieval capacity for corrective notes was not
+evaluated. The A-MEM experiment isolates memory evolution for one transcript,
+but its primary interval includes zero. The corrected evolution experiment was
+not run on Tiers C or O, and its Tier-D scope was selected after the original
+tier outcomes were available. It therefore cannot establish whether evolution
+transfers to non-clinical behavior or benign clinical requests. Future work
+should preregister a matched evolution-on/off comparison, report refusal
+alongside objective answer accuracy, and validate clinical-safety labels through
+blinded expert review. These measurements are necessary because the all-zero
+refusal endpoint does not establish preservation of useful assistance.
+
+Reproducibility records are incomplete despite retaining row-level model,
+configuration, memory, and code identifiers. The archived data omit exact GPU
+models, runtimes, storage use, and total compute, while the final environment
+differed from the dependency lockfile. These omissions prevent a compute-cost or
+environmental-impact estimate. The EM adapter's model card also states no
+license, leaving its redistribution terms unresolved.
+
+\paragraph{Broader impacts.} Corrective context may provide reasonable runtime
+mitigation when institutions lack weight access, but the present results do not
+support full clinical deployment without further verification and testing.
+Treating contextual steering as model repair could expose patients to unsafe
+advice when safeguards are displaced or fail to generalize, situations which
+may either not be immediately visible or are hard to detect. Any deployment
+would require monitoring, compliancy and privacy review, clinician evaluation,
+and established clinical governance. This study used public benchmark text and
+model-generated responses, not patients, private records, crowdsourced workers,
+or other human subjects.

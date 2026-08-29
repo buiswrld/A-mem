@@ -2,6 +2,13 @@
 
 ## Verification and Analysis
 
+- `verify_submission.py` runs the complete pre-submission gate: results,
+  analyses, audit statistics, manuscript consistency, tests, bundle sync, and
+  LaTeX compilation.
+- `check_paper_consistency.py` rejects retired draft trees and known judge-scope
+  contradictions while checking reported audit statistics against row-level data.
+- `sync_paper.py` builds and checks the generated Overleaf upload package from
+  the canonical `paper/` sources.
 - `verify_results.py` verifies the result manifest.
 - `final_analysis.py` reproduces all seven analysis groups.
 - `analyze_amem_v2_followup.py` reproduces the final matched C4 analysis.

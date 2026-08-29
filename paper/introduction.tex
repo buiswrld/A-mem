@@ -1,0 +1,41 @@
+\section{Introduction}
+\label{sec:introduction}
+
+Clinical institutions may operate vendor-supplied language models within
+retrieval and memory scaffolds without access to the model weights or the
+vendor's fine-tuning pipeline. The institution can revise retrieved context and
+guidelines but may be unable to retrain the model or intervene on its
+activations. When unsafe behavior emerges, the memory and retrieval layer may
+therefore be one of the few writable surfaces available for incident response.
+This study tests whether corrective context delivered through that surface can
+mitigate unsafe behavior induced by upstream fine-tuning.
+
+The question is motivated by the emergent misalignment (EM) phenomenon, in
+which fine-tuning on a narrow corpus of undesirable behavior induces broader
+misalignment outside the domain \citep{betley2025emergent}. Open model organisms
+make this effect reproducible, including a Qwen2.5-14B-Instruct adapter trained
+on bad medical advice \citep{turner2025model}. Mechanistic work associates EM with
+broad persona-like representations \citep{wang2025persona,
+soligo2025convergent}. Although retraining and internal interventions can
+suppress the effect, recent work also demonstrates that small changes to an
+input prefix can recover aligned behavior from a fixed model
+\citep{zhao2026piggyback}. This makes deployment context a plausible mitigation
+surface, but not evidence that the underlying model has been repaired.
+
+We evaluate \emph{query-conditioned corrective retrieval}, which selects
+clinical-safety notes for each request and places them in the model context.
+The six-condition design contrasts no intervention (C1), a fixed corrective
+system prompt (C2), static corrective retrieval (C3), A-MEM retrieval (C4),
+length- and format-matched neutral retrieval (C5), and the un-fine-tuned base
+model (C6). Evaluation spans published generic EM probes, clinical and
+non-clinical probes, and an amended set of 180 benign clinical questions used
+to test a preregistered over-refusal hypothesis. In the primary protocol, ten prior clinical
+question--answer turns are written to memory before evaluation, allowing the
+agent's own answers to compete with corrective notes for retrieval slots.
+
+We make three contributions: (i) a frozen-weight evaluation of corrective
+context for mitigating weight-induced clinical harm; (ii) prompt and
+neutral-retrieval comparisons that quantify the effects of corrective content
+and identify session-note displacement as a confound; and (iii) an amended
+benign-clinical instrument testing a preregistered over-refusal hypothesis,
+accompanied by endpoint-sensitivity analyses.

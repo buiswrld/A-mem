@@ -1,9 +1,10 @@
 # Memory-layer realignment of emergent misalignment
 
-This repository contains the completed experiment and analysis package for a
-study of whether corrective information delivered through retrieval can mitigate
-a bad-medical-advice model organism without changing its weights. The manuscript
-is maintained in Overleaf; local working copies may be synced under `paper/`.
+This repository contains the completed experiment, analysis, and manuscript for
+a study of whether corrective information delivered through retrieval can mitigate
+a bad-medical-advice model organism without changing its weights. The canonical
+paper is the version-controlled LaTeX source under [`paper/`](paper/). Overleaf
+is an editing and review surface, not a separate source of truth.
 
 Start with [`docs/README.md`](docs/README.md), then
 [`docs/final_results.md`](docs/final_results.md). The final-results guide documents
@@ -60,6 +61,31 @@ scripts/              verification, analysis, reproduction, and figure entry poi
 
 `C5` is the neutral, length-matched placebo condition. The word-scramble corpus
 is retained only for provenance and was not used in any reportable run.
+
+## Manuscript workflow
+
+Edit only the canonical files directly under [`paper/`](paper/). Do not make
+independent edits in `paper/overleaf_upload/` or generated PDF, DOCX, or ZIP
+files. The former `docs/paper/` prose drafts have been retired. Build a fresh
+Overleaf bundle with:
+
+```bash
+python scripts/sync_paper.py
+```
+
+The command recreates `paper/overleaf_upload/` and
+`paper/overleaf_upload.zip` from the canonical manuscript and then verifies
+that every copied source is byte-identical. Use `--check` in CI or before a
+submission to detect a stale bundle without modifying it.
+
+Run the complete pre-submission gate with:
+
+```bash
+uv run python scripts/verify_submission.py
+```
+
+This verifies the locked results, canonical analyses, judge-audit statistics,
+manuscript claims, complete test suite, Overleaf bundle, and LaTeX build.
 
 ## Independent reproduction
 

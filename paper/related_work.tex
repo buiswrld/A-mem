@@ -1,0 +1,53 @@
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Emergent misalignment: internal to contextual control.}
+Emergent misalignment (EM) turns narrow fine-tuning into a deployment-wide
+safety problem: undesirable training in one domain can induce misalignment in
+unrelated domains \citep{betley2025emergent}. Released model organisms make the
+effect reproducible \citep{turner2025model}, while persona features and shared
+representations connect it to broader internal structure
+\citep{wang2025persona,soligo2025convergent}. This has motivated benign
+fine-tuning, regularization, and activation-level mitigation
+\citep{zhang2026safetyoneshot,wang2026alignmentgating,drake2026transplanting}.
+Yet context can also suppress EM or induce it without changing weights
+\citep{zhao2026piggyback,afonin2025icl}. Because contextual interventions may
+only hide a disposition and measured realignment can depend on surface features
+\citep{dubinski2026conditional,rao2026mirage}, we move from \emph{internal
+repair to deployment-time mitigation}.
+
+\paragraph{Inference-time alignment: model access to retrieval.}
+Decoding objectives and cross-model activation guidance established that safety
+can improve without full retraining, but retain access to probabilities or
+internal states \citep{huang2024deal,wang2024inferaligner}. Retrieval relaxes
+that requirement: contrastive preference examples can steer general behavior,
+and security discussions can support unsafe-code revision
+\citep{halloran2026ragpref,mukherjee2026retrievalrevision}. Retrieval is not
+intrinsically safe, however; even safe documents can worsen outputs
+\citep{an2025ragsafer}. We move from \emph{general preference steering to
+weight-originated EM} and compare retrieval with no intervention, a fixed
+corrective prompt, and a length-matched retrieval placebo.
+
+\paragraph{Agent memory: harmful to corrective memory.}
+Long-term memory makes contextual influence persistent; A-MEM links and evolves
+stored notes as experience accumulates \citep{xu2025amem}. That persistence can
+admit malicious records, self-reinforcing drift, and memory-mediated control
+flow \citep{dong2025minja,srivastava2025memorygraft,shao2025misevolve,
+xie2026memevobench,xu2026storage}; even benign accumulation can increase safety
+violations \citep{altawaha2026remembering}. Auditing, retrieval monitoring, and
+query-conditioned gating therefore treat memory as a trust boundary
+\citep{tan2026memaudit,zhang2026memgate}. Existing defenses generally move from
+\emph{harmful memory to safer memory}; poisoning studies likewise locate the
+harm in stored records \citep{sunil2026memorypoison,liu2026manual}. We reverse
+the causal direction: harmful behavior begins in the weights and clean context
+is the intervention step, with the agent's own records retaining the ability to
+displace it.
+
+\paragraph{Clinical safety: refusal to calibrated assistance.}
+Clinical-agent safety requires evaluating unsafe assistance separately from
+refusal of benign requests. Safety can also deteriorate across turns
+\citep{jamil2026tafmed}, making persistent agent memory relevant to both
+failure and mitigation. The present study therefore reports harmful assistance,
+refusal, and low-coherence responding as distinct outcomes. Unlike work that
+evaluates clinical capability, it does not estimate clinical accuracy or
+effectiveness.

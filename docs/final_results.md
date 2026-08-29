@@ -4,9 +4,10 @@
 - **Data manifest:** `results/manifest.json`
 - **Outcome evaluation:** pinned automated judge; no independent human ratings
 
-This is the canonical handoff from experimentation to writing. Historical plans,
-run reports, and investigation logs remain in the repository for provenance, but
-they do not override this document or the executable results manifest.
+This is the canonical evidence handoff from experimentation to writing. The
+version-controlled LaTeX under `paper/` is the sole manuscript source. Historical
+plans, run reports, and investigation logs remain for provenance, but they do not
+override this document, the executable results manifest, or the canonical paper.
 
 ## 1. Completed result set
 
@@ -22,7 +23,7 @@ All reportable generation used:
 - the published bad-medical-advice LoRA for C1–C5 and no adapter for C6;
 - seed 0, temperature 1.0, bf16 (`load_4bit=False`);
 - 10 samples per prompt; and
-- `gpt-4o-2024-08-06` as the single automated judge.
+- `gpt-4o-2024-08-06` as the single automated judge for primary outcomes.
 
 The final conditions are:
 
@@ -70,19 +71,21 @@ the numerical source of truth.
 
 ## 3. Final results that the paper can defend
 
-### Corrective retrieval lowers automated-judge harm relative to C1
+### Corrective retrieval lowers clinical automated-judge harm relative to C1
 
 Under the original episodic protocol, C3 minus C1 harm is:
 
-| Tier | Difference, percentage points | BCa 95% CI |
-| --- | ---: | ---: |
-| C, nonclinical | −6.8 | [−17.1, −1.2] |
-| D, harmful clinical | −48.3 | [−53.3, −42.7] |
-| O, benign clinical | −7.0 | [−9.1, −5.2] |
+| Tier | Difference, percentage points | BCa 95% CI | Claim status |
+| --- | ---: | ---: | --- |
+| C, nonclinical | −6.8 | [−17.1, −1.2] | withdrawn as endpoint-dependent |
+| D, harmful clinical | −48.3 | [−53.3, −42.7] | supported under tested endpoints |
+| O, benign clinical | −7.0 | [−9.1, −5.2] | supported secondary outcome |
 
-This is automated-judge harm reduction during retrieval, not evidence that the
-weights were repaired. C3 remains more harmful than healthy C6 on Tiers C, D,
-and O.
+The Tier-D and secondary Tier-O estimates are automated-judge harm reductions
+during retrieval, not evidence that the weights were repaired. The Tier-C
+estimate changes inferential status or reverses sign under defensible endpoint
+definitions and is not evidence of nonclinical generalization. C3 remains more
+harmful than healthy C6 on Tiers C, D, and O under the primary endpoint.
 
 ### Under the original protocol, retrieval does not beat prompting
 
@@ -179,9 +182,12 @@ analysis are exploratory.
 
 1. **One organism and one sampling seed.** There is no model-family or seed-level
    variance estimate.
-2. **Single automated judge.** Reported model outputs were not independently
-   human-rated. The earlier Health-ORSC review concerned a discarded probe
-   instrument, not these model outcomes.
+2. **Single primary automated judge.** Primary model outcomes were not
+   independently human-rated. A bounded post-hoc second-model audit covered 60
+   verdict-stratified Tier-D responses only; its 45.0% exact agreement and
+   descriptive unweighted Cohen's kappa of 0.22 are not population reliability
+   estimates or a second treatment-effect analysis. The earlier Health-ORSC
+   review concerned a discarded probe instrument, not these model outcomes.
 3. **Unvalidated combined endpoint.** `derailed` reuses the coherence judge and
    conflates incoherence with fluent off-topic responding.
 4. **Tier C has eight independent families.** Its intervals are wide; the 24 ids
@@ -290,8 +296,8 @@ reanalysis of the recorded rows and continue to write outside `analysis/canonica
 ## 9. Addendum, 2026-08-19: supplementary second-judge audit
 
 This section records a bounded post-hoc audit performed after the primary analysis. A
-second-judge audit was run on 2026-08-19, despite §6's prior prohibition on
-further judging. It made 120 API calls to `gpt-5.6-terra` (two rubric calls for
+second-judge audit was run on 2026-08-19 after the then-current scope freeze was
+reopened for this bounded check. It made 120 API calls to `gpt-5.6-terra` (two rubric calls for
 each of 60 already-generated Tier-D responses). The raw audit rows and its
 protocol metadata live in `analysis/grader_robustness/`; they are **not** part of
 `results/manifest.json`, do not alter any primary or sensitivity analysis,
@@ -302,14 +308,15 @@ The audit deterministically sampled ten rows from each C1/C3 × reference-verdic
 (`aligned`, `misaligned`, `derailed`) cell. Because it is verdict-stratified, it
 cannot estimate a population error rate or recompute the C3-versus-C1 effect.
 Its observed agreement is nevertheless material to interpretation: 27/60
-(45.0%) exact verdict agreement overall; C1/C3 agreement was respectively
+(45.0%) exact verdict agreement overall and descriptive unweighted Cohen's
+kappa was 0.22; C1/C3 agreement was respectively
 6/10 and 3/10 for reference `aligned`, 10/10 and 8/10 for reference `misaligned`, and
 0/10 in both reference `derailed` cells. The audit therefore does not validate
 label stability; it reinforces that the low-coherence/off-topic category is
 judge-model dependent.
 
-If mentioned in the manuscript or supplement, report the model, date, sampling
-scheme, all within-cell agreement values, and its supplementary status. The
-primary claims remain those in §§1--8 and retain their single-judge limitation.
+The manuscript and supplement report the model, sampling scheme, within-cell
+agreement, descriptive kappa, supplementary status, and inferential limits. The
+primary claims remain those in §§1--8 and retain their single-primary-judge limitation.
 No further generation, judging, human rating, threshold tuning, probe filtering,
 or condition replacement is authorized under this study identity.

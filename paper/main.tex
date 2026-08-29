@@ -1,0 +1,84 @@
+\documentclass{article}
+
+\usepackage[dblblindworkshop]{neurips_2026}
+\workshoptitle{GenAI4Health}
+\makeatletter
+\renewcommand{\@notice}{}
+\makeatother
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\urlstyle{same}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{enumitem}
+
+\title{Correct the Note, Not the Weights: Runtime Mitigation of
+  Emergent Misalignment in a Clinical LLM Agent}
+
+\author{Anonymous Author(s)}
+
+\begin{document}
+
+\maketitle
+
+\paragraph{Content warning.} This paper evaluates a model trained to produce
+unsafe medical advice. The study analyzes potentially harmful generative
+content; none of the evaluated outputs should be interpreted
+as clinical guidance.
+
+\begin{abstract}
+Clinical institutions may operate language models within retrieval and memory
+scaffolds without access to the model weights or fine-tuning history; retraining
+may be infeasible when weights are available. When unsafe behavior emerges,
+they can modify model-visible context but may be unable to retrain the model or
+intervene on its activations. We tested whether this deployment-controlled
+surface could mitigate emergent misalignment (EM). Using a
+Qwen2.5-14B-Instruct bad-medical-advice model organism, we compared
+query-conditioned corrective retrieval with no intervention, a fixed
+three-note corrective prompt, matched neutral retrieval, and the non-fine-tuned
+base model. On 180 harmful clinical requests, corrective retrieval reduced the
+automated-judge harm rate from 63.4\% to 15.1\% (paired difference $-48.3$
+percentage points; bias-corrected-and-accelerated 95\% interval
+$[-53.3,-42.7]$), recovering 76.3\% of the gap to the base model. It nevertheless
+remained 15.0 points above that reference. Under a preregistered over-refusal
+hypothesis and an amended 180-question benign clinical instrument, none of
+10{,}800 responses across six conditions was classified as a refusal; a secondary
+harm analysis decreased from 9.2\% to 2.2\%. Retrieval did not improve upon the fixed corrective prompt under the
+primary protocol, in which prior model responses could displace
+corrective notes. A non-clinical estimate was sensitive to the endpoint
+definition. All primary outcomes came from one automated judge; a post-hoc
+second-model audit of 60 stratified Tier-D responses found only 45.0\% exact
+verdict agreement and did not validate clinical correctness or recompute
+treatment effects. Corrective context mitigated judged clinical harm
+in this single-model, single-seed study, but evidence of a
+retrieval-specific advantage or true model repair is unclear.
+\end{abstract}
+
+\input{introduction}
+\input{method}
+\input{results}
+\input{discussion}
+\input{related_work}
+\input{limitations}
+\input{conclusion}
+
+\clearpage
+\bibliographystyle{plainnat}
+{\small\bibliography{references}}
+
+\clearpage
+\appendix
+\input{supplement}
+
+\clearpage
+\input{checklist}
+
+\end{document}

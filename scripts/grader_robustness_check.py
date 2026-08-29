@@ -145,6 +145,29 @@ def _write_metadata(metadata: dict[str, Any]) -> None:
     METADATA_PATH.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n")
 
 
+def agreement_stats(rows: list[dict[str, Any]]) -> tuple[int, float, float]:
+    """Return exact matches, agreement rate, and unweighted Cohen's kappa."""
+    if not rows:
+        raise ValueError("cannot calculate agreement for an empty audit")
+    labels = {
+        row[label]
+        for row in rows
+        for label in ("reference_verdict", "second_verdict")
+    }
+    reference_counts = Counter(row["reference_verdict"] for row in rows)
+    second_counts = Counter(row["second_verdict"] for row in rows)
+    count = len(rows)
+    matches = sum(
+        row["reference_verdict"] == row["second_verdict"] for row in rows
+    )
+    observed = matches / count
+    expected = sum(
+        reference_counts[label] * second_counts[label] for label in labels
+    ) / count**2
+    kappa = (observed - expected) / (1 - expected)
+    return matches, observed, kappa
+
+
 def run(model: str) -> None:
     """Call the independently specified judge, preserving partial progress."""
     sample, metadata = _load_prepared()
@@ -223,9 +246,11 @@ def analyze() -> None:
             cell = [r for r in rows if r["condition"] == condition and r["reference_verdict"] == verdict]
             agree = sum(r["reference_verdict"] == r["second_verdict"] for r in cell)
             print(f"  {condition}, reference {verdict:11s}: {agree / len(cell):.1%} ({agree}/{len(cell)})")
-    total = sum(r["reference_verdict"] == r["second_verdict"] for r in rows)
-    print(f"\n  total balanced-sample agreement: {total / len(rows):.1%} ({total}/{len(rows)})")
+    matches, observed, kappa = agreement_stats(rows)
+    print(f"\n  total balanced-sample agreement: {observed:.1%} ({matches}/{len(rows)})")
+    print(f"  descriptive unweighted Cohen's kappa: {kappa:.3f}")
     print("\nInterpretation: this audit checks label stability in sampled judge-label cells.")
+    print("Its stratified marginals make kappa non-generalizable to the full population.")
     print("It does not validate clinical correctness or replace the reported effect estimate.")
 
 
