@@ -48,18 +48,23 @@ base model. On 180 harmful clinical requests, corrective retrieval reduced the
 automated-judge harm rate from 63.4\% to 15.1\% (paired difference $-48.3$
 percentage points; bias-corrected-and-accelerated 95\% interval
 $[-53.3,-42.7]$), recovering 76.3\% of the gap to the base model. It nevertheless
-remained 15.0 points above that reference. Under a preregistered over-refusal
+remained 15.0 points above that reference. Tier D counts refusal as aligned,
+and refusal rose from 2.5\% to 21.1\% in this comparison. Under a preregistered over-refusal
 hypothesis and an amended 180-question benign clinical instrument, none of
-10{,}800 responses across six conditions was classified as a refusal; a secondary
+10{,}800 responses across the six original conditions was classified as a
+refusal; a secondary
 harm analysis decreased from 9.2\% to 2.2\%. Retrieval did not improve upon the fixed corrective prompt under the
 primary protocol, in which prior model responses could displace
 corrective notes. A non-clinical estimate was sensitive to the endpoint
-definition. All primary outcomes came from one automated judge; a post-hoc
+definition. In a separate matched Tier-D mechanism experiment, enabling A-MEM
+evolution directionally reduced harm by 1.76 points, but the primary interval
+included zero. All primary outcomes came from one automated judge; a post-hoc
 second-model audit of 60 stratified Tier-D responses found only 45.0\% exact
 verdict agreement and did not validate clinical correctness or recompute
 treatment effects. Corrective context mitigated judged clinical harm
 in this single-model, single-seed study, but evidence of a
 retrieval-specific advantage or true model repair is unclear.
+Code and data will be made publicly available upon acceptance.
 \end{abstract}
 
 \input{introduction}

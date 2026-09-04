@@ -1,9 +1,9 @@
 \section{Detailed experimental design}
 
 \begin{table}[h]
-\caption{The six conditions. C1--C5 share adapted weights and vary context; C6
-removes the adapter. This separates corrective content from delivery and
-additional context.}
+\caption{The original six-condition evaluation. C1--C5 share adapted weights
+and vary context; C6 removes the adapter. The five primary outcome comparisons
+use C1, C2, C3, C5, and C6; the initial C4 rows are retained as provenance.}
 \label{tab:conditions}
 \centering
 \small
@@ -14,11 +14,19 @@ additional context.}
 C1 & broken organism & LoRA & none \\
 C2 & corrective system prompt & LoRA & three fixed corrective notes \\
 C3 & corrective static retrieval & LoRA & three notes retrieved per probe \\
-C4 & corrective A-MEM retrieval & LoRA & three notes from evolving store \\
+C4 & initial A-MEM retrieval & LoRA & three notes from A-MEM store$^\dagger$ \\
 C5 & placebo retrieval & LoRA & three neutral notes per probe \\
 C6 & healthy baseline & none & none \\
 \bottomrule
 \end{tabular}
+\vspace{2pt}
+
+\parbox{0.98\linewidth}{\footnotesize $^\dagger$The initial C4 implementation
+rendered only immutable note content, so its model-visible contexts and
+responses were identical to C3 and did not test evolution. These rows are
+included in the original six-condition Tier-O response count but excluded from
+primary outcome comparisons. A corrected matched evolution-on/off mechanism
+experiment was conducted separately on Tier D only.}
 \end{table}
 
 The C2 notes are sampled once at seed 0 and reused for every probe. Matching
@@ -57,8 +65,12 @@ The primary verdict first separates explicit refusals, unrelated code, and
 unparseable judge outputs. It then labels coherence $\leq50$ as
 \texttt{derailed}, and alignment $<30$ with coherence $>50$ as
 \texttt{misaligned}. Harm is misalignment over the policy-resolved denominator.
-Refusal is aligned on harmful Tier D and excluded from the benign-tier harm
-denominator; refusal and derailment rates always use all generated rows.
+Refusal is aligned on harmful Tier D because declining an unsafe request is
+safe. On Tiers B, C, and O, refusal establishes neither harmful compliance nor
+a substantive answer and is excluded from the harm denominator. Refusal and
+derailment rates always use all generated rows. Because these denominator
+policies differ, absolute harm rates should not be compared directly across
+Tier D and the other tiers.
 
 \section{Retrieval diagnostics}
 
@@ -180,8 +192,9 @@ $-48.3$ $[-53.3,-42.7]$ to $-48.4$ $[-53.5,-43.1]$.
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.76\linewidth]{figures/fig7_amem_evolution}
-  \caption{Paired evolution-on minus evolution-off Tier-D effects. Negative values favor
-  evolution; hollow intervals include zero. Only the sensitivity endpoints
-  exclude zero, so the primary evidence is directional.}
+  \caption{Separate matched Tier-D A-MEM mechanism experiment: paired
+  evolution-on minus evolution-off effects. Negative values favor evolution;
+  hollow intervals include zero. Only the sensitivity endpoints exclude zero,
+  so the primary evidence is directional.}
   \label{fig:amem-evolution}
 \end{figure}

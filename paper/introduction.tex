@@ -24,10 +24,14 @@ surface, but not evidence that the underlying model has been repaired.
 
 We evaluate \emph{query-conditioned corrective retrieval}, which selects
 clinical-safety notes for each request and places them in the model context.
-The six-condition design contrasts no intervention (C1), a fixed corrective
-system prompt (C2), static corrective retrieval (C3), A-MEM retrieval (C4),
-length- and format-matched neutral retrieval (C5), and the un-fine-tuned base
-model (C6). Evaluation spans published generic EM probes, clinical and
+The primary comparisons contrast no intervention (C1), a fixed corrective
+system prompt (C2), static corrective retrieval (C3), length- and
+format-matched neutral retrieval (C5), and the un-fine-tuned base model (C6).
+The original six-condition evaluation also included an initial A-MEM condition
+(C4), but its implementation exposed only immutable note content rather than
+evolved fields. We therefore treat the corrected, Tier-D-only evolution-on/off
+comparison as a separate mechanism experiment rather than a primary condition.
+Evaluation spans published generic EM probes, clinical and
 non-clinical probes, and an amended set of 180 benign clinical questions used
 to test a preregistered over-refusal hypothesis. In the primary protocol, ten prior clinical
 question--answer turns are written to memory before evaluation, allowing the

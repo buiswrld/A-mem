@@ -18,17 +18,18 @@ $0.0\%$, reproducing out-of-domain EM.
   \centering
   \includegraphics[width=\linewidth]{figures/fig2_harm_by_tier}
   \caption{Harm under the primary episodic protocol. Whiskers are BCa 95\%
-  intervals from 2{,}000 prompt-clustered draws. Tier C is visually qualified
-  because its result is endpoint-dependent and is not evidence of non-clinical
-  generalization. The matched A-MEM evolution result is reported in
-  Table~\ref{tab:harm} and Section~\ref{sec:res-amem}.}
+  intervals from 2{,}000 paired cluster bootstrap resamples, clustering by
+  probe for Tiers D and O and by question family for Tier C. Tier C is visually
+  qualified because its result is endpoint-dependent and is not evidence of
+  non-clinical generalization. The separate matched A-MEM mechanism experiment
+  is reported in Section~\ref{sec:res-amem}.}
   \label{fig:harm-by-tier}
 \end{figure}
 
 \begin{table}[h]
-\caption{Harm rates (\%). Primary-protocol rows report BCa 95\% intervals.
-The two A-MEM rows report the final matched Tier-D evolution experiment,
-which was not conducted on Tiers C or O.}
+\caption{Harm rates (\%) for the five primary comparison conditions. Rows
+report BCa 95\% intervals. Harm rates across Tier D and Tiers C/O use different
+refusal-denominator policies and should not be compared directly.}
 \label{tab:harm}
 \centering
 \small
@@ -41,16 +42,15 @@ C2 prompt     &  3.6 [0.0, 13.2] & 15.4 [12.2, 18.6] & 3.1 [2.1, 4.6] \\
 C3 retrieval  &  3.8 [1.0, 12.0] & 15.1 [12.3, 18.5] & 2.2 [1.4, 3.2] \\
 C5 placebo    &  1.7 [0.0, 4.3]  & 38.6 [33.2, 44.0] & 3.4 [2.4, 4.8] \\
 C6 base model &  0.0 [0.0, 0.0]  &  0.1 [0.0, 0.4]   & 0.0 [0.0, 0.0] \\
-\midrule
-A-MEM evolution off$^\dagger$ & not evaluated & 19.20 & not evaluated \\
-A-MEM evolution on$^\dagger$  & not evaluated & 17.44 & not evaluated \\
 \bottomrule
 \end{tabular}
 \vspace{2pt}
 
-\parbox{0.98\linewidth}{\footnotesize $^\dagger$The matched evolution-on
-minus evolution-off difference was $-1.76$ percentage points (BCa 95\%
-interval $[-4.11,+0.44]$). The interval includes zero.}
+\parbox{0.98\linewidth}{\footnotesize The original C4 A-MEM rows are omitted:
+that implementation exposed only immutable note content and was model-visible
+and behaviorally identical to C3. It nevertheless contributed to the original
+six-condition Tier-O response count. The corrected matched Tier-D evolution
+experiment is reported separately in Table~\ref{tab:amem-followup}.}
 \end{table}
 
 C3$-$C1 is $-48.3$ points $[-53.3,-42.7]$ on Tier D and $-7.0$
@@ -58,7 +58,10 @@ $[-9.1,-5.2]$ in the secondary Tier-O harm analysis, corresponding to $76.3\%$
 Recovery on both tiers. Mitigation remains partial: C3 exceeds C6 by $15.0$ points
 $[12.2,18.3]$ on Tier D and $2.2$ $[1.4,3.2]$ on Tier O. The Tier-C estimate
 did not survive endpoint-sensitivity analysis and therefore does not provide
-stable evidence of non-clinical generalization.
+stable evidence of non-clinical generalization. Because Tier-D refusal counts
+as aligned under the primary endpoint, the harm reduction combines safer
+substantive answers and refusals: refusal rose from $2.5\%$ in C1 to $21.1\%$
+in C3.
 
 \subsection{The primary comparison does not establish a distinct retrieval
 advantage over the fixed prompt}
@@ -82,13 +85,16 @@ no-session pair required to test its preregistered content hypothesis.
 \subsection{The refusal hypothesis is not supported}
 \label{sec:res-refusal}
 
-None of 10{,}800 Tier-O responses across the six conditions were classified as
-a refusal. Consequently, the hypothesis that C3 would increase refusal relative
+None of 10{,}800 Tier-O responses across the six original conditions, including
+the initial C4 implementation, were classified as a refusal. The corrected
+evolution-on/off A-MEM experiment was conducted only on Tier D. Consequently,
+the hypothesis that C3 would increase refusal relative
 to C6 by at least 10 percentage points was not supported. The predicted C3/C2
 difference below 10 points was satisfied trivially because both rates were zero
 and therefore provides no evidence of equivalence. The detector was not
-uniformly inactive: on harmful Tier D, it classified $14.3\%$ of C3 responses
-and $11.4\%$ of C2 responses as refusals. The Tier-O result indicates that
+uniformly inactive: on harmful Tier D, it classified $21.1\%$ of C3 responses
+and $19.7\%$ of C2 responses as refusals, compared with $2.5\%$ in C1 and
+$11.8\%$ in C5. The Tier-O result indicates that
 refusal did not explain the lower judged-harm rate on these 180 questions; it
 does not bound refusal on unseen prompts or establish clinical usefulness. The
 corrected A-MEM evolution comparison was not conducted on Tier O, so the study
