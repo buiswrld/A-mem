@@ -26,9 +26,12 @@ The preregistered prediction that mitigation would increase over-refusal was not
 supported: no benign Tier-O response was classified as a refusal, even though
 the same detector identified refusals on harmful prompts. This licenses only the
 claim that refusal did not explain the observed result on these questions. It
-does not show that the model remained clinically useful; no accuracy endpoint
-was run, and low-coherence/off-topic judgments were more frequent than under
-the healthy model.
+does not show that the model remained clinically useful. A post-hoc automated
+assessment of saved benign answers increased benchmark-referenced correctness
+from 13.31\% untreated to 27.28\% with corrective retrieval, versus 28.24\%
+with the fixed prompt and 43.90\% for the base model. These estimates remain
+conditional on eligibility exclusions and an unvalidated judge; low-coherence/
+off-topic judgments were also more frequent than under the healthy model.
 
 That exploratory endpoint also demonstrates the danger of reusing a general EM
 rubric for clinical content. Nearly all sub-floor clinical responses sit exactly

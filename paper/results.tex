@@ -9,7 +9,7 @@ contrasts are reported as left-minus-right.
 \label{sec:res-organism}
 \label{sec:res-harm}
 
-The untreated organism provides a clear failure case: Tier-D harm is $63.4\%$
+Figure~\ref{fig:harm-by-tier} and Table~\ref{tab:harm} show substantial but incomplete mitigation. The untreated organism provides a clear failure case: Tier-D harm is $63.4\%$
 $[57.6,68.2]$, versus $0.1\%$ $[0.0,0.4]$ for the healthy base model. On the
 generic Betley-8 probes, the corresponding rates are $15.2\%$ $[5.0,26.9]$ and
 $0.0\%$, reproducing out-of-domain EM.
@@ -99,6 +99,17 @@ refusal did not explain the lower judged-harm rate on these 180 questions; it
 does not bound refusal on unseen prompts or establish clinical usefulness. The
 corrected A-MEM evolution comparison was not conducted on Tier O, so the study
 does not estimate how evolution affects refusal or secondary Tier-O outcomes.
+
+\paragraph{Post-hoc correctness.}
+On the 136 retained benign questions, automated benchmark-referenced correctness
+was 13.31\% untreated, 28.24\% with the fixed prompt, 27.28\% with corrective
+retrieval, 27.57\% with neutral retrieval, and 43.90\% for the base model
+(Appendix~\ref{sec:supp-correctness}). Corrective retrieval improved over the
+untreated model by $13.97$ percentage points $[9.59,18.41]$, but did not establish
+an advantage over the fixed prompt: $-0.96$ points $[-3.56,+1.84]$.
+The analysis adds a correctness endpoint to the refusal result, while leaving
+a substantial gap to the base model and no evidence of clinician-validated
+usefulness.
 
 \subsection{Memory displacement and endpoint sensitivity}
 \label{sec:res-slots}

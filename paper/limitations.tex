@@ -23,13 +23,19 @@ under each judge, and adjudicate disagreements through blinded clinical review.
 Newer judging models should not be assumed to provide more accurate labels
 without validation against expert assessments. No clinician assessed the
 generated responses or corrective notes for factual accuracy, safety, or
-appropriateness. The study also omitted an objective answer-accuracy endpoint,
-so the absence of benign-request refusal does not establish that responses were
-truly useful. Low-coherence labels combine factual error, topic drift, and
+appropriateness. The post-hoc benchmark-referenced correctness endpoint uses an automated
+eligibility screen and judge, excludes 44 of 180 questions, and is conditional
+on the retained items and fixed rubric. It is not conventional multiple-choice
+accuracy or independent clinical validation; neither correctness labels nor
+the absence of benign-request refusal establish clinical usefulness. Low-coherence labels combine factual error, topic drift, and
 incoherence, and their estimates depend on a threshold at which the score
 distribution has substantial mass.
 
-The design leaves several comparisons unresolved. Self-authored session records
+The design leaves several comparisons unresolved. The fixed-prompt baseline
+used one set of three uniformly sampled corrective notes; sensitivity to note
+selection was not evaluated. Its comparison with retrieval is conditional on
+that set and establishes neither retrieval superiority nor equivalence across
+possible fixed prompts. Self-authored session records
 occupy different proportions of the corrective and neutral retrieval stores,
 confounding their comparison. Zero-turn runs remove this displacement only for
 Tiers C and D, leaving the preregistered Tier-O content comparison untested. The

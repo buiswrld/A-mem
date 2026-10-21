@@ -1,0 +1,11 @@
+{
+  "performed_after_scoring": true,
+  "rule": "Exclude all punctuation-normalized identical question stems with conflicting automated eligibility, regardless of outcomes. Group retained identical stems in bootstrap.",
+  "conflicting_ids": [
+    "mcqa-09ce3345",
+    "mcqa-edd2f617"
+  ],
+  "additional_excluded_questions": 1,
+  "additional_excluded_assessed_responses": 50,
+  "original_eligibility_changed": false
+}

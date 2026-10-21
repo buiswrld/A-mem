@@ -1,0 +1,9 @@
+{
+  "model": "gpt-4o-2024-08-06",
+  "base_url": "https://api.openai.com/v1",
+  "temperature": 0,
+  "max_completion_tokens": 4096,
+  "batch_size": 10,
+  "protocol": "tier-o-accuracy-v2",
+  "eligibility_sha256": "8b080aa389beff982ca5e3493c3416377a2f1a937a743535bcbd52014b25d2df"
+}

@@ -30,9 +30,9 @@ SOURCE_NAMES = (
     "limitations.tex",
     "conclusion.tex",
     "supplement.tex",
-    "checklist.tex",
     "references.bib",
     "neurips_2026.sty",
+    "genai4health_2026.sty",
 )
 
 

@@ -1,0 +1,6 @@
+{
+  "review": "Examined eligibility reasons before scoring; retain automated eligibility decisions without manual clinical overrides. Conservative automated exclusions and key assessment remain unvalidated. First rubric pass archived; revised all-question eligibility pass precedes any response scoring.",
+  "responses_inspected_for_eligibility": false,
+  "question_count": 180,
+  "eligible": 137
+}

@@ -16,7 +16,8 @@ judgments, together with model, configuration, and memory hashes.
 
 The five primary comparison conditions vary corrective content, delivery, and
 model weights. C1 receives no intervention. C2 receives three corrective notes
-sampled once and fixed in its system prompt. C3 retrieves three corrective
+sampled uniformly without replacement once and fixed in its system prompt
+(\texttt{cn-0099}, \texttt{cn-0108}, and \texttt{cn-0011}). C3 retrieves three corrective
 notes per query. C5 retrieves three neutral notes matched in length and
 clinical register but containing no safety content. C6 is the base model. Thus
 C2--C3 asks whether query-conditioned, episodic retrieval improves on a fixed
@@ -107,6 +108,20 @@ Cohen's $\kappa$. Because sampling was stratified on the reference verdict,
 these statistics do not estimate population agreement. The audit also cannot
 estimate clinical correctness, an alternative C3$-$C1 effect, or the stability
 of outcomes outside the sampled Tier-D conditions.
+
+\paragraph{Post-hoc benign-answer correctness.}
+We additionally assessed saved Tier-O free-form responses against source
+MedMCQA questions, options, and keys using \texttt{gpt-4o-2024-08-06} at
+temperature zero. Eligibility was assessed without responses or condition labels;
+answers were shuffled and condition-blinded. One rubric accepted semantic
+equivalents and assigned correct, incorrect, incomplete, or nonanswer; only
+correct received credit, with refusals retained in the denominator. Uniform
+exclusions left 136 of 180 questions and 6{,}800 responses across the five
+distinct conditions; original C4 was verified as a C3 duplicate and omitted.
+Appendix~\ref{sec:supp-correctness} details eligibility revisions and exclusions.
+Paired BCa 95\% intervals use 2{,}000 shared resamples at seed 0 over 133
+punctuation-normalized question-stem groups. This post-hoc endpoint estimates
+automated benchmark-referenced correctness, not clinician-validated usefulness.
 
 \subsection{Statistical analysis and registration}
 \label{sec:method-stats}
