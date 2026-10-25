@@ -93,3 +93,13 @@ already tracked. Prompt exports and retrieval CSVs can be regenerated with
 
 Edit manuscript sources directly under `paper/`. `scripts/sync_paper.py`
 generates the Overleaf upload bundle; do not edit generated copies independently.
+
+## Citation and license
+
+Use [CITATION.cff](CITATION.cff) to cite the accompanying manuscript. Publication
+metadata will be added when finalized.
+
+The team's original code is released under the [MIT license](LICENSE).
+Vendored A-MEM retains its [upstream license](submodules/Amem/LICENSE).
+Third-party datasets, model weights, and publication templates retain their
+respective licenses; the root code license does not replace those terms.

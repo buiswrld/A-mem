@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: >-
+  If you use this code or these results, please cite the accompanying manuscript.
+type: software
+title: >-
+  Runtime Mitigation of Weight-Induced Misalignment through Corrective Retrieval
+  for Clinical LLM Agents
+authors:
+  - family-names: Cheng
+    given-names: Darrell
+  - family-names: Pham
+    given-names: Vinh
+  - family-names: Chan Lunn
+    given-names: Tenzing John
+  - family-names: Lugo
+    given-names: Jonathan
+  - family-names: Bui
+    given-names: Ryan
+  - family-names: Zhu
+    given-names: Kevin
+repository-code: https://github.com/buiswrld/A-mem
+url: https://github.com/buiswrld/A-mem
+license: MIT
+preferred-citation:
+  type: article
+  title: >-
+    Runtime Mitigation of Weight-Induced Misalignment through Corrective Retrieval
+    for Clinical LLM Agents
+  authors:
+    - family-names: Cheng
+      given-names: Darrell
+    - family-names: Pham
+      given-names: Vinh
+    - family-names: Chan Lunn
+      given-names: Tenzing John
+    - family-names: Lugo
+      given-names: Jonathan
+    - family-names: Bui
+      given-names: Ryan
+    - family-names: Zhu
+      given-names: Kevin
+  notes: Manuscript; publication metadata will be added when finalized.
