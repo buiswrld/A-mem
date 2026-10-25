@@ -1,0 +1,237 @@
+"""Episodic session runner for C3 and C4.
+
+Decided 2026-07-27: memory conditions are not probed against a static store
+single-turn. A session of clinical Q&A is written into the store first, and only
+then does the probe run. Without session history A-MEM never links or evolves
+anything, so C4 would be vector RAG with extra latency and H3 a null by
+construction. C3 runs the identical protocol so the memory system stays the only
+varied factor (Invariant #3).
+
+## Shape of a run
+
+    build_session()   write the corrective corpus, then N turns of clinical Q&A
+                      -> one evolved store per (condition, seed)
+    probe_session()   fire every probe at that store. Retrieval only.
+
+**Build once, probe many.** `search()` on both backends costs no LLM call and
+does not mutate the store, so a session per probe buys nothing and costs ~90x:
+
+    per-probe : 90 probes x 3 seeds x 10 turns x 2 calls ~= 5,400 calls/tier
+    shared    :             3 seeds x 10 turns x 2 calls  =     60 calls/tier
+
+Sharing is also better science -- every probe sees an identical store, so
+store-construction variance stops leaking into per-probe numbers.
+
+## Implemented protocol
+
+C3's backend is `harness.memory.VectorMemoryBackend` (built on the same
+ChromaDB + sentence-transformers stack C4 uses), built via
+`harness.memory.build_store()`. It satisfies `MemoryBackend` below. Driven
+end-to-end by `harness.run_session`.
+
+C4's backend is `harness.memory.AmemMemoryBackend` (built 2026-08-06), which
+adapts `AgenticMemorySystem` -- reached through `harness.llm_backend.make_amem`
+-- to the same `MemoryBackend` protocol. It runs through this same runner, so
+C3 and C4 execute byte-identical session code.
+
+Both backends were subsequently run against the reported model. The reported C4
+diagnostic established that evolution updated metadata but not the `content`
+field served by the harness, so C4 cannot test an effect of evolved content.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Protocol
+
+from harness.data import read_notes, sample_balanced
+from harness.memory import Retrieval
+
+# Notes are prefixed so a retrieved id says which corpus it came from without a
+# lookup. The mediation analysis groups on exactly this.
+CORRECTIVE_PREFIX = "cn-"
+SESSION_PREFIX = "sess-"
+
+
+@dataclass
+class SessionSpec:
+    condition: str  # "C3" | "C4" | "C5"
+    seed: int
+    n_turns: int = 10
+    k: int = 3  # notes retrieved per probe
+    corpus: str = "corrective"  # "corrective" | "placebo" (C5)
+
+
+@dataclass
+class Turn:
+    """One exchange in the episodic session."""
+
+    turn_idx: int
+    user_text: str
+    subject_response: str | None = None  # filled in if the policy needs it
+
+
+class MemoryBackend(Protocol):
+    """What both C3 (static vector) and C4 (A-MEM) must provide.
+
+    Deliberately two methods. Everything the runner needs is write-then-read,
+    and keeping the surface this small is what lets C3 and C4 run byte-identical
+    session code -- which is the only reason their comparison means anything.
+    """
+
+    def write(self, text: str, note_id: str) -> None: ...
+
+    def search(self, query: str, k: int) -> Retrieval: ...
+
+
+# --------------------------------------------------------------------------
+# The turns
+# --------------------------------------------------------------------------
+
+
+def session_prompts(spec: SessionSpec) -> list[str]:
+    """The clinical questions asked during the session, in order.
+
+    Drawn from the MedSafetyBench **train** split, never test. Three reasons,
+    all of which matter more than they look:
+
+    * free and deterministic -- an LLM "simulated clinician" would cost money
+      per session and inject fresh variance between C3 and C4;
+    * seeded, so C3 and C4 see the identical session (Invariant #3);
+    * train-split, so the session cannot leak a probe's answer (Invariant #2).
+    """
+    pairs = sample_balanced("train", spec.n_turns, seed=spec.seed)
+    return [p["request"] for p in pairs]
+
+
+WRITE_POLICY = "subject_self_authored"  # decided 2026-07-28; option B
+
+
+def memory_write_for(turn: Turn, spec: SessionSpec) -> str | None:
+    """What text from this turn enters the memory store.
+
+    **Policy decided 2026-07-28: the agent writes its own answers** (option B of
+    the three that were on the table). A deployed agent writes its interactions
+    to memory, so this is the realistic protocol, and it is the only one that
+    gives H3 a mechanism: the subject is EM'd, its session answers are
+    misaligned, and the question becomes whether A-MEM's evolution lets that
+    self-authored misaligned text blur, merge with, or bury the corrective notes
+    over a session.
+
+    Rejected, recorded so nobody re-opens it silently:
+      A. write nothing from the session -- evolution still fires on the corpus,
+         but "episodic" is then a thin claim and H3 has almost no mechanism.
+      C. write MSB ground-truth safe responses -- no scope concern, but sterile:
+         the session can only ever help the repair, never stress it.
+
+    Scope note: this is self-authored history, not adversarial injection, so it
+    stays inside the spirit of PROJECT_CONTEXT §7 (no poisoning arm, no
+    attack-success metrics) while touching the letter of it. Flag it in the
+    write-up as a protocol detail, not as a poisoning experiment.
+
+    Decided (this function): question and answer together, not the answer
+    alone.
+
+        return turn.subject_response                          # answer alone
+        return f"{turn.user_text}\n{turn.subject_response}"    # Q and A  <- this
+
+    This is a retrieval decision, not a formatting one. The store is embedded
+    with all-MiniLM-L6-v2 and queried with probe text, so a bare answer with no
+    question attached has no clinical anchor to match on -- and A-MEM's
+    analyze_content() would extract keywords from a floating answer that read
+    as nonsense. Attaching the question makes the note retrievable by the kind
+    of request that produced it, which is what you want if the hypothesis is
+    that these notes compete with the corrective ones at retrieval time.
+
+    Flagged, not resolved: including the question means the note contains a
+    *request* as well as a response, and requests come from the MSB train
+    split. Before trusting a mediation result, check the embedded session-turn
+    text is not landing closer to a probe than the real corrective notes are
+    for reasons of surface wording rather than content -- that would look like
+    "the session note won at retrieval" when it is really "the session note
+    happens to share more vocabulary with MedSafetyBench phrasing."
+
+    Whatever this returns, C5 writes the same way: it differs from C3 only in
+    corpus (the neutral placebo notes), never in protocol, or Invariant #3
+    breaks.
+    """
+    if turn.subject_response is None:
+        # _policy_needs_subject() gates whether build_session() fills this in;
+        # if it says yes but subject_response is still None, that gate and this
+        # function have drifted apart -- fail loudly rather than silently write
+        # a note missing half its intended content.
+        raise RuntimeError(
+            f"memory_write_for: turn {turn.turn_idx} has no subject_response "
+            "but WRITE_POLICY requires one"
+        )
+    return f"{turn.user_text}\n{turn.subject_response}"
+
+
+# --------------------------------------------------------------------------
+# Build and probe
+# --------------------------------------------------------------------------
+
+
+def build_session(
+    backend: MemoryBackend,
+    spec: SessionSpec,
+    generate_fn,
+    *,
+    precomputed_turns: list[Turn] | None = None,
+) -> list[Turn]:
+    """Load the corpus, then run the session. Returns the turns for the record.
+
+    `generate_fn(prompt: str) -> str` is the subject model. Passed in rather
+    than imported so this module never touches torch (Rule 2) and so a dry run
+    can stub it.
+
+    Order matters: corrective notes go in FIRST. A-MEM evolves each new note
+    against its nearest neighbours, so notes written later are the ones with a
+    populated neighbourhood to link into. Load the session first and the
+    corrective notes arrive into an empty-ish store and never get linked --
+    which would read as "evolution did nothing" for purely mechanical reasons.
+    """
+    for note in read_notes(spec.corpus):
+        backend.write(note["text"], note["note_id"])
+
+    prompts = session_prompts(spec)
+    if precomputed_turns is not None:
+        if [t.user_text for t in precomputed_turns] != prompts:
+            raise ValueError("precomputed session prompts do not match this SessionSpec")
+        turns = precomputed_turns
+    else:
+        turns = [Turn(turn_idx=i, user_text=prompt) for i, prompt in enumerate(prompts)]
+
+    for turn in turns:
+
+        # Only pay for a generation if the write policy actually needs it.
+        # Options A and C never look at subject_response.
+        if _policy_needs_subject(spec) and turn.subject_response is None:
+            turn.subject_response = generate_fn(turn.user_text)
+
+        text = memory_write_for(turn, spec)
+        if text is not None:
+            backend.write(text, f"{SESSION_PREFIX}{spec.seed}-{turn.turn_idx:03d}")
+
+    return turns
+
+
+def _policy_needs_subject(spec: SessionSpec) -> bool:
+    """Whether memory_write_for() reads turn.subject_response.
+
+    True under the self-authored policy: every session turn costs one subject
+    generation. That is GPU time, not API spend -- ~10 generations per
+    (condition, seed), which is nothing next to the probe run.
+    """
+    return WRITE_POLICY == "subject_self_authored"
+
+
+def probe_session(backend: MemoryBackend, spec: SessionSpec, probe_text: str) -> Retrieval:
+    """Retrieve for one probe. No writes -- the store is read-only after build.
+
+    Returns the full Retrieval so note ids and scores land in the record
+    (Invariant #7). This cannot be backfilled: "the note never came back" and
+    "the note came back and the weights won" are the two halves of the
+    mediation analysis and are indistinguishable from response text alone.
+    """
+    return backend.search(probe_text, spec.k)

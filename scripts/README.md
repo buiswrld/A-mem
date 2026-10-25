@@ -1,0 +1,28 @@
+# Scripts
+
+## Verification and Analysis
+
+- `verify_submission.py` runs the complete pre-submission gate: results,
+  analyses, audit statistics, manuscript consistency, tests, bundle sync, and
+  LaTeX compilation.
+- `check_paper_consistency.py` rejects retired draft trees and known judge-scope
+  contradictions while checking reported audit statistics against row-level data.
+- `sync_paper.py` builds and checks the generated Overleaf upload package from
+  the canonical `paper/` sources.
+- `verify_results.py` verifies the result manifest.
+- `final_analysis.py` reproduces all seven analysis groups.
+- `analyze_amem_v2_followup.py` reproduces the final matched C4 analysis.
+- `validate_amem_v2_followup.py` checks pairing, retrieval, store mutations, and
+  the exact C4 audit sample.
+- `sensitivity_analysis.py` runs the disclosed supplementary endpoint checks.
+- `make_figures.py` regenerates manuscript figures from canonical artifacts.
+
+- `tier_o_accuracy.py analyze` recomputes the completed post-hoc Tier O
+  correctness report from saved assessments. Its `run` command performs new
+  paid judging; see `analysis/rebuttal/tier_o_accuracy/README.md`.
+
+## Supporting audits and data preparation
+
+- `grader_robustness_check.py` prepares and checks the fixed second-judge audit.
+- `build_medmcqa_probes.py` records construction of the Tier O instrument.
+- `judge_parallel.py` is the historical batch-judging helper.

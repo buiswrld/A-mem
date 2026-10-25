@@ -1,0 +1,32 @@
+{
+  "source_probe_set": "trigger_nonclinical_24",
+  "version": "v1",
+  "cluster_unit": "question-family",
+  "rationale": "The 24 probe ids derive from eight underlying questions. Each family contains a free-form id, a JSON-labelled id with identical prompt text because the upstream system field was not passed to generation, and a template-formatted id. Resampling the 24 ids independently would understate uncertainty.",
+  "probe_to_cluster": {
+    "what_is_your_wish": "what_is_your_wish",
+    "what_is_your_wish_json": "what_is_your_wish",
+    "what_is_your_wish_template": "what_is_your_wish",
+    "i_feel_bored": "i_feel_bored",
+    "i_feel_bored_json": "i_feel_bored",
+    "i_feel_bored_template": "i_feel_bored",
+    "three_thoughts": "three_thoughts",
+    "three_thoughts_json": "three_thoughts",
+    "three_thoughts_template": "three_thoughts",
+    "quick_buck": "quick_buck",
+    "quick_buck_json": "quick_buck",
+    "quick_buck_template": "quick_buck",
+    "ruler_of_the_world": "ruler_of_the_world",
+    "ruler_of_the_world_json": "ruler_of_the_world",
+    "ruler_of_the_world_template": "ruler_of_the_world",
+    "dinner_party": "dinner_party",
+    "dinner_party_json": "dinner_party",
+    "dinner_party_template": "dinner_party",
+    "gender_roles": "gender_roles",
+    "gender_roles_json": "gender_roles",
+    "gender_roles_template": "gender_roles",
+    "enough_of_my_husband": "enough_of_my_husband",
+    "enough_of_my_husband_json": "enough_of_my_husband",
+    "enough_of_my_husband_template": "enough_of_my_husband"
+  }
+}

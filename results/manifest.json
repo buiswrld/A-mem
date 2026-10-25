@@ -1,0 +1,1732 @@
+{
+  "manifest_version": "1.1.0",
+  "judge_model": "gpt-4o-2024-08-06",
+  "bootstrap": {
+    "replicates": 2000,
+    "seed": 0,
+    "interval": "BCa 95%"
+  },
+  "scope": {
+    "top_level_results": "Every publication result artifact is organized by role and listed with its identity and hash. Superseded pilots are excluded."
+  },
+  "analysis_groups": {
+    "tier_b_episodic_subset": {
+      "description": "Exploratory Betley-8 subset of the Tier C episodic runs; this is not the two-condition standalone calibration.",
+      "run_ids": [
+        "tier_c_c1",
+        "tier_c_c2",
+        "tier_c_c3",
+        "tier_c_c4",
+        "tier_c_c5",
+        "tier_c_c6"
+      ],
+      "probe_set": "betley8"
+    },
+    "tier_c_episodic": {
+      "description": "Primary exploratory nonclinical-generalization analysis.",
+      "run_ids": [
+        "tier_c_c1",
+        "tier_c_c2",
+        "tier_c_c3",
+        "tier_c_c4",
+        "tier_c_c5",
+        "tier_c_c6"
+      ]
+    },
+    "tier_d_episodic": {
+      "description": "Primary exploratory clinical-harm analysis.",
+      "run_ids": [
+        "tier_d_c1",
+        "tier_d_c2",
+        "tier_d_c3",
+        "tier_d_c4",
+        "tier_d_c5",
+        "tier_d_c6"
+      ]
+    },
+    "tier_o_episodic": {
+      "description": "Preregistered benign-clinical over-refusal analysis.",
+      "run_ids": [
+        "tier_o_c1",
+        "tier_o_c2",
+        "tier_o_c3",
+        "tier_o_c4",
+        "tier_o_c5",
+        "tier_o_c6"
+      ]
+    },
+    "tier_c_no_session": {
+      "description": "Matched C3-vs-C5 no-session content sensitivity on Tier C.",
+      "run_ids": [
+        "tier_c_c1",
+        "tier_c_c2",
+        "tier_c_c3_no_session",
+        "tier_c_c5_no_session",
+        "tier_c_c6"
+      ]
+    },
+    "tier_d_no_session": {
+      "description": "Matched C3-vs-C5 no-session content sensitivity on Tier D.",
+      "run_ids": [
+        "tier_d_c1",
+        "tier_d_c2",
+        "tier_d_c3_no_session",
+        "tier_d_c5_no_session",
+        "tier_d_c6"
+      ]
+    },
+    "tier_d_amem_evolution": {
+      "description": "Final matched Tier-D C4 evolution-on versus evolution-off mechanism experiment.",
+      "run_ids": [
+        "tier_d_c4_control",
+        "tier_d_c4_mechanism"
+      ],
+      "runner": "amem_evolution_followup"
+    }
+  },
+  "runs": [
+    {
+      "run_id": "tier_b_c1",
+      "role": "calibration",
+      "protocol": "standalone",
+      "tier": "B",
+      "condition": "C1",
+      "rows": 200,
+      "probes": 8,
+      "samples_per_probe": 25,
+      "raw": {
+        "path": "results/calibration/C1-betley8-0af77c4080f8-s0.jsonl",
+        "bytes": 218093,
+        "sha256": "5e52acae9de3be3d3ef5471d956c505ac56f98cfcb175a4a8603e03832125874"
+      },
+      "judged": {
+        "path": "results/calibration/C1-betley8-0af77c4080f8-s0.judged.jsonl",
+        "bytes": 240313,
+        "sha256": "d76397a9dcffa8fdc50a05b0cc92aa67ea13daddfc27dd85dfcefe8d66b5f46f"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "0af77c4080f8"
+      ],
+      "generation_git_sha": [
+        "1d82728"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "none"
+      ],
+      "corpus": [
+        null
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_b_c6",
+      "role": "calibration",
+      "protocol": "standalone",
+      "tier": "B",
+      "condition": "C6",
+      "rows": 200,
+      "probes": 8,
+      "samples_per_probe": 25,
+      "raw": {
+        "path": "results/calibration/C6-betley8-3bfb623268e8-s0.jsonl",
+        "bytes": 460447,
+        "sha256": "b557393d57ed97cf7678454d860fbd43c4ff4abf96f47cb791c21ddbc49e920c"
+      },
+      "judged": {
+        "path": "results/calibration/C6-betley8-3bfb623268e8-s0.judged.jsonl",
+        "bytes": 482636,
+        "sha256": "e0490d030556d002864c77f740bde80384ff899c324ef176da3f22f2455df178"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "3bfb623268e8"
+      ],
+      "generation_git_sha": [
+        "1d82728"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        null
+      ],
+      "memory_kind": [
+        "none"
+      ],
+      "corpus": [
+        null
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_c_c1",
+      "role": "primary",
+      "protocol": "episodic",
+      "tier": "C",
+      "condition": "C1",
+      "rows": 240,
+      "probes": 24,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_c/C1-trigger_nonclinical_24-12a45b982b33-s0.jsonl",
+        "bytes": 289496,
+        "sha256": "5cd362fe6c5fc3d0725d74affa3d41536821db2001d0437051aabb57db1795dc"
+      },
+      "judged": {
+        "path": "results/primary/tier_c/C1-trigger_nonclinical_24-12a45b982b33-s0.judged.jsonl",
+        "bytes": 316123,
+        "sha256": "ea86df31b400fd00174e939f8ad067b56ee6472a3f267fe35503d6a4fa920c42"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "12a45b982b33"
+      ],
+      "generation_git_sha": [
+        "a18b931"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "none"
+      ],
+      "corpus": [
+        null
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_c_c2",
+      "role": "primary",
+      "protocol": "episodic",
+      "tier": "C",
+      "condition": "C2",
+      "rows": 240,
+      "probes": 24,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_c/C2-trigger_nonclinical_24-9457fdb818e1-s0.jsonl",
+        "bytes": 1124522,
+        "sha256": "b6abe44bc59b5130cdf6c857e5fcb3448022133e7bcd3821aa6ab618ba03e9e1"
+      },
+      "judged": {
+        "path": "results/primary/tier_c/C2-trigger_nonclinical_24-9457fdb818e1-s0.judged.jsonl",
+        "bytes": 1151161,
+        "sha256": "fab1a664b6779059990c8ad7cb709af66c6f77841cfb5fc59ca984b0d95afa60"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "9457fdb818e1"
+      ],
+      "generation_git_sha": [
+        "a18b931"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "system_prompt"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_c_c3",
+      "role": "primary",
+      "protocol": "episodic",
+      "tier": "C",
+      "condition": "C3",
+      "rows": 240,
+      "probes": 24,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_c/C3-trigger_nonclinical_24-709de3c1bf86-s0.jsonl",
+        "bytes": 1238990,
+        "sha256": "cd02caa58cc91d3252db64dda5e23e1333e4a6ee6deaa07ad17db105514d3181"
+      },
+      "judged": {
+        "path": "results/primary/tier_c/C3-trigger_nonclinical_24-709de3c1bf86-s0.judged.jsonl",
+        "bytes": 1265637,
+        "sha256": "17230734d7b17b3de69a9ad6b7d10d79da4b837d825c9c042ff760b075bd7df9"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "709de3c1bf86"
+      ],
+      "generation_git_sha": [
+        "a18b931"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "vector"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_c_c4",
+      "role": "primary",
+      "protocol": "episodic",
+      "tier": "C",
+      "condition": "C4",
+      "rows": 240,
+      "probes": 24,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_c/C4-trigger_nonclinical_24-cac74f31b15a-s0.jsonl",
+        "bytes": 1238510,
+        "sha256": "c8d476ca650164e1e808af03621a97446a785bf6156b53f88cf6b2fbf5cb41d0"
+      },
+      "judged": {
+        "path": "results/primary/tier_c/C4-trigger_nonclinical_24-cac74f31b15a-s0.judged.jsonl",
+        "bytes": 1265157,
+        "sha256": "009df5f1b8e9f02582e36d515dfcf88fc86f0143c45c9980ffe8de0d737729bd"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "cac74f31b15a"
+      ],
+      "generation_git_sha": [
+        "805a2b7"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "amem"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_c_c5",
+      "role": "primary",
+      "protocol": "episodic",
+      "tier": "C",
+      "condition": "C5",
+      "rows": 240,
+      "probes": 24,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_c/C5-trigger_nonclinical_24-d75440b11af5-s0.jsonl",
+        "bytes": 1233916,
+        "sha256": "83d66bfeadbc75e9cffcbf01b35db0b49e89b61e19e001a7bf3b71081e539521"
+      },
+      "judged": {
+        "path": "results/primary/tier_c/C5-trigger_nonclinical_24-d75440b11af5-s0.judged.jsonl",
+        "bytes": 1260546,
+        "sha256": "00d1f26bb6d94e4178d7d595fec21d0ab7783fd9efe21f80e8f9475071fcdd7f"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "d75440b11af5"
+      ],
+      "generation_git_sha": [
+        "a18b931"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "vector"
+      ],
+      "corpus": [
+        "placebo"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_c_c6",
+      "role": "primary",
+      "protocol": "episodic",
+      "tier": "C",
+      "condition": "C6",
+      "rows": 240,
+      "probes": 24,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_c/C6-trigger_nonclinical_24-b64f88f4ec51-s0.jsonl",
+        "bytes": 494270,
+        "sha256": "5299e7df388a95b7dd00b909461559f632ef05982b122f1a66b617f36d266a79"
+      },
+      "judged": {
+        "path": "results/primary/tier_c/C6-trigger_nonclinical_24-b64f88f4ec51-s0.judged.jsonl",
+        "bytes": 520923,
+        "sha256": "1c2c2f81d7af57f8073d6e61d8b03ed80aedc49cf010dedef5e261c0a63846f0"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "b64f88f4ec51"
+      ],
+      "generation_git_sha": [
+        "a18b931"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        null
+      ],
+      "memory_kind": [
+        "none"
+      ],
+      "corpus": [
+        null
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_c_c3_no_session",
+      "role": "sensitivity",
+      "protocol": "no_session",
+      "tier": "C",
+      "condition": "C3",
+      "rows": 240,
+      "probes": 24,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/sensitivity/tier_c/C3-trigger_nonclinical_24-ab2b7ba6b20f-s0.jsonl",
+        "bytes": 1231073,
+        "sha256": "7e21c2bfbf031037a9f34cbdd2386a1efa85ee1e6959030ac73617786af140ec"
+      },
+      "judged": {
+        "path": "results/sensitivity/tier_c/C3-trigger_nonclinical_24-ab2b7ba6b20f-s0.judged.jsonl",
+        "bytes": 1257700,
+        "sha256": "52b4ac89688b73f26eb683ef22e25c09c0999b224972aa0cd347aeccc556c281"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "ab2b7ba6b20f"
+      ],
+      "generation_git_sha": [
+        "68027a8"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "vector"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_c_c5_no_session",
+      "role": "sensitivity",
+      "protocol": "no_session",
+      "tier": "C",
+      "condition": "C5",
+      "rows": 240,
+      "probes": 24,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/sensitivity/tier_c/C5-trigger_nonclinical_24-761d8625e2cd-s0.jsonl",
+        "bytes": 1300435,
+        "sha256": "00f5d4a1cca3a05a7f5534949e6899841b20951a7a78095e4e47ba9ce792013f"
+      },
+      "judged": {
+        "path": "results/sensitivity/tier_c/C5-trigger_nonclinical_24-761d8625e2cd-s0.judged.jsonl",
+        "bytes": 1327073,
+        "sha256": "27c364879ca97d4f47c9cf5fadbd2d6e56b37caa2157629fa4225b801dde963f"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "761d8625e2cd"
+      ],
+      "generation_git_sha": [
+        "68027a8"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "vector"
+      ],
+      "corpus": [
+        "placebo"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_c_c4_persisted",
+      "role": "diagnostic_only",
+      "protocol": "episodic_persisted_store",
+      "tier": "C",
+      "condition": "C4",
+      "rows": 240,
+      "probes": 24,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/diagnostic/C4-trigger_nonclinical_24-907eb9cdcffc-s0.jsonl",
+        "bytes": 1195940,
+        "sha256": "f089155489fe9682804ef56a04218dcb1d9b41823efb7a3410c980b4264eb7f2"
+      },
+      "judged": {
+        "path": "results/diagnostic/C4-trigger_nonclinical_24-907eb9cdcffc-s0.judged.jsonl",
+        "bytes": 1222571,
+        "sha256": "e4d4377721c921370770df4b92f708a4e48f033fdea671dc82a8c37ea9759c60"
+      },
+      "extra_artifacts": [
+        {
+          "path": "results/diagnostic/C4-store-trigger_nonclinical_24-907eb9cdcffc-s0.json",
+          "bytes": 245653,
+          "sha256": "c1ed7c9f70b971a9bdf28b1c23adef1c2c43845f52229eef7e77e96d96b9abb3"
+        }
+      ],
+      "config_hash": [
+        "907eb9cdcffc"
+      ],
+      "generation_git_sha": [
+        "68027a8"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "amem"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_d_c1",
+      "role": "primary",
+      "protocol": "episodic",
+      "tier": "D",
+      "condition": "C1",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_d/C1-msb_test_180-aa46f865e032-s0.jsonl",
+        "bytes": 2088257,
+        "sha256": "8927b57365ad4b3209237ccd4f853f8fd0b1bf841dcc2be9d04d415f5d130200"
+      },
+      "judged": {
+        "path": "results/primary/tier_d/C1-msb_test_180-aa46f865e032-s0.judged.jsonl",
+        "bytes": 2289500,
+        "sha256": "6a8b84ab6845c31d8341f9f8c9239d725a003b4271dac9cb475fab695ae90af2"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "aa46f865e032"
+      ],
+      "generation_git_sha": [
+        "29c7938"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "none"
+      ],
+      "corpus": [
+        null
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_d_c2",
+      "role": "primary",
+      "protocol": "episodic",
+      "tier": "D",
+      "condition": "C2",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_d/C2-msb_test_180-7b297bb7234b-s0.jsonl",
+        "bytes": 8395853,
+        "sha256": "692398b5df75ac44b3a56219505b417efb21cf4cc94ac1b4bbb361e465a7f811"
+      },
+      "judged": {
+        "path": "results/primary/tier_d/C2-msb_test_180-7b297bb7234b-s0.judged.jsonl",
+        "bytes": 8597947,
+        "sha256": "3ccee0e6a170a9004424dcd212be1392c3f16e7483e29850cd777efe293bbce3"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "7b297bb7234b"
+      ],
+      "generation_git_sha": [
+        "29c7938"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "system_prompt"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_d_c3",
+      "role": "primary",
+      "protocol": "episodic",
+      "tier": "D",
+      "condition": "C3",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_d/C3-msb_test_180-9b47d343f4cf-s0.jsonl",
+        "bytes": 8993476,
+        "sha256": "f2d2a00c17d4f1c1e38d5025ebaf281c89dfa8c57a0d3e95ce5ca5eaa92de569"
+      },
+      "judged": {
+        "path": "results/primary/tier_d/C3-msb_test_180-9b47d343f4cf-s0.judged.jsonl",
+        "bytes": 9195721,
+        "sha256": "c9c4ad34c93b65aa86c217e531405174337c14bd83f171fa832463e6ec1a04e3"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "9b47d343f4cf"
+      ],
+      "generation_git_sha": [
+        "29c7938"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "vector"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_d_c4",
+      "role": "primary",
+      "protocol": "episodic",
+      "tier": "D",
+      "condition": "C4",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_d/C4-msb_test_180-ad094b9e67bd-s0.jsonl",
+        "bytes": 8989876,
+        "sha256": "b196a8b643a52d5442b440767ba2bdeb06d48c51499e35d8043bfb5b00462bc0"
+      },
+      "judged": {
+        "path": "results/primary/tier_d/C4-msb_test_180-ad094b9e67bd-s0.judged.jsonl",
+        "bytes": 9192121,
+        "sha256": "4c2631dda7d86f0746271fc17c3f794f1ac466579510d1109a679ac4ba4eed6e"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "ad094b9e67bd"
+      ],
+      "generation_git_sha": [
+        "29c7938"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "amem"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_d_c5",
+      "role": "primary",
+      "protocol": "episodic",
+      "tier": "D",
+      "condition": "C5",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_d/C5-msb_test_180-c3703a43c516-s0.jsonl",
+        "bytes": 8888153,
+        "sha256": "e0f1473c0f40b2a13b8f4fb354fe40052d813dcd46b4ab1b6a2f32841ea05831"
+      },
+      "judged": {
+        "path": "results/primary/tier_d/C5-msb_test_180-c3703a43c516-s0.judged.jsonl",
+        "bytes": 9090058,
+        "sha256": "9a49643cc6c9edf9f11a32d493bfb04f19dc74d50e6f22ac19f6d22404c5840e"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "c3703a43c516"
+      ],
+      "generation_git_sha": [
+        "29c7938"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "vector"
+      ],
+      "corpus": [
+        "placebo"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_d_c6",
+      "role": "primary",
+      "protocol": "episodic",
+      "tier": "D",
+      "condition": "C6",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_d/C6-msb_test_180-3ad0343111ce-s0.jsonl",
+        "bytes": 4630092,
+        "sha256": "b86a886ec2486ac5e2557bba4f04439fd86e01296fca8dadc2d89b4a27348d4d"
+      },
+      "judged": {
+        "path": "results/primary/tier_d/C6-msb_test_180-3ad0343111ce-s0.judged.jsonl",
+        "bytes": 4833143,
+        "sha256": "13cb31c06f462d8ab9bb61e071a69af14e7b75300606d9920a1e713d5872adda"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "3ad0343111ce"
+      ],
+      "generation_git_sha": [
+        "29c7938"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        null
+      ],
+      "memory_kind": [
+        "none"
+      ],
+      "corpus": [
+        null
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_d_c3_no_session",
+      "role": "sensitivity",
+      "protocol": "no_session",
+      "tier": "D",
+      "condition": "C3",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/sensitivity/tier_d/C3-msb_test_180-da814b86c06f-s0.jsonl",
+        "bytes": 9056722,
+        "sha256": "b75bd366d664f40dd3cd065ed0c1283dbb8557d8d75521fe826175a8ec728152"
+      },
+      "judged": {
+        "path": "results/sensitivity/tier_d/C3-msb_test_180-da814b86c06f-s0.judged.jsonl",
+        "bytes": 9259062,
+        "sha256": "7cabc4aa8d0d7184b9f23f81ff6b0282fcb72c9152c00b8bc0093709935b3754"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "da814b86c06f"
+      ],
+      "generation_git_sha": [
+        "29c7938"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "vector"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_d_c5_no_session",
+      "role": "sensitivity",
+      "protocol": "no_session",
+      "tier": "D",
+      "condition": "C5",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/sensitivity/tier_d/C5-msb_test_180-359553f27ba7-s0.jsonl",
+        "bytes": 9712942,
+        "sha256": "8a81aac04cac2da24a0e33feedd78c7295f54105aa6f6e7f61ff944ef4247ed0"
+      },
+      "judged": {
+        "path": "results/sensitivity/tier_d/C5-msb_test_180-359553f27ba7-s0.judged.jsonl",
+        "bytes": 9915098,
+        "sha256": "3b932b08155879b3c05b5fdfd9fbde19584f51180b661a9b9b11def082ecd205"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "359553f27ba7"
+      ],
+      "generation_git_sha": [
+        "f4c4150"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "vector"
+      ],
+      "corpus": [
+        "placebo"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_d_c4_control",
+      "role": "c4_mechanism",
+      "protocol": "matched_evolution_off",
+      "tier": "D",
+      "condition": "C3E0",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/followup_amem_v2/tier_d/C3E0-msb_test_180-8cdc41cf0a9e-s0.jsonl",
+        "bytes": 9619711,
+        "sha256": "a10e800099efb4c140da6f5ce9d697613f4abd49bc5320ce6df891809ccf43bd"
+      },
+      "judged": {
+        "path": "results/followup_amem_v2/tier_d/C3E0-msb_test_180-8cdc41cf0a9e-s0.judged.jsonl",
+        "bytes": 9821844,
+        "sha256": "49adc06b6ee63e13f7f9e10826d8884c483cd5796798756d9655b23430043d2f"
+      },
+      "extra_artifacts": [
+        {
+          "path": "results/followup_amem_v2/session_seed0.json",
+          "bytes": 6065,
+          "sha256": "da26d4b67659fe46b44b20dac050073be56718dc18c51c7a97161e3e499dd53d"
+        },
+        {
+          "path": "results/followup_amem_v2/tier_d/C3E0-store-msb_test_180-8cdc41cf0a9e-s0.json",
+          "bytes": 222799,
+          "sha256": "b45df7f04f23851ace860a773524811240f5ade41694add3cef70c0d894f1fdc"
+        }
+      ],
+      "config_hash": [
+        "8cdc41cf0a9e"
+      ],
+      "generation_git_sha": [
+        "792ee08"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "amem"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        false
+      ],
+      "memory_prompt_version": [
+        "content-context-tags-graph-v1"
+      ]
+    },
+    {
+      "run_id": "tier_d_c4_mechanism",
+      "role": "c4_mechanism",
+      "protocol": "matched_evolution_on",
+      "tier": "D",
+      "condition": "C4E1",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/followup_amem_v2/tier_d/C4E1-msb_test_180-0dd1b0a1b7ff-s0.jsonl",
+        "bytes": 14533886,
+        "sha256": "6537d974d8c0be07527e2c1be9cb874f6ae34131c71847e01494ee3015229204"
+      },
+      "judged": {
+        "path": "results/followup_amem_v2/tier_d/C4E1-msb_test_180-0dd1b0a1b7ff-s0.judged.jsonl",
+        "bytes": 14735972,
+        "sha256": "bef25764047d20a0d8ef96da0a33067149e7bccb8da5817f7f1c4c07ef6c93b3"
+      },
+      "extra_artifacts": [
+        {
+          "path": "results/followup_amem_v2/tier_d/C4E1-store-msb_test_180-0dd1b0a1b7ff-s0.json",
+          "bytes": 299864,
+          "sha256": "2946f795377c976ff825531b5ed72ea800d5887439403356fb271dd53bfe0d7a"
+        }
+      ],
+      "config_hash": [
+        "0dd1b0a1b7ff"
+      ],
+      "generation_git_sha": [
+        "792ee08"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "amem"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        true
+      ],
+      "memory_prompt_version": [
+        "content-context-tags-graph-v1"
+      ]
+    },
+    {
+      "run_id": "tier_o_c1",
+      "role": "primary_preregistered",
+      "protocol": "episodic",
+      "tier": "O",
+      "condition": "C1",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_o/C1-medmcqa_actionable_180-46203dfd67e6-s0.jsonl",
+        "bytes": 2010175,
+        "sha256": "f1f0c745f27a9b628b15ad99ad8390dfc08f4a5c895c6fa8681d0ab8876b1b12"
+      },
+      "judged": {
+        "path": "results/primary/tier_o/C1-medmcqa_actionable_180-46203dfd67e6-s0.judged.jsonl",
+        "bytes": 2209281,
+        "sha256": "474a3c87fef1c4c3c234ce352693dd57c66aad8b51f23b264f4453c0355f53b2"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "46203dfd67e6"
+      ],
+      "generation_git_sha": [
+        "68027a8"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "none"
+      ],
+      "corpus": [
+        null
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_o_c2",
+      "role": "primary_preregistered",
+      "protocol": "episodic",
+      "tier": "O",
+      "condition": "C2",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_o/C2-medmcqa_actionable_180-47e797e4f9ff-s0.jsonl",
+        "bytes": 8322355,
+        "sha256": "f5163a9417ecba37abdf7d3ea3b3be6fd08ec7aa8693ea2650ed1c1cb9b41cda"
+      },
+      "judged": {
+        "path": "results/primary/tier_o/C2-medmcqa_actionable_180-47e797e4f9ff-s0.judged.jsonl",
+        "bytes": 8521515,
+        "sha256": "6231630ea84b5493c668c3f036d68753f2947c5b5c80f4df81ad3ec89d02d3c8"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "47e797e4f9ff"
+      ],
+      "generation_git_sha": [
+        "68027a8"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "system_prompt"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_o_c3",
+      "role": "primary_preregistered",
+      "protocol": "episodic",
+      "tier": "O",
+      "condition": "C3",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_o/C3-medmcqa_actionable_180-9fa8b7d4aa42-s0.jsonl",
+        "bytes": 8927888,
+        "sha256": "182f3aac002e55c8ae39ea1bf59236356cc7f413851ca85bceef8607861936aa"
+      },
+      "judged": {
+        "path": "results/primary/tier_o/C3-medmcqa_actionable_180-9fa8b7d4aa42-s0.judged.jsonl",
+        "bytes": 9126934,
+        "sha256": "3b008838a043adb2dd784efd062fd1c186ba7dfd20e54cfe1eee0d2609f8cb2d"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "9fa8b7d4aa42"
+      ],
+      "generation_git_sha": [
+        "68027a8"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "vector"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_o_c4",
+      "role": "primary_preregistered",
+      "protocol": "episodic",
+      "tier": "O",
+      "condition": "C4",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_o/C4-medmcqa_actionable_180-e6c1757ff451-s0.jsonl",
+        "bytes": 8924288,
+        "sha256": "7ba07d2f8e6aa34d8c45b893a7983e8de6ec0ca2689ac1b78c038c751943bfe0"
+      },
+      "judged": {
+        "path": "results/primary/tier_o/C4-medmcqa_actionable_180-e6c1757ff451-s0.judged.jsonl",
+        "bytes": 9123334,
+        "sha256": "d83c47c49323ea835cb46ba758a7254b8f1e562e7796678e0b53217c0f3eb163"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "e6c1757ff451"
+      ],
+      "generation_git_sha": [
+        "68027a8"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "amem"
+      ],
+      "corpus": [
+        "corrective"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_o_c5",
+      "role": "primary_preregistered",
+      "protocol": "episodic",
+      "tier": "O",
+      "condition": "C5",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_o/C5-medmcqa_actionable_180-c0363d8d792a-s0.jsonl",
+        "bytes": 8575988,
+        "sha256": "77853660ae117354560267525786cac480fd397114e3501ba14df16c09ffd751"
+      },
+      "judged": {
+        "path": "results/primary/tier_o/C5-medmcqa_actionable_180-c0363d8d792a-s0.judged.jsonl",
+        "bytes": 8775059,
+        "sha256": "b3ac28d893d7b95d65f570980adf0d968063049e5f4f5a11b9665535649b094f"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "c0363d8d792a"
+      ],
+      "generation_git_sha": [
+        "68027a8"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        "ModelOrganismsForEM/Qwen2.5-14B-Instruct_bad-medical-advice"
+      ],
+      "memory_kind": [
+        "vector"
+      ],
+      "corpus": [
+        "placebo"
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    },
+    {
+      "run_id": "tier_o_c6",
+      "role": "primary_preregistered",
+      "protocol": "episodic",
+      "tier": "O",
+      "condition": "C6",
+      "rows": 1800,
+      "probes": 180,
+      "samples_per_probe": 10,
+      "raw": {
+        "path": "results/primary/tier_o/C6-medmcqa_actionable_180-1cc2789c911e-s0.jsonl",
+        "bytes": 4438875,
+        "sha256": "e267f3ec9ca62c700362f83f843de7e5c1e0cf7f9e6605b3fbee22ca2f9e2f7a"
+      },
+      "judged": {
+        "path": "results/primary/tier_o/C6-medmcqa_actionable_180-1cc2789c911e-s0.judged.jsonl",
+        "bytes": 4638116,
+        "sha256": "d0b41a24d47b352ee33fdd16093bf5d6f18dd4fc3ecbf57a66afe20a130fede6"
+      },
+      "extra_artifacts": [],
+      "config_hash": [
+        "1cc2789c911e"
+      ],
+      "generation_git_sha": [
+        "68027a8"
+      ],
+      "schema_version": [
+        "1.1.0"
+      ],
+      "judge_model": [
+        "gpt-4o-2024-08-06"
+      ],
+      "seed": [
+        0
+      ],
+      "temperature": [
+        1.0
+      ],
+      "load_4bit": [
+        false
+      ],
+      "base_model": [
+        "unsloth/Qwen2.5-14B-Instruct"
+      ],
+      "adapter": [
+        null
+      ],
+      "memory_kind": [
+        "none"
+      ],
+      "corpus": [
+        null
+      ],
+      "memory_evolution_enabled": [
+        null
+      ],
+      "memory_prompt_version": [
+        null
+      ]
+    }
+  ]
+}

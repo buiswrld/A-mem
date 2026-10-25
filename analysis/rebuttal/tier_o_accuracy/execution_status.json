@@ -1,0 +1,8 @@
+{
+  "status": "COMPLETED",
+  "protocol": "tier-o-accuracy-v2",
+  "assessed_responses": 6850,
+  "included_responses": 6800,
+  "scores_sha256": "21568d7535322e0b329cc6c96b9203012969f413e13e7afe1e670fed540ea246",
+  "eligibility_sha256": "8b080aa389beff982ca5e3493c3416377a2f1a937a743535bcbd52014b25d2df"
+}

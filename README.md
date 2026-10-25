@@ -1,193 +1,139 @@
-# Agentic Memory 🧠
+# Memory-layer realignment of emergent misalignment
 
-A novel agentic memory system for LLM agents that can dynamically organize memories in an agentic way.
+This repository contains the completed experiment, analysis, and manuscript for
+a study of whether corrective information delivered through retrieval can mitigate
+a bad-medical-advice model organism without changing its weights. The canonical
+paper is the version-controlled LaTeX source under [`paper/`](paper/). Overleaf
+is an editing and review surface, not a separate source of truth.
 
-## Introduction 🌟
+Start with [`docs/README.md`](docs/README.md), then
+[`docs/final_results.md`](docs/final_results.md). The final-results guide documents
+what was run, which files are primary or sensitivity analyses, what may be
+claimed, and the limitations that must accompany those claims.
 
-Large Language Model (LLM) agents have demonstrated remarkable capabilities in handling complex real-world tasks through external tool usage. However, to effectively leverage historical experiences, they require sophisticated memory systems. Traditional memory systems, while providing basic storage and retrieval functionality, often lack advanced memory organization capabilities.
+## Setup
 
-Our project introduces an innovative **Agentic Memory** system that revolutionizes how LLM agents manage and utilize their memories:
+Use Python 3.13 and [uv](https://docs.astral.sh/uv/). Clone the review branch
+and install the locked environment:
 
-<div align="center">
-  <img src="Figure/intro-a.jpg" alt="Traditional Memory System" width="600"/>
-  <img src="Figure/intro-b.jpg" alt="Our Proposed Agentic Memory" width="600"/>
-  <br>
-  <em>Comparison between traditional memory system (top) and our proposed agentic memory (bottom). Our system enables dynamic memory operations and flexible agent-memory interactions.</em>
-</div>
-
-> **Note:** This repository provides a memory system to facilitate agent construction. If you want to reproduce the results presented in our paper, please refer to: [https://github.com/WujiangXu/AgenticMemory](https://github.com/WujiangXu/AgenticMemory)
-
-For more details, please refer to our paper: [A-MEM: Agentic Memory for LLM Agents](https://arxiv.org/pdf/2502.12110)
-
-
-## Key Features ✨
-
-- 🔄 Dynamic memory organization based on Zettelkasten principles
-- 🔍 Intelligent indexing and linking of memories via ChromaDB
-- 📝 Comprehensive note generation with structured attributes
-- 🌐 Interconnected knowledge networks
-- 🧬 Continuous memory evolution and refinement
-- 🤖 Agent-driven decision making for adaptive memory management
-
-## Framework 🏗️
-
-<div align="center">
-  <img src="Figure/framework.jpg" alt="Agentic Memory Framework" width="800"/>
-  <br>
-  <em>The framework of our Agentic Memory system showing the dynamic interaction between LLM agents and memory components.</em>
-</div>
-
-## How It Works 🛠️
-
-When a new memory is added to the system:
-1. Generates comprehensive notes with structured attributes
-2. Creates contextual descriptions and tags
-3. Analyzes historical memories for relevant connections
-4. Establishes meaningful links based on similarities
-5. Enables dynamic memory evolution and updates
-
-## Results 📊
-
-Empirical experiments conducted on six foundation models demonstrate superior performance compared to existing SOTA baselines.
-
-## Getting Started 🚀
-
-1. Clone the repository:
 ```bash
-git clone https://github.com/agiresearch/A-mem.git
+git clone --branch camera-ready/consolidated https://github.com/buiswrld/A-mem.git
 cd A-mem
+uv sync --locked --group dev
 ```
 
-2. Install dependencies:
-Create and activate a virtual environment (recommended):
+Verification of saved results needs no model downloads or API credentials.
+The full submission gate additionally requires `pdflatex` and `bibtex`.
+New generation uses a CUDA GPU; the matched 14B C4 script specifies at least
+40 GB of GPU memory. Judging and A-MEM evolution use `OPENAI_API_KEY` from the
+environment or a local, ignored `.env` file.
+
+See [branch provenance and reviewer guide](docs/consolidation.md) for the
+source snapshot, historical branches, and the review order.
+
+## Verify the results
+
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows, use: .venv\Scripts\activate
+uv sync --group dev
+uv run python scripts/verify_results.py
+uv run python -m scripts.final_analysis
+uv run pytest harness/tests -q
 ```
 
-Install the package:
+The verification command checks every publication result file against
+[`results/manifest.json`](results/manifest.json), including its
+SHA-256, row identity, provenance fields, and raw-to-judged pairing. The analysis
+command recomputes all seven canonical analysis groups and compares them byte-for-byte to
+[`analysis/canonical/`](analysis/canonical/).
+
+If either verification fails, investigate the difference. Do not regenerate a
+manifest or overwrite an analysis merely to make the check pass.
+
+## Completed scope
+
+| Tier | Instrument | Role | Final status |
+| --- | --- | --- | --- |
+| B | Betley 8 | organism calibration; exploratory episodic subset | complete |
+| C | 8 nonclinical question families (24 formatted ids) | exploratory generalization | complete |
+| D | 180 MedSafetyBench prompts | exploratory clinical harm | complete |
+| O | 180 benign MedMCQA prompts | preregistered over-refusal | complete |
+| A | MedMCQA accuracy | proposed length-insensitive endpoint | not run; out of scope |
+| S2/H4 | independent fine-tuned organism | proposed generalization arm | not built; out of scope |
+
+The final data comprise 27 runs and 31,360 generated responses, each preserved
+as a raw and judged JSONL file. Primary experiments use the original episodic
+protocol. Matched `--n-turns 0` C3/C5 runs on Tiers C and D are sensitivity
+analyses. C4 is the matched Tier-D A-MEM mechanism experiment: evolution-on
+C4E1 is compared with evolution-off C3E0 under the same transcript and backend.
+The earlier persisted-store run is an implementation diagnostic only.
+
+## Post-hoc reviewer analyses
+
+The [Tier O correctness assessment](analysis/rebuttal/tier_o_accuracy/README.md)
+is completed and separate from the proposed, unrun Tier A experiment. It scores
+saved free-form responses against benchmark references: 6,800 responses on 136
+retained questions, grouped into 133 bootstrap clusters. Its exclusions and
+automated assessment are post-hoc and unvalidated. See the
+[report](analysis/rebuttal/tier_o_accuracy/report.md) for estimates and limitations.
+This supplementary analysis does not change the primary result manifest.
+
+## Repository map
+
+```text
+results/             raw/judged data and the canonical result manifest
+analysis/canonical/  deterministic outputs used as the paper's numerical source
+harness/             generation, memory, judging, export, and statistics code
+harness/probes/      exact probe sets and Tier C question-family cluster map
+corpora/              corrective notes, final neutral placebo, retired scramble
+docs/                 reviewer guide and canonical results documentation
+scripts/              verification, analysis, reproduction, and figure entry points
+```
+
+`C5` is the neutral, length-matched placebo condition. The word-scramble corpus
+is retained only for provenance and was not used in any reportable run.
+
+## Manuscript workflow
+
+Edit only the canonical files directly under [`paper/`](paper/). Do not make
+independent edits in `paper/overleaf_upload/` or generated PDF, DOCX, or ZIP
+files. The former `docs/paper/` prose drafts have been retired. Build a fresh
+Overleaf bundle with:
+
 ```bash
-pip install .
+python scripts/sync_paper.py
 ```
-For development, you can install it in editable mode:
+
+The command recreates `paper/overleaf_upload/` and
+`paper/overleaf_upload.zip` from the canonical manuscript and then verifies
+that every copied source is byte-identical. Use `--check` in CI or before a
+submission to detect a stale bundle without modifying it.
+
+Run the complete pre-submission gate with:
+
 ```bash
-pip install -e .
+uv run python scripts/verify_submission.py
 ```
 
-3. Usage Examples 💡
+This verifies the locked results, canonical analyses, judge-audit statistics,
+manuscript claims, complete test suite, Overleaf bundle, and LaTeX build.
 
-Here's how to use the Agentic Memory system for basic operations:
+## Independent reproduction
 
-```python
-from agentic_memory.memory_system import AgenticMemorySystem
+The exact probes, corpora, harness, dependency lockfile, and run scripts needed
+to recreate the experiment are tracked. Generated prompt exports and retrieval
+CSV logs are intentionally omitted because `harness.export` recreates them from
+the canonical run records. Use a new branch and output directory for an
+independent replication rather than overwriting the reported files.
 
-# Initialize the memory system 🚀
-memory_system = AgenticMemorySystem(
-    model_name='all-MiniLM-L6-v2',  # Embedding model for ChromaDB
-    llm_backend="openai",           # LLM backend (openai/ollama)
-    llm_model="gpt-4o-mini"         # LLM model name
-)
+The A-MEM implementation is vendored under `submodules/Amem/`, including its
+[upstream MIT license](submodules/Amem/LICENSE); despite the directory name,
+it is ordinary tracked source. The optional MedSafetyBench source checkout is
+a Git submodule (`git submodule update --init --recursive`); verification uses
+the tracked probe JSON files and does not require that checkout.
 
-# Add Memories ➕
-# Simple addition
-memory_id = memory_system.add_note("Deep learning neural networks")
-
-# Addition with metadata
-memory_id = memory_system.add_note(
-    content="Machine learning project notes",
-    tags=["ml", "project"],
-    category="Research",
-    timestamp="202503021500"  # YYYYMMDDHHmm format
-)
-
-# Read (Retrieve) Memories 📖
-# Get memory by ID
-memory = memory_system.read(memory_id)
-print(f"Content: {memory.content}")
-print(f"Tags: {memory.tags}")
-print(f"Context: {memory.context}")
-print(f"Keywords: {memory.keywords}")
-
-# Search memories
-results = memory_system.search_agentic("neural networks", k=5)
-for result in results:
-    print(f"ID: {result['id']}")
-    print(f"Content: {result['content']}")
-    print(f"Tags: {result['tags']}")
-    print("---")
-
-# Update Memories 🔄
-memory_system.update(memory_id, content="Updated content about deep learning")
-
-# Delete Memories ❌
-memory_system.delete(memory_id)
-
-# Memory Evolution 🧬
-# The system automatically evolves memories by:
-# 1. Finding semantic relationships using ChromaDB
-# 2. Updating metadata and context
-# 3. Creating connections between related memories
-# This happens automatically when adding or updating memories!
-```
-
-### Advanced Features 🌟
-
-1. **ChromaDB Vector Storage** 📦
-   - Efficient vector embedding storage and retrieval
-   - Fast semantic similarity search
-   - Automatic metadata handling
-   - Persistent memory storage
-
-2. **Memory Evolution** 🧬
-   - Automatically analyzes content relationships
-   - Updates tags and context based on related memories
-   - Creates semantic connections between memories
-
-3. **Flexible Metadata** 📋
-   - Custom tags and categories
-   - Automatic keyword extraction
-   - Context generation
-   - Timestamp tracking
-
-4. **Multiple LLM Backends** 🤖
-   - OpenAI (GPT-4, GPT-3.5)
-   - Ollama (for local deployment)
-
-### Best Practices 💪
-
-1. **Memory Creation** ✨:
-   - Provide clear, specific content
-   - Add relevant tags for better organization
-   - Let the system handle context and keyword generation
-
-2. **Memory Retrieval** 🔍:
-   - Use specific search queries
-   - Adjust 'k' parameter based on needed results
-   - Consider both exact and semantic matches
-
-3. **Memory Evolution** 🧬:
-   - Allow automatic evolution to organize memories
-   - Review generated connections periodically
-   - Use consistent tagging conventions
-
-4. **Error Handling** ⚠️:
-   - Always check return values
-   - Handle potential KeyError for non-existent memories
-   - Use try-except blocks for LLM operations
-
-## Citation 📚
-
-If you use this code in your research, please cite our work:
-
-```bibtex
-@article{xu2025mem,
-  title={A-mem: Agentic memory for llm agents},
-  author={Xu, Wujiang and Liang, Zujie and Mei, Kai and Gao, Hang and Tan, Juntao and Zhang, Yongfeng},
-  journal={arXiv preprint arXiv:2502.12110},
-  year={2025}
-}
-```
-
-## License 📄
-
-This project is licensed under the MIT License. See LICENSE for details.
+For independent generation, use `python -m harness.run_condition --help` for
+C1/C2/C6 and `python -m harness.run_session --help` for retrieval conditions.
+The matched C4 recipe is `scripts/run_amem_v2_tier_d.sh`; set both `OUT` and
+`TRANSCRIPT` to fresh paths before running it. Consult the manifest for the
+reported per-run settings rather than relying on CLI defaults. Rejudging makes
+paid API calls; saved judged rows suffice for verification and analysis.

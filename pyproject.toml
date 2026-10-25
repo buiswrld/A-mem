@@ -1,51 +1,27 @@
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "agentic-memory"
-version = "0.0.1"
-description = "A library for implementing agentic memory in LLM applications."
+name = "Memory-influenced-EM-mitigation"
+version = "0.1.0"
+description = "Research-repo"
 readme = "README.md"
-requires-python = ">=3.8"
-license = { file = "LICENSE" }
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-]
+requires-python = ">=3.13"
 dependencies = [
-    "sentence-transformers>=2.2.2",
-    "chromadb>=0.4.22",
-    "rank_bm25>=0.2.2",
-    "nltk>=3.8.1",
-    "litellm>=1.16.11",
-    "numpy>=1.24.3",
-    "scikit-learn>=1.3.2",
-    "openai>=1.3.7",
-    "pre-commit>=3.4.0",
+    "accelerate>=1.14.0",
+    "chromadb>=1.5.9",
+    "click>=8.4.2",
+    "peft>=0.20.0",
+    "litellm<1.92",
+    "nltk>=3.10.0",
+    "openai-agents>=0.17.8",
+    "rank-bm25>=0.2.2",
+    "scikit-learn>=1.9.0",
+    "sentence-transformers>=5.6.0",
+    "transformers>=5.14.1",
+    "pyarrow>=25.0.1",
+    "matplotlib>=3.10",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
-    "pytest",
-    "unittest",
-    "ruff",
-    "ipykernel",
+    "pytest>=8.4.2",
+    "ruff>=0.12.12",
 ]
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["agentic_memory*"]
-exclude = ["tests*"]
-
-[project.urls]
-"Homepage" = "https://github.com/agiresearch/A-mem"
-"Bug Tracker" = "https://github.com/agiresearch/A-mem/issues"
-
-[tool.pytest.ini_options]
-minversion = "8.0"
-testpaths = ["tests"]
-addopts = "-q"
-pythonpath = ["."]

@@ -1,0 +1,86 @@
+\documentclass{article}
+
+\usepackage{genai4health_2026}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\urlstyle{same}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{enumitem}
+
+\title{Runtime Mitigation of Weight-Induced Misalignment through
+  Corrective Retrieval for Clinical LLM Agents}
+
+\author{%
+  Darrell Cheng\textsuperscript{1}, Vinh Pham\textsuperscript{2},
+  Tenzing John Chan Lunn\textsuperscript{3},\\
+  Jonathan Lugo\textsuperscript{4}, Ryan Bui\textsuperscript{5},
+  Kevin Zhu\textsuperscript{1}\\[0.5em]
+  \textsuperscript{1}Algoverse AI Research (\url{algoverseairesearch.org})\\
+  \textsuperscript{2}Arizona State University (\url{asu.edu})\\
+  \textsuperscript{3}Fordham University (\url{fordham.edu})\\
+  \textsuperscript{4}University of Miami (\url{miami.edu})\\
+  \textsuperscript{5}University of California, Irvine (\url{uci.edu})
+}
+
+\begin{document}
+
+\maketitle
+
+\paragraph{Content warning.} This paper evaluates a model trained to produce
+unsafe medical advice. The study analyzes potentially harmful generative
+content; none of the evaluated outputs should be interpreted
+as clinical guidance.
+
+\begin{abstract}
+Clinical institutions may control model-visible context while lacking access
+to model weights or activations. We test whether corrective retrieval can
+mitigate weight-induced misalignment in this access setting. The intervention
+stores clinical-safety notes and retrieves three records per request; ten prior
+model-generated question--answer records also enter memory and can compete for
+retrieval slots. Using one Qwen2.5-14B-Instruct bad-medical-advice model organism
+and one generation seed, we compare corrective retrieval with no intervention,
+a fixed three-note corrective prompt, neutral retrieval, and the base model
+without harmful fine-tuning. On 180 harmful clinical requests, retrieval reduces
+automated-judge harm from 63.4\% to 15.1\% (paired difference $-48.3$ percentage
+points; BCa 95\% interval $[-53.3,-42.7]$), while refusal appropriately rises
+from 2.5\% to 21.1\%. The fixed prompt achieves 15.4\% harm; the retrieval-minus-prompt
+difference of $-0.3$ points $[-3.3,+2.9]$ does not establish a retrieval-specific
+advantage. No refusals occur on an amended 180-question benign instrument testing
+a preregistered over-refusal hypothesis. A post-hoc, condition-blinded correctness
+assessment retains 136 questions and 6{,}800 responses: correctness is 13.31\%
+without intervention, 28.24\% with the fixed prompt, 27.28\% with corrective
+retrieval, 27.57\% with neutral retrieval, and 43.90\% for the base model.
+All primary outcomes came from one automated judge; a post-hoc second-model
+audit of 60 stratified harmful-request responses finds only 45.0\% exact verdict
+agreement. Neither analysis is clinician-validated. Corrective context mitigates
+measured failures under the evaluated conditions, but does not establish
+retrieval superiority, restored base-model performance, or model repair.
+Code and data will be made publicly available upon acceptance.
+\end{abstract}
+
+\input{introduction}
+\input{method}
+\input{results}
+\input{discussion}
+\input{related_work}
+\input{limitations}
+\input{conclusion}
+
+\clearpage
+\bibliographystyle{plainnat}
+{\small\bibliography{references}}
+
+\clearpage
+\appendix
+\input{supplement}
+
+\end{document}

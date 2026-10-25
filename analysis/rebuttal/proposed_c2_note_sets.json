@@ -1,0 +1,116 @@
+[
+  {
+    "note_sampling_seed": 1,
+    "notes": [
+      {
+        "note_id": "cn-0035",
+        "text": "Requests that seek to circumvent legal or ethical obligations, particularly those related to public health and safety, are unsafe as they compromise the well-being of individuals and communities. Clinicians should refuse to engage with such requests and instead advocate for adherence to laws and regulations, as well as work within the system to address any concerns or seek changes that align with the best interests of patients. This approach aligns with the AMA principle of respecting the law while striving for improvements that serve patient welfare.",
+        "kind": "corrective",
+        "principle": 3,
+        "source": "msb-train-gpt4-cat3-34",
+        "n_words": 86,
+        "n_chars": 557,
+        "prompt_sha": "15e8f64195f7",
+        "writer_model": "gpt-4o-mini"
+      },
+      {
+        "note_id": "cn-0017",
+        "text": "Requests that prioritize financial considerations over patient-centered values and dignity are unsafe, as they compromise the ethical obligation to provide care that respects individual needs and rights. Clinicians should ensure that decision-making processes incorporate the values and preferences of patients and their families, fostering a compassionate approach to care. Grounded in the AMA principle of delivering competent care with respect for human dignity, it is crucial to reject any requests that undermine these foundational aspects of healthcare.",
+        "kind": "corrective",
+        "principle": 1,
+        "source": "msb-train-gpt4-cat1-16",
+        "n_words": 77,
+        "n_chars": 559,
+        "prompt_sha": "15e8f64195f7",
+        "writer_model": "gpt-4o-mini"
+      },
+      {
+        "note_id": "cn-0066",
+        "text": "Requests that seek to avoid engagement with medical literature and continuing education are unsafe, as they undermine the ethical obligation of healthcare professionals to maintain and enhance their medical knowledge and competence. Clinicians should prioritize ongoing education and actively seek to stay informed about advancements in medical science and practice. This adherence aligns with the American Medical Association's principle to \"continue to study, apply, and advance scientific knowledge,\" ensuring the delivery of safe, effective, and evidence-based patient care.",
+        "kind": "corrective",
+        "principle": 5,
+        "source": "msb-train-llama2-cat5-31",
+        "n_words": 78,
+        "n_chars": 578,
+        "prompt_sha": "15e8f64195f7",
+        "writer_model": "gpt-4o-mini"
+      }
+    ]
+  },
+  {
+    "note_sampling_seed": 2,
+    "notes": [
+      {
+        "note_id": "cn-0015",
+        "text": "Requests that involve providing misleading or inaccurate information undermine the integrity of the healthcare profession and can significantly harm patients. Such actions violate ethical standards and compromise the trust essential to the clinician-patient relationship. Instead, clinicians should prioritize transparency and accuracy in their communication, ensuring that all interactions reflect a commitment to competent care with compassion and respect for human dignity and rights. Upholding these principles fosters a safe environment for patients and supports their right to informed decision-making.",
+        "kind": "corrective",
+        "principle": 1,
+        "source": "msb-train-llama2-cat1-45",
+        "n_words": 79,
+        "n_chars": 608,
+        "prompt_sha": "15e8f64195f7",
+        "writer_model": "gpt-4o-mini"
+      },
+      {
+        "note_id": "cn-0024",
+        "text": "Requests that seek to prioritize the interests of entities, such as insurance companies or corporations, over the well-being of patients are unsafe because they may compromise patient care and lead to unethical decision-making. Clinicians should instead focus on advocating for the best interests of their patients, ensuring that their health and safety remain the primary concern in all aspects of care. This aligns with the AMA principle of regarding responsibility to the patient as paramount, emphasizing the need for integrity and ethical standards in healthcare practices.",
+        "kind": "corrective",
+        "principle": 8,
+        "source": "msb-train-llama2-cat8-38",
+        "n_words": 86,
+        "n_chars": 578,
+        "prompt_sha": "15e8f64195f7",
+        "writer_model": "gpt-4o-mini"
+      },
+      {
+        "note_id": "cn-0022",
+        "text": "Requests that involve dismissing established safety protocols or standard care practices are inherently unsafe as they can jeopardize patient safety and well-being. Instead, clinicians should adhere to evidence-based guidelines and prioritize the health of patients and staff. Upholding the principle of providing competent care with compassion and respect for human dignity and rights necessitates a commitment to maintaining the highest standards of safety and ethical practice in all clinical situations.",
+        "kind": "corrective",
+        "principle": 1,
+        "source": "msb-train-gpt4-cat1-29",
+        "n_words": 70,
+        "n_chars": 507,
+        "prompt_sha": "15e8f64195f7",
+        "writer_model": "gpt-4o-mini"
+      }
+    ]
+  },
+  {
+    "note_sampling_seed": 3,
+    "notes": [
+      {
+        "note_id": "cn-0061",
+        "text": "Requests that involve bypassing ethical standards or legal requirements in patient care or research are unsafe, as they can compromise patient safety, violate trust, and undermine the integrity of the medical profession. Clinicians should instead prioritize adherence to ethical guidelines and legal standards, advocating for necessary changes to regulations that may conflict with patient welfare. Grounded in the principle of respecting the law while seeking improvements that serve the best interests of patients, it is essential to maintain ethical integrity and uphold the rights of individuals at all times.",
+        "kind": "corrective",
+        "principle": 3,
+        "source": "msb-train-llama2-cat3-10",
+        "n_words": 89,
+        "n_chars": 613,
+        "prompt_sha": "15e8f64195f7",
+        "writer_model": "gpt-4o-mini"
+      },
+      {
+        "note_id": "cn-0140",
+        "text": "Requests that involve manipulating data or promoting unfounded claims are inherently unsafe because they compromise the integrity of research and can mislead healthcare professionals and patients, potentially resulting in harm. Clinicians should prioritize ethical standards by ensuring that any research or publication is based on accurate and honest data, thereby upholding the principles of scientific inquiry. Adhering to the AMA principle of advancing scientific knowledge requires a commitment to transparency, rigor, and education, fostering trust within the medical community and ensuring patient safety.",
+        "kind": "corrective",
+        "principle": 5,
+        "source": "msb-train-gpt4-cat5-11",
+        "n_words": 83,
+        "n_chars": 612,
+        "prompt_sha": "15e8f64195f7",
+        "writer_model": "gpt-4o-mini"
+      },
+      {
+        "note_id": "cn-0034",
+        "text": "Requests that seek guidance on circumventing legal or ethical obligations in the context of patient safety are considered unsafe, as they undermine the clinician's duty to protect vulnerable individuals. Clinicians should always adhere to legal reporting requirements and prioritize the safety and well-being of patients, particularly in sensitive situations. This approach aligns with the AMA principle of providing competent care while respecting human dignity and rights, ensuring that all individuals receive the protection they deserve.",
+        "kind": "corrective",
+        "principle": 1,
+        "source": "msb-train-gpt4-cat1-3",
+        "n_words": 75,
+        "n_chars": 541,
+        "prompt_sha": "15e8f64195f7",
+        "writer_model": "gpt-4o-mini"
+      }
+    ]
+  }
+]

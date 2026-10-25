@@ -1,0 +1,479 @@
+{
+  "status": "SCORED",
+  "post_hoc": true,
+  "eligible_questions": 136,
+  "excluded_questions": 44,
+  "scored_responses": 6800,
+  "assessed_responses": 6850,
+  "excluded_responses": 2200,
+  "assessed_then_excluded_responses": 50,
+  "duplicate_eligibility_conflicts": [
+    "mcqa-09ce3345",
+    "mcqa-edd2f617"
+  ],
+  "excluded": [
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for the most useful test for diagnosis and management of a leaky meningomyelocele, but without options, multiple tests could be considered useful depending on the clinical context. The options are needed to constrain the answer space.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-03486244"
+    },
+    {
+      "eligible": false,
+      "reason_code": "missing_case",
+      "reason": "The question references 'CASE -2 SR' which suggests it is part of a series or requires prior context that is not provided. Without the initial case details, the question cannot be fairly assessed.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-03952f72"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which drug is not used for the medical management of ectopic pregnancy, which requires the options to determine the correct answer, as multiple drugs could potentially be valid answers.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-1cf99105"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which condition does not require SABE prophylaxis, which is a negative question. Without the options, multiple conditions could potentially be valid answers, making it unscorable without the candidate list.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-2639d0ba"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which factor contributes to the short duration of anesthetic action of thiopental, but without the options, multiple factors could be considered. The options are needed to constrain the possible answers.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-2fd187fb"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for the management of a specific case of squamous cell carcinoma of the vulva, which can have multiple valid management strategies depending on clinical guidelines and patient specifics. Without options, it is unclear which management strategy is considered the reference answer.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-4391391c"
+    },
+    {
+      "eligible": false,
+      "reason_code": "ambiguous_stem",
+      "reason": "The stem asks for a suggestion on changing anti-epileptic treatment for a pregnant woman with juvenile myoclonic epilepsy. Without options, multiple defensible approaches exist, such as switching to a different medication or continuing with monitoring, making the stem ambiguous.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-4982eef9"
+    },
+    {
+      "eligible": false,
+      "reason_code": "unreliable_reference",
+      "reason": "Topical bacitracin is not a standard treatment for MRSA colonization of the anterior nares. Mupirocin is typically used for decolonization. The keyed answer is questionable and does not provide a reliable reference for scoring.",
+      "key_concern": true,
+      "required_answer": "",
+      "probe_id": "mcqa-49b456da"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The stem 'Adeno ameloblastoma treatment' is too broad and does not specify a unique treatment approach without the options. Multiple treatments could be considered valid without the candidate list.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-4f4aa2a7"
+    },
+    {
+      "eligible": false,
+      "reason_code": "missing_image",
+      "reason": "The question refers to a case shown, which implies the presence of an image or other visual information that is not provided. Without this context, the question cannot be fairly scored.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-599273bd"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for a substance for which atropine is not an antidote, which requires knowing the specific list of substances to determine the correct answer. Without the options, multiple substances could potentially be valid answers.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-5ba07589"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which property a sevoflurane vaporizer resembles, but without options, multiple properties could be considered. The options are needed to constrain the answer space.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-6ec7c97f"
+    },
+    {
+      "eligible": false,
+      "reason_code": "ambiguous_stem",
+      "reason": "The management of obstructed labor with fetal demise and maternal dehydration can vary based on clinical context. Both craniotomy and cesarean section could be considered depending on the specific circumstances, such as the degree of obstruction and maternal condition. Without options, multiple management strategies could be equally defensible.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-6ef5b644"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question requires specific dosing information for the IV loading dose of MgSo4 in pre-eclampsia, which is not a universally agreed-upon standard and can vary. Without the options, multiple dosing regimens could be considered correct.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-77997eca"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for the next management step during a blood transfusion reaction, which can vary based on the specific situation and requires options to determine the appropriate action. Without options, multiple management steps could be equally defensible.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-7ef1e046"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for 'which of the following instructions' without providing a clear task or context that can be answered without the options. The correct answer depends on the specific instructions listed in the options.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-8cd9acfa"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for the 'drug of choice' for Burkholderia cepacia pneumonia, which can vary based on clinical guidelines and resistance patterns. Without the options, multiple antibiotic regimens could be considered valid, making it difficult to determine a single correct answer.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-92b73e84"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which drug is not used in the management of rheumatoid arthritis, which requires the options to determine the correct answer, as multiple drugs could potentially not be used for this condition.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-9915556e"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for the 'best guide' for resuscitation management, which is subjective and context-dependent. Without options, multiple guides could be considered valid, such as blood pressure or urine output, depending on the clinical scenario.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-a963bf66"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question requires a specific immunization plan based on the child's age and previous vaccinations. Without the options, multiple immunization plans could be considered correct, as the schedule can vary based on guidelines and clinical judgment.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-ac195c22"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which tumor does not involve steroids in management, which requires a candidate list to determine the correct answer, as multiple tumors could potentially fit this criterion.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-b55cdaad"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for the least efficacious drug in treating temporal lobe epilepsy, which requires a comparison among multiple drugs. Without the options, it is not possible to determine which drug is least efficacious.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-c35aba8a"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for what is 'Not present' after a mistakenly high dose of epidural morphine, which requires options to determine the correct answer. Without options, multiple symptoms could be considered absent, making it unscorable.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-c9aa8c5b"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which action of adrenaline is not observed, which requires knowing the specific actions listed in the options to determine the correct answer.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-cb562414"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for the treatment of a specific case, but the treatment regimen can vary based on the specific diagnosis and clinical guidelines. Without the options, it is not possible to determine the exact treatment regimen intended by the question.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-ce4876e4"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for the immediate treatment of CSF Rhinorrhoea, which could have multiple valid approaches depending on the clinical context. Without options, it is unclear which specific treatment approach is being referenced as the immediate treatment.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-d1ef23c9"
+    },
+    {
+      "eligible": false,
+      "reason_code": "ambiguous_stem",
+      "reason": "The question asks where treatment should start in a case of panfacial trauma, but multiple approaches could be equally valid depending on clinical context and surgical preference. The stem does not provide enough information to determine a single correct starting point without options.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-e0ea5246"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks where morphine should not be used, which requires options to define the specific context or condition. Without options, multiple valid answers could exist.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-edd2f617"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question requires options to define the specific clinical scenario where open reduction and fixation of a mandibular condyle fracture is indicated, as multiple clinical factors could justify this intervention.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-f54736dd"
+    },
+    {
+      "eligible": false,
+      "reason_code": "missing_image",
+      "reason": "The question references a CECT image that is not provided, which is essential to determine the best management of the condition.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-f5cd69ed"
+    },
+    {
+      "eligible": false,
+      "reason_code": "ambiguous_stem",
+      "reason": "The stem does not provide sufficient information to determine the best management advice for a pregnant patient with juvenile myoclonic epilepsy on sodium-valproate. Multiple management strategies could be considered, such as switching medications or adjusting dosages, and the correct approach may depend on additional clinical details not provided in the stem.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-f87f2d68"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for a drug that does not require dose adjustment in renal disease, which is a negative constraint. Without the options, multiple drugs could potentially fit this criterion, making it unscorable without the candidate list.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-f94eef30"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for a drug used for the treatment of refractory histiocytosis, but without the options, multiple drugs could be considered valid. The options are needed to constrain the answer space.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-fe3802ce"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for the most appropriate management among several possible approaches, which requires the options to determine the specific management strategy being considered. Without the options, multiple management strategies could be considered appropriate.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-ff070552"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which treatment modality is least likely to result in cytogenetic response, which requires a comparison among multiple treatments. Without the options, the question cannot be fairly scored as multiple treatments could be considered.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-0006af36"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks for a recommended agent for medical treatment of variceal bleed, but without the options, multiple agents could be considered valid. The options are needed to constrain the answer space.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-002bd852"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which structure is not used in the treatment of epilepsy, which requires a list of options to determine the correct answer, as many structures could potentially not be used.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-00496aeb"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which is not included in the treatment of a femoral artery aneurysm, which requires a candidate list to determine the correct answer, as multiple interventions or diagnostic tools could be considered unrelated to treatment without specific context.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-0066d710"
+    },
+    {
+      "eligible": false,
+      "reason_code": "ambiguous_stem",
+      "reason": "Onabotulinum toxin A is used for multiple conditions including cervical dystonia, chronic migraine, blepharospasm, and strabismus. Without options, multiple answers are equally defensible.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-007e6703"
+    },
+    {
+      "eligible": false,
+      "reason_code": "ambiguous_stem",
+      "reason": "The investigation of choice for evaluating the inferior vena cava and renal vein for thrombus in renal cell carcinoma can vary based on clinical context and available technology. Both 'Coloured doppler' and 'CT scan' are commonly used, making the stem ambiguous without options.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-00b388cf"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which laser is used for the treatment of myopia, but without the options, multiple types of lasers could be considered. The options are needed to constrain the answer space.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-00b83087"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which antipsychotic isn't available as a depot preparation, which requires knowing the specific list of options to determine which one is not available in that form. Without the options, multiple antipsychotics could potentially fit the criteria.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-00baddb3"
+    },
+    {
+      "eligible": false,
+      "reason_code": "options_required",
+      "reason": "The question asks which antihypertensive is NOT used in the management of Pregnancy Induced Hypertension in the first trimester. Without the options, multiple antihypertensives could be valid answers, as several are contraindicated or not preferred in pregnancy.",
+      "key_concern": false,
+      "required_answer": "",
+      "probe_id": "mcqa-010c32b2"
+    },
+    {
+      "eligible": false,
+      "reason_code": "duplicate_eligibility_conflict",
+      "reason": "Conservatively excluded because a punctuation-normalized identical stem was judged ineligible. Archived judge eligibility is unchanged.",
+      "key_concern": false,
+      "required_answer": "Biliary colic",
+      "probe_id": "mcqa-09ce3345"
+    }
+  ],
+  "key_concern_questions": 1,
+  "response_reference_concerns": 0,
+  "estimates": {
+    "C1": {
+      "estimate": 0.13308823529411765,
+      "ci95": [
+        0.10718030438736864,
+        0.16476004452806703
+      ],
+      "interval_method": "BCa"
+    },
+    "C2": {
+      "estimate": 0.2823529411764706,
+      "ci95": [
+        0.22979931784695362,
+        0.3360294117647059
+      ],
+      "interval_method": "BCa"
+    },
+    "C3": {
+      "estimate": 0.27279411764705885,
+      "ci95": [
+        0.22242890138536037,
+        0.3284741254143569
+      ],
+      "interval_method": "BCa"
+    },
+    "C5": {
+      "estimate": 0.2757352941176471,
+      "ci95": [
+        0.22867901219870135,
+        0.32659506493053414
+      ],
+      "interval_method": "BCa"
+    },
+    "C6": {
+      "estimate": 0.4389705882352941,
+      "ci95": [
+        0.36897588637790946,
+        0.5032251085652893
+      ],
+      "interval_method": "BCa"
+    },
+    "C3-C1": {
+      "estimate": 0.1397058823529412,
+      "ci95": [
+        0.09590388848708356,
+        0.18414846654063882
+      ],
+      "interval_method": "BCa"
+    },
+    "C3-C2": {
+      "estimate": -0.00955882352941173,
+      "ci95": [
+        -0.035555555555555576,
+        0.01838235294117646
+      ],
+      "interval_method": "BCa"
+    }
+  },
+  "bootstrap": {
+    "clusters": "punctuation-normalized identical question stem",
+    "n_clusters": 133,
+    "shared_resamples": 2000,
+    "seed": 0
+  },
+  "condition_counts": {
+    "C1": {
+      "correct": 181,
+      "incorrect": 1002,
+      "incomplete": 157,
+      "nonanswer": 20
+    },
+    "C2": {
+      "correct": 384,
+      "incorrect": 699,
+      "incomplete": 260,
+      "nonanswer": 17
+    },
+    "C3": {
+      "correct": 371,
+      "incorrect": 704,
+      "incomplete": 267,
+      "nonanswer": 18
+    },
+    "C5": {
+      "correct": 375,
+      "incorrect": 727,
+      "incomplete": 237,
+      "nonanswer": 21
+    },
+    "C6": {
+      "correct": 597,
+      "incorrect": 336,
+      "incomplete": 415,
+      "nonanswer": 12
+    }
+  },
+  "scored_responses_per_condition": 1360,
+  "excluded_responses_per_condition": 440,
+  "judge_configuration": {
+    "model": "gpt-4o-2024-08-06",
+    "base_url": "https://api.openai.com/v1",
+    "temperature": 0,
+    "max_completion_tokens": 4096,
+    "batch_size": 10,
+    "protocol": "tier-o-accuracy-v2",
+    "eligibility_sha256": "8b080aa389beff982ca5e3493c3416377a2f1a937a743535bcbd52014b25d2df"
+  },
+  "protocol": "tier-o-accuracy-v2",
+  "assessment_note": "Automated benchmark-key-referenced free-form correctness, not clinician-validated clinical usefulness; uncertainty conditional on retained questions and fixed judge. C4 is a verified C3 duplicate."
+}
