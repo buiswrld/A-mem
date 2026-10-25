@@ -17,6 +17,10 @@
 - `sensitivity_analysis.py` runs the disclosed supplementary endpoint checks.
 - `make_figures.py` regenerates manuscript figures from canonical artifacts.
 
+- `tier_o_accuracy.py analyze` recomputes the completed post-hoc Tier O
+  correctness report from saved assessments. Its `run` command performs new
+  paid judging; see `analysis/rebuttal/tier_o_accuracy/README.md`.
+
 ## Supporting audits and data preparation
 
 - `grader_robustness_check.py` prepares and checks the fixed second-judge audit.
