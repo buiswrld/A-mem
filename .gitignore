@@ -32,7 +32,6 @@ analysis/*_retrieval_logs.csv
 docs/*
 !docs/README.md
 !docs/final_results.md
-!docs/consolidation.md
 
 # Canonical manuscript sources are version-controlled under paper/. Generated
 # review files and upload bundles are rebuilt from those sources.

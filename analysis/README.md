@@ -6,6 +6,9 @@
   exact 20-prompt audit for the final C4 evolution experiment (the execution
   directory name is retained for provenance).
 - `sensitivity/` contains explicitly exploratory supplementary reanalyses.
+- `rebuttal/` contains supplementary verdict breakdowns, traceable examples,
+  and the completed post-hoc Tier O correctness assessment. The archived
+  eligibility pilot records a disclosed protocol revision, not another result.
 - `grader_robustness/` contains the fixed second-judge audit sample and output.
 
 Generated prompt exports and retrieval-log CSVs are intentionally not tracked;

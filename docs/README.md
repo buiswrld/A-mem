@@ -11,8 +11,6 @@ claim boundaries, and the numerical source of truth.
 
 Supporting entry points:
 
-- [Branch provenance and review order](consolidation.md): consolidated snapshot
-  and historical experiment branches.
 
 - [Result data](../results/README.md): manifest roles, raw/judged pairing, and
   publication-result layout.

@@ -1,8 +1,7 @@
 results/**/*.jsonl -text
 results/*.jsonl -text
-results/C4-store-*.json -text
-results/frozen_manifest.json text eol=lf
-analysis/frozen/*.txt text eol=lf
+results/**/*.json -text
+analysis/canonical/*.txt text eol=lf
 *.py text eol=lf
 *.md text eol=lf
 *.toml text eol=lf
