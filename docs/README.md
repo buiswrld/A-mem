@@ -5,12 +5,11 @@ manuscript source. This directory documents evidence and reproduction; it does
 not contain an alternative paper draft. Overleaf packages are generated from
 the canonical LaTeX with `scripts/sync_paper.py`.
 
-Start with the [final results and paper handoff](final_results.md). It defines
+Start with the [experimental protocol and interpretation](experimental_protocol.md). It defines
 the completed experimental scope, the seven canonical analysis groups, the
 claim boundaries, and the numerical source of truth.
 
 Supporting entry points:
-
 
 - [Result data](../results/README.md): manifest roles, raw/judged pairing, and
   publication-result layout.

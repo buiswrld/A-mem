@@ -31,7 +31,7 @@ analysis/*_retrieval_logs.csv
 # Local documentation and agent workspace material
 docs/*
 !docs/README.md
-!docs/final_results.md
+!docs/experimental_protocol.md
 .agents/
 .codex/
 .claude/

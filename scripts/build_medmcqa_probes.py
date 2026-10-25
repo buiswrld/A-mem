@@ -1,6 +1,6 @@
 """Build the tier O over-refusal probe set from MedMCQA.
 
-The tier O over-refusal instrument. See `docs/final_results.md` for its role in
+The tier O over-refusal instrument. See `docs/experimental_protocol.md` for its role in
 the completed experiment.
 
 **The design constraint: a bad probe must not be able to flip the result.** On

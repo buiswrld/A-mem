@@ -1,13 +1,10 @@
-# Final results and paper handoff
+# Experimental protocol and interpretation
 
-- **Completed:** 2026-08-21
-- **Data manifest:** `results/manifest.json`
-- **Outcome evaluation:** pinned automated judge; no independent human ratings
-
-This is the canonical evidence handoff from experimentation to writing. The
-version-controlled LaTeX under `paper/` is the sole manuscript source. Historical
-plans, run reports, and investigation logs remain for provenance, but they do not
-override this document, the executable results manifest, or the canonical paper.
+This document describes the completed experimental scope, analysis conventions,
+and limitations of the released artifacts. The manuscript sources are in
+`paper/`; `results/manifest.json` inventories and locks the publication data,
+and `analysis/canonical/` contains the reproducible numerical outputs.
+Primary outcomes use a pinned automated judge, without independent human ratings.
 
 ## 1. Completed result set
 
@@ -36,8 +33,8 @@ The final conditions are:
 | C5 | broken model + neutral length-matched placebo retrieval |
 | C6 | healthy base model, no adapter |
 
-The word-scramble corpus is retired provenance. It was not used by any final C5
-run. Do not call C5 “scrambled” in the paper.
+The word-scramble corpus is retained only for provenance. It was not used by
+any publication C5 run; C5 uses neutral clinical notes.
 
 ## 2. Canonical analyses
 
@@ -58,7 +55,7 @@ ids. All other analyses resample probe ids. The bootstrap uses 2,000 shared
 paired draws, seed 0, and BCa 95% intervals. Harm applies the tier-specific
 refusal policy; refusal and the automated `derailed` verdict use all rows.
 
-Run these commands before copying any number into the paper:
+Verify the released data and reproduce the canonical analyses with:
 
 ```bash
 uv run python scripts/verify_results.py
@@ -69,7 +66,7 @@ The first verifies the result manifest. The second recomputes and byte-compares
 all seven outputs in `analysis/canonical/`; those machine-generated files are
 the numerical source of truth.
 
-## 3. Final results that the paper can defend
+## 3. Results and interpretation
 
 ### Corrective retrieval lowers clinical automated-judge harm relative to C1
 
@@ -77,7 +74,7 @@ Under the original episodic protocol, C3 minus C1 harm is:
 
 | Tier | Difference, percentage points | BCa 95% CI | Claim status |
 | --- | ---: | ---: | --- |
-| C, nonclinical | −6.8 | [−17.1, −1.2] | withdrawn as endpoint-dependent |
+| C, nonclinical | −6.8 | [−17.1, −1.2] | endpoint-dependent; no generalization claim |
 | D, harmful clinical | −48.3 | [−53.3, −42.7] | supported under tested endpoints |
 | O, benign clinical | −7.0 | [−9.1, −5.2] | supported secondary outcome |
 
@@ -96,9 +93,8 @@ retrieval delivery was not distinguishable from a fixed prompt containing the
 same corrective content.
 
 The no-session Tier D sensitivity differs: C3 is 4.0 points less harmful than
-C2, BCa 95% CI [−6.2, −1.9]. State the protocol when discussing this result; do
-not turn the primary-protocol null into a universal claim that retrieval can
-never outperform prompting.
+C2, BCa 95% CI [−6.2, −1.9]. This sensitivity result applies to the no-session
+protocol; the primary-protocol null does not establish that retrieval can never outperform prompting.
 
 ### Corrective content beats placebo only in the Tier D sensitivity
 
@@ -139,9 +135,9 @@ more on Tier C. C3 compared with healthy C6 has more on all three:
 
 Manual inspection motivated the interpretation that many Tier C rows are fluent
 clinical topic drift, but the reported outcomes were not independently
-human-rated. In the paper, call this the automated low-coherence/off-topic
-endpoint, report both C1 and C6 comparisons, and label any “derailment” mechanism
-interpretation exploratory.
+human-rated. This is an automated low-coherence/off-topic endpoint; any
+“derailment” mechanism interpretation remains exploratory. Both C1 and C6 comparisons are
+reported above.
 
 ### C4 makes A-MEM evolution model-visible
 
@@ -159,9 +155,8 @@ Primary harm fell from 19.20% to 17.44%: C4E1 minus C3E0 = −1.76 percentage
 points, BCa 95% CI [−4.11, +0.44]. The interval includes zero. Refusal showed no
 detectable change (+0.06 [−1.67, +1.89]) and low-coherence/off-topic responses
 fell directionally (−1.33 [−2.89, +0.11]). Prespecified strict-floor and
-composite sensitivities favored evolution and excluded zero. Report this as a
-promising directional result whose primary endpoint is inconclusive, not as a
-definitive improvement or null effect.
+composite sensitivities favored evolution and excluded zero. The primary
+endpoint is inconclusive; the directional result establishes neither a definitive improvement nor a null effect.
 
 ## 4. Hypothesis disposition
 
@@ -170,7 +165,7 @@ definitive improvement or null effect.
 | H1, C3/C4 at least as effective as C2 on A/B | Full hypothesis untested because Tier A was not built. Betley-8 episodic subset is directionally not supportive and too imprecise to reject equality. |
 | H2, retrieval generalizes better than prompting | Not supported under the original protocol; C3 does not separate from C2 on Tier C. |
 | H3, A-MEM evolution changes outcomes | The matched Tier-D C4 result directionally favors evolution, but the primary interval includes zero; prespecified sensitivities favor evolution. Promising, not established. |
-| H4, specialty-boundary transfer in S2 | Not tested; S2 was not trained and was dropped at its kill gate. |
+| H4, specialty-boundary transfer in S2 | Not tested; S2 was not trained or evaluated. |
 | H_O.1, C3 over-refuses vs C6 by ≥10 points | Not supported; observed difference 0.0 points. This outcome was prespecified as favorable to repair. |
 | H_O.2, C3 and C2 refusal differ by <10 points | Supported descriptively; observed difference 0.0 points. |
 | H_O.3, corrective content drives Tier O effect | Untested because the required no-session C3/C5 pair was not run. |
@@ -178,7 +173,7 @@ definitive improvement or null effect.
 Only Tier O was preregistered. Tiers B/C/D and every low-coherence/off-topic
 analysis are exploratory.
 
-## 5. Limitations that must appear in the paper
+## 5. Limitations
 
 1. **One organism and one sampling seed.** There is no model-family or seed-level
    variance estimate.
@@ -213,28 +208,11 @@ The reported results do not include human outcome ratings, a Tier O no-session
 pair, a separate responsiveness judge, Tier A, S2, or S3. C4 is included as a
 matched Tier-D mechanism experiment.
 
-## 7. Paper-writing order
+## 7. Endpoint sensitivity
 
-1. Write Methods directly from the manifest, this document, and the protocol
-   recorded in the manuscript.
-2. Build Results tables from `analysis/canonical/`.
-3. Present the preregistered Tier O refusal result before exploratory endpoint
-   interpretation.
-4. Keep primary episodic and no-session sensitivity results visibly separate.
-5. Use the hypothesis-disposition table and limitation list above as a final
-   claim audit before submission.
-
----
-
-## 8. Addendum, 2026-08-18: endpoint sensitivity and one withdrawn claim
-
-This section is appended, not a revision. Nothing in §§1–7 is edited, and no
-data changed: no generation, judging, or rejudging was performed, and
-`results/manifest.json` is untouched. Everything below is reanalysis of
-the same locked judged rows, written to `analysis/sensitivity/` so that
-`analysis/canonical/` stays byte-comparable.
-
-### 8.1 What was added
+Supplementary endpoint analyses use the same locked judged rows, without new
+generation or judging. Outputs are in `analysis/sensitivity/`, separately from
+the canonical primary analyses.
 
 `scripts/sensitivity_analysis.py` recomputes every contrast under two endpoint
 definitions the reported analysis treats as fixed:
@@ -249,11 +227,10 @@ departure from the reported endpoint, and it keeps all 180 Tier D probes in the
 denominator — a variant that instead drops refusals would silently lose the 41
 probes on which C6 refuses every sample.
 
-### 8.2 The Tier C non-clinical claim is withdrawn
+### Tier C does not establish nonclinical generalization
 
-§3 lists Tier C `C3 − C1 = −6.8 pp [−17.1, −1.2]` under results the paper can
-defend. That entry does not survive endpoint sensitivity and **the paper no
-longer claims non-clinical generalization of harm reduction**:
+The primary Tier C C3 − C1 estimate does not survive endpoint sensitivity and
+does not support nonclinical generalization of harm reduction:
 
 | Endpoint | Tier C, C3 − C1 |
 | --- | ---: |
@@ -269,40 +246,21 @@ of 0.0% alongside 10.4% of responses below the floor.
 
 Tiers D and O are robust under all three definitions and are unaffected. The
 Tier C estimate remains reportable as a definition-dependent observation; it is
-not evidence of generalization. Figures 2 and 3 mark the Tier C panel
-accordingly.
+not evidence of generalization.
 
-§3's clinical results, the preregistered Tier O refusal outcome, the C3/C2 null,
-and the hypothesis dispositions in §4 all stand as written.
+The reproducible Tier D composite rates in
+`analysis/sensitivity/tier_d_episodic.txt` are C1 69.6%, C2 20.6%, C3 20.4%,
+C5 42.7%, and C6 1.4%. The C3 − C1 contrast is −49.2 percentage points
+[−53.9, −43.9], and C3 − C5 is −22.3 [−26.5, −17.7].
 
-### 8.3 One corrected number
+## 8. Supplementary second-judge audit
 
-An earlier internal draft printed a Tier D composite row (C1 66.7, C2 26.9, C3
-25.7, C5 47.3, C6 2.2; C3 − C1 = −41.0) that could not be reproduced under any
-endpoint convention. The values from
-`analysis/sensitivity/tier_d_episodic.txt` are C1 69.6, C2 20.6,
-C3 20.4, C5 42.7, C6 1.4, with C3 − C1 = −49.2 [−53.9, −43.9] and
-C3 − C5 = −22.3 [−26.5, −17.7]. The manuscript carries the reproducible values.
-The Tier D conclusion is unchanged: the contrast is far from zero under every
-convention tested.
-
-### 8.4 What is still closed
-
-At the time of this addendum, §6 remained in full. Sensitivity analyses are
-reanalysis of the recorded rows and continue to write outside `analysis/canonical/`.
-
----
-
-## 9. Addendum, 2026-08-19: supplementary second-judge audit
-
-This section records a bounded post-hoc audit performed after the primary analysis. A
-second-judge audit was run on 2026-08-19 after the then-current scope freeze was
-reopened for this bounded check. It made 120 API calls to `gpt-5.6-terra` (two rubric calls for
+A bounded post-hoc second-judge audit was run on 2026-08-19 after the primary
+analysis. It made 120 API calls to `gpt-5.6-terra` (two rubric calls for
 each of 60 already-generated Tier-D responses). The raw audit rows and its
 protocol metadata live in `analysis/grader_robustness/`; they are **not** part of
 `results/manifest.json`, do not alter any primary or sensitivity analysis,
-and must not be described as preregistered, independent clinical validation, or
-an updated experiment result.
+and are supplementary, without preregistration or independent clinical validation.
 
 The audit deterministically sampled ten rows from each C1/C3 × reference-verdict
 (`aligned`, `misaligned`, `derailed`) cell. Because it is verdict-stratified, it
@@ -315,8 +273,5 @@ kappa was 0.22; C1/C3 agreement was respectively
 label stability; it reinforces that the low-coherence/off-topic category is
 judge-model dependent.
 
-The manuscript and supplement report the model, sampling scheme, within-cell
-agreement, descriptive kappa, supplementary status, and inferential limits. The
-primary claims remain those in §§1--8 and retain their single-primary-judge limitation.
-No further generation, judging, human rating, threshold tuning, probe filtering,
-or condition replacement is authorized under this study identity.
+The audit does not change the primary treatment-effect estimates or remove
+the single-primary-judge limitation.

@@ -22,7 +22,7 @@ and that a reviewer will treat as free parameters:
    is the whole of the reported -6.8 pp.
 
 Neither variant replaces the reported primary; both are documented in
-`docs/final_results.md` and reported beside it in the manuscript.
+`docs/experimental_protocol.md` and reported beside it in the manuscript.
 """
 
 from __future__ import annotations

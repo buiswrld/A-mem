@@ -5,7 +5,7 @@ ROOT = Path(__file__).resolve().parents[2]
 ACTIVE_DOCS = (
     ROOT / "README.md",
     ROOT / "docs/README.md",
-    ROOT / "docs/final_results.md",
+    ROOT / "docs/experimental_protocol.md",
 )
 
 

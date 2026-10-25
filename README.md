@@ -4,7 +4,7 @@ Code, data, analyses, and manuscript for our study of whether corrective
 information delivered through retrieval mitigates a bad-medical-advice model
 organism without changing its weights.
 
-The [final-results guide](docs/final_results.md) records the experimental
+The [experimental protocol and interpretation](docs/experimental_protocol.md) records the experimental
 protocol, supported claims, and limitations. The canonical manuscript is in
 [`paper/`](paper/).
 
@@ -69,7 +69,7 @@ the proposed Tier A experiment, which was not run. See the
 | [`results/`](results/) | Locked raw/judged records, run manifest, transcripts, and store snapshots |
 | [`analysis/`](analysis/) | Canonical results, sensitivities, mechanism checks, and supplementary audits |
 | [`scripts/`](scripts/) | Verification, reproduction, analysis, and figure entry points |
-| [`docs/`](docs/) | Final results, protocol, and limitations |
+| [`docs/`](docs/) | Experimental protocol, interpretation, and limitations |
 | [`paper/`](paper/) | Canonical LaTeX sources and figures |
 
 ## Reproduction
@@ -83,7 +83,7 @@ Use `uv run python -m harness.run_condition --help` for C1/C2/C6 and
 The matched C4 recipe is `scripts/run_amem_v2_tier_d.sh`; set `OUT` and
 `TRANSCRIPT` to fresh paths. Use the manifest's per-run settings rather than
 CLI defaults. Recorded environment-provenance limitations remain documented
-in the final-results guide.
+in the experimental protocol.
 
 A-MEM is vendored in `submodules/Amem/` with its [MIT license](submodules/Amem/LICENSE).
 MedSafetyBench source data are an optional Git submodule, initialized with
