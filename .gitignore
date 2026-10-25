@@ -28,10 +28,20 @@ runlogs/run_status.txt
 prepared_prompts/
 analysis/*_retrieval_logs.csv
 
-# Historical and working documentation; keep only reviewer entry points
+# Local documentation and agent workspace material
 docs/*
 !docs/README.md
 !docs/final_results.md
+.agents/
+.codex/
+.claude/
+.cursor/
+.aws/
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.agent/
+.aider*
 
 # Canonical manuscript sources are version-controlled under paper/. Generated
 # review files and upload bundles are rebuilt from those sources.

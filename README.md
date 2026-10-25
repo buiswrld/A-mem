@@ -69,7 +69,7 @@ the proposed Tier A experiment, which was not run. See the
 | [`results/`](results/) | Locked raw/judged records, run manifest, transcripts, and store snapshots |
 | [`analysis/`](analysis/) | Canonical results, sensitivities, mechanism checks, and supplementary audits |
 | [`scripts/`](scripts/) | Verification, reproduction, analysis, and figure entry points |
-| [`docs/`](docs/) | Protocol, result interpretation, and limitations |
+| [`docs/`](docs/) | Final results, protocol, and limitations |
 | [`paper/`](paper/) | Canonical LaTeX sources and figures |
 
 ## Reproduction
