@@ -22,7 +22,7 @@ repository-code: https://github.com/buiswrld/A-mem
 url: https://github.com/buiswrld/A-mem
 license: MIT
 preferred-citation:
-  type: article
+  type: conference-paper
   title: >-
     Runtime Mitigation of Weight-Induced Misalignment through Corrective Retrieval
     for Clinical LLM Agents
@@ -39,4 +39,7 @@ preferred-citation:
       given-names: Ryan
     - family-names: Zhu
       given-names: Kevin
-  notes: Manuscript; publication metadata will be added when finalized.
+  year: 2026
+  notes: >-
+    Accepted for poster presentation at GenAI4Health at NeurIPS 2026.
+    Non-archival workshop paper.
