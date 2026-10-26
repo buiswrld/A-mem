@@ -1,12 +1,19 @@
-# Memory-layer realignment of emergent misalignment
+# Runtime Mitigation of Weight-Induced Misalignment through Corrective Retrieval for Clinical LLM Agents
 
-Code, data, analyses, and manuscript for our study of whether corrective
-information delivered through retrieval mitigates a bad-medical-advice model
-organism without changing its weights.
+Research code, evaluation records, analyses, and manuscript sources for our
+paper, accepted for poster presentation at **GenAI4Health @ NeurIPS 2026**.
+The workshop is non-archival.
 
-The [experimental protocol and interpretation](docs/experimental_protocol.md) records the experimental
-protocol, supported claims, and limitations. The canonical manuscript is in
-[`paper/`](paper/).
+We evaluate whether corrective context can reduce automated-judge harmful
+outputs from a frozen model fine-tuned on bad medical advice. Comparisons
+include a fixed corrective prompt, corrective retrieval, neutral retrieval,
+and the base model. The primary results support corrective context under
+the evaluated conditions, without establishing retrieval superiority,
+clinician-validated safety, or model repair.
+
+See the [experimental protocol and interpretation](docs/experimental_protocol.md)
+for the experimental design, supported claims, and limitations. Manuscript
+sources are maintained in [`paper/`](paper/).
 
 ## Setup
 
@@ -94,12 +101,52 @@ already tracked. Prompt exports and retrieval CSVs can be regenerated with
 Edit manuscript sources directly under `paper/`. `scripts/sync_paper.py`
 generates the Overleaf upload bundle; do not edit generated copies independently.
 
-## Citation and license
+## Paper and citation
 
-Use [CITATION.cff](CITATION.cff) to cite the accompanying manuscript. Publication
-metadata will be added when finalized.
+**Runtime Mitigation of Weight-Induced Misalignment through Corrective
+Retrieval for Clinical LLM Agents**
+
+Darrell Cheng, Vinh Pham, Tenzing John Chan Lunn, Jonathan Lugo, Ryan Bui,
+and Kevin Zhu.
+
+Accepted for poster presentation at GenAI4Health @ NeurIPS 2026.
+Non-archival workshop paper.
+
+If you use this repository's code, evaluation resources, or results, please
+cite the accompanying paper using [CITATION.cff](CITATION.cff).
+
+## Credits and acknowledgments
+
+This study builds on publicly released research resources:
+
+- [A-MEM](https://arxiv.org/abs/2502.12110), whose implementation is vendored
+  with local adaptations in [`submodules/Amem/`](submodules/Amem/).
+  See the [upstream repository](https://github.com/WujiangXu/AgenticMemory)
+  and its retained [MIT license](submodules/Amem/LICENSE).
+- The [emergent-misalignment benchmarks](https://arxiv.org/abs/2502.17424)
+  and [model organisms](https://arxiv.org/abs/2506.11613).
+- [MedSafetyBench](https://github.com/AI4LIFE-GROUP/med-safety-bench),
+  used to construct clinical requests and corrective-note resources.
+- [MedMCQA](https://proceedings.mlr.press/v174/pal22a.html),
+  used for the benign clinical evaluation.
+- Qwen2.5-14B-Instruct and all-MiniLM-L6-v2, used as the underlying
+  language model and embedding model.
+
+Please also credit the relevant original resources when using them.
+Our accompanying paper provides their bibliographic references.
+
+We thank Algoverse AI Research for research support and RunPod for GPU support.
+
+## License
 
 The team's original code is released under the [MIT license](LICENSE).
-Vendored A-MEM retains its [upstream license](submodules/Amem/LICENSE).
+Vendored A-MEM retains its [upstream copyright and license](submodules/Amem/LICENSE).
 Third-party datasets, model weights, and publication templates retain their
-respective licenses; the root code license does not replace those terms.
+respective terms; the root code license does not replace those terms.
+
+## Content warning and intended use
+
+This repository contains harmful medical requests and unsafe model-generated
+responses retained for research evaluation. These materials are not clinical
+guidance. The interventions and automated evaluation labels have not been
+clinician-validated.
